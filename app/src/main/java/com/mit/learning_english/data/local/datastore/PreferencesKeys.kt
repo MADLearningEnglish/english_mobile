@@ -14,6 +14,7 @@ object PreferencesKeys {
     // String keys
     val USER_TOKEN = stringPreferencesKey("user_token")
     val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
+    val EXPIRES_AT = stringPreferencesKey("expires_at")
     val LANGUAGE = stringPreferencesKey("language")
 
     // Int keys

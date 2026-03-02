@@ -3,6 +3,7 @@ package com.mit.learning_english.di
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.mit.learning_english.data.mapper.ResultMapper
 import com.mit.learning_english.data.remote.api.AuthApiService
 import com.mit.learning_english.data.remote.retrofit.okhttpclient.AuthInterceptor
 import com.mit.learning_english.data.remote.retrofit.okhttpclient.TokenAuthenticator
@@ -134,11 +135,13 @@ object NetworkModule {
     @Singleton
     fun provideAuthRepository(
         authApiService: AuthApiService,
-        tokenManager: com.mit.learning_english.data.remote.retrofit.TokenManager
+        authManager: com.mit.learning_english.data.remote.retrofit.AuthManager,
+        resultMapper: ResultMapper
     ): com.mit.learning_english.domain.repository.AuthRepository {
         return com.mit.learning_english.data.repository.AuthRepositoryImpl(
             authApiService = authApiService,
-            tokenManager = tokenManager
+            authManager = authManager,
+            resultMapper = resultMapper
         )
     }
 

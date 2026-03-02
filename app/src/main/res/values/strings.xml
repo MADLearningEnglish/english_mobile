@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">learning_english</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="your_personal_language_n_learning_tutor">Your personal language\n learning tutor</string>
+    <string name="log_in_and_continue_your_learning">Log in and continue your learning</string>
+    <string name="email">Email</string>
+    <string name="user_gmail_com">user@gmail.com</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="password">Password</string>
+    <string name="continues">Continue</string>
+    <string name="or">or</string>
+    <string name="log_in_with_google">Log in with Google</string>
+    <string name="by_joining_i_declare_that_i_have_read_and_accent_the_n_terms_and_privacy_policy">By joining, I declare that I have read and accent the\n Terms and Privacy Policy</string>
+    <string name="don_t_have_an_account_yet">Don\'t have an account yet?</string>
+    <string name="signup">SignUp</string>
 </resources>

@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.fragment.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.runtime.ktx)
 
     // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
@@ -81,4 +82,6 @@ dependencies {
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)
+    // Lottie
+    implementation(libs.lottie)
 }

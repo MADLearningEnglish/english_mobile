@@ -1,6 +1,6 @@
 package com.mit.learning_english.data.remote.retrofit.okhttpclient
 
-import com.mit.learning_english.data.remote.retrofit.TokenManager
+import com.mit.learning_english.data.remote.retrofit.AuthManager
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -22,7 +22,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class AuthInterceptor @Inject constructor(
-    private val tokenManager: TokenManager
+    private val authManager: AuthManager
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -36,7 +36,7 @@ class AuthInterceptor @Inject constructor(
 
         // Lấy token (sử dụng runBlocking vì Interceptor không hỗ trợ suspend)
         val token = runBlocking {
-            tokenManager.getTokenOnce()
+            authManager.getTokenOnce()
         }
 
         // Nếu có token, thêm vào header
