@@ -1,13 +1,14 @@
 package com.mit.learning_english.data.repository
 
+import android.util.Log
 import com.mit.learning_english.data.mapper.ResultMapper
 import com.mit.learning_english.data.remote.api.AuthApiService
-import com.mit.learning_english.data.remote.dto.LoginRequest as LoginRequestDto
-import com.mit.learning_english.data.remote.retrofit.TokenManager
+import com.mit.learning_english.data.remote.retrofit.AuthManager
 import com.mit.learning_english.domain.model.LoginRequest
 import com.mit.learning_english.domain.repository.AuthRepository
 import com.mit.learning_english.domain.util.Result
 import javax.inject.Inject
+import com.mit.learning_english.data.remote.dto.LoginRequest as LoginRequestDto
 
 /**
  * Implementation của AuthRepository
@@ -16,36 +17,45 @@ import javax.inject.Inject
  */
 class AuthRepositoryImpl @Inject constructor(
     private val authApiService: AuthApiService,
-    private val tokenManager: TokenManager
+    private val authManager: AuthManager,
+    private val resultMapper: ResultMapper,
 ) : AuthRepository {
 
     override suspend fun hasToken(): Boolean {
-        return tokenManager.hasToken()
+        return authManager.hasToken()
     }
 
     override suspend fun login(loginRequest: LoginRequest): Result<Boolean> {
         return try {
             val requestDto = LoginRequestDto(
-                username = loginRequest.username,
+                email = loginRequest.username,
                 password = loginRequest.password
             )
             val response = authApiService.login(requestDto)
-            
-            when (val result = ResultMapper.fromResponse(response)) {
+            Log.d("LoginResponse1", "${response.body()}")
+            when (val result = resultMapper.fromResponse(response)) {
                 is Result.Success -> {
-                    val loginResponse = result.data
-                    // Lưu token sau khi login thành công
-                    tokenManager.saveTokens(
-                        accessToken = loginResponse.accessToken,
-                        refreshToken = loginResponse.refreshToken
-                    )
-                    Result.Success(true)
+                    val baseResponse = result.data
+                    val loginResponse = baseResponse.data
+                    
+                    if (loginResponse != null) {
+                        // Lưu token sau khi login thành công
+                        Log.d("LoginResponse", "$loginResponse")
+                        authManager.saveTokens(
+                            accessToken = loginResponse.accessToken,
+                            refreshToken = loginResponse.refreshToken,
+                            expiresAt = loginResponse.expiresAt
+                        )
+                        Result.Success(true)
+                    } else {
+                        Result.Error(baseResponse.message ?: "Login failed")
+                    }
                 }
                 is Result.Error -> result
                 else -> Result.Error("Unknown error")
             }
         } catch (e: Exception) {
-            ResultMapper.fromException(e)
+            resultMapper.fromException(e)
         }
     }
 
@@ -77,12 +87,17 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun checkLoggedIn(): Result<Boolean> {
         return try {
             // Gọi API - token sẽ tự động được thêm vào header qua AuthInterceptor
-            val response = authApiService.checkLoggedIn()
+            val response =  authApiService.checkLoggedIn()
             
-            when (val result = ResultMapper.fromResponse(response)) {
+            when (val result = resultMapper.fromResponse(response)) {
                 is Result.Success -> {
-                    // API trả về 200 với UserInfo → Token hợp lệ, user đã đăng nhập
-                    Result.Success(true)
+                    val baseResponse = result.data
+                    // API trả về 200 với UserInfo trong data -> Token hợp lệ
+                    if (baseResponse.data != null) {
+                        Result.Success(true)
+                    } else {
+                        Result.Success(false)
+                    }
                 }
                 is Result.Error -> {
                     // Xử lý các trường hợp lỗi
@@ -90,7 +105,8 @@ class AuthRepositoryImpl @Inject constructor(
                         401, 403 -> {
                             // Token không hợp lệ hoặc hết hạn
                             // Xóa token khỏi local storage để tránh gọi lại với token cũ
-                            tokenManager.clearToken()
+                            authManager.clearToken()
+
                             // Trả về Success(false) để báo chưa đăng nhập (không phải lỗi)
                             Result.Success(false)
                         }
@@ -104,7 +120,13 @@ class AuthRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             // Xử lý exception (network timeout, connection error, etc.)
-            ResultMapper.fromException(e)
+            resultMapper.fromException(e)
         }
     }
+
+    override suspend fun isValidLoggedIn(): Boolean {
+        return authManager.isValidLoggedIn()
+    }
+
+
 }

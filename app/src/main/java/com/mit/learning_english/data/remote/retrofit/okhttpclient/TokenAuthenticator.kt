@@ -3,7 +3,7 @@ package com.mit.learning_english.data.remote.retrofit.okhttpclient
 import android.util.Log
 import com.mit.learning_english.data.remote.api.AuthApiService
 import com.mit.learning_english.data.remote.dto.RefreshTokenRequest
-import com.mit.learning_english.data.remote.retrofit.TokenManager
+import com.mit.learning_english.data.remote.retrofit.AuthManager
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -28,7 +28,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class TokenAuthenticator @Inject constructor(
-    private val tokenManager: TokenManager,
+    private val authManager: AuthManager,
     private val authApiService: AuthApiService
 ) : Authenticator {
 
@@ -61,12 +61,12 @@ class TokenAuthenticator @Inject constructor(
         return runBlocking {
             try {
                 // Lấy refresh token
-                val refreshToken = tokenManager.getRefreshToken()
+                val refreshToken = authManager.getRefreshToken()
                 
                 if (refreshToken.isEmpty()) {
                     Log.w(TAG, "No refresh token available, cannot refresh access token")
                     // Không có refresh token, có thể logout user
-                    tokenManager.clearToken()
+                    authManager.clearToken()
                     return@runBlocking null
                 }
 
@@ -77,13 +77,15 @@ class TokenAuthenticator @Inject constructor(
                 )
 
                 if (refreshResponse.isSuccessful) {
-                    val refreshTokenResponse = refreshResponse.body()
+                    val baseResponse = refreshResponse.body()
+                    val refreshTokenResponse = baseResponse?.data
                     
                     if (refreshTokenResponse != null) {
                         // Lưu access token mới
-                        tokenManager.saveTokens(
+                        authManager.saveTokens(
                             accessToken = refreshTokenResponse.accessToken,
-                            refreshToken = refreshTokenResponse.refreshToken
+                            refreshToken = refreshTokenResponse.refreshToken,
+                            expiresAt = refreshTokenResponse.expiresAt
                         )
                         
                         Log.d(TAG, "Token refreshed successfully")
@@ -93,7 +95,7 @@ class TokenAuthenticator @Inject constructor(
                             .header("Authorization", "Bearer ${refreshTokenResponse.accessToken}")
                             .build()
                     } else {
-                        Log.e(TAG, "Refresh token response body is null")
+                        Log.e(TAG, "Refresh token response data is null or error: ${baseResponse?.message}")
                     }
                 } else {
                     Log.e(TAG, "Refresh token failed with code: ${refreshResponse.code()}")
@@ -101,7 +103,7 @@ class TokenAuthenticator @Inject constructor(
                     // Nếu refresh token cũng hết hạn, logout user
                     if (refreshResponse.code() == 401) {
                         Log.w(TAG, "Refresh token expired, clearing tokens")
-                        tokenManager.clearToken()
+                        authManager.clearToken()
                     }
                 }
             } catch (e: Exception) {

@@ -19,4 +19,7 @@ interface AuthRepository {
      * @return Result<Boolean> true nếu đã đăng nhập và token hợp lệ, false nếu chưa
      */
     suspend fun checkLoggedIn(): Result<Boolean>
+
+    suspend fun isValidLoggedIn(): Boolean
+
 }

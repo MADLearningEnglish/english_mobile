@@ -6,17 +6,41 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
+/**
+ * Base Fragment với ViewBinding và ViewModel integration.
+ * Loading và error lấy từ uiState (BaseUiState) - single source of truth.
+ *
+ * @param VB ViewBinding type
+ * @param VM BaseViewModel type (STATE phải extend BaseUiState)
+ */
+abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragment() {
 
     private var _binding: VB? = null
     protected val binding get() = _binding!!
 
     protected abstract val viewModel: VM
 
+    /**
+     * Tạo ViewBinding. Thường dùng: XxxBinding.inflate(inflater, container, false)
+     */
     abstract fun verifyBinding(inflater: LayoutInflater, container: ViewGroup?): VB
+
+    /**
+     * Setup UI: toolbar, adapter, visibility ban đầu...
+     */
     abstract fun setupView()
+
+    /**
+     * Bind data: gọi ViewModel, set listeners, bind dữ liệu...
+     */
     abstract fun bindView()
 
     override fun onCreateView(
@@ -35,22 +59,42 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment() {
         observeViewModel()
     }
 
-    private fun observeViewModel() {
-        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            if (isLoading) showLoading() else hideLoading()
+    /**
+     * Observe ViewModel. Mặc định observe loading và error từ uiState.
+     * Override để thêm observe uiState chi tiết, event...
+     */
+    protected open fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collectLatest { state ->
+                    if (state.isLoading) showLoading() else hideLoading()
+                    state.errorMessage?.let { showError(it) }
+                }
+            }
         }
+    }
 
-        viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
-            showError(message)
+    /**
+     * Collect StateFlow an toàn với lifecycle.
+     * Dùng trong observeViewModel() khi override.
+     */
+    protected fun <T> collectState(
+        flow: StateFlow<T>,
+        action: suspend (T) -> Unit
+    ) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                flow.collectLatest(action)
+            }
         }
     }
 
     protected open fun showLoading() {
-        // Override to show loading dialog/progress
+        // Override để hiển thị loading dialog/progress
     }
 
     protected open fun hideLoading() {
-        // Override to hide loading dialog/progress
+        // Override để ẩn loading
     }
 
     protected open fun showError(message: String) {

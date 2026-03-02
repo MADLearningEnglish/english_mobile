@@ -7,6 +7,6 @@ package com.mit.learning_english.data.remote.dto
 data class LoginResponse(
     val accessToken: String,
     val refreshToken: String,
-    val expiresIn: Long? = null,
+    val expiresAt: Long? = null,
     val user: UserInfo? = null
 )

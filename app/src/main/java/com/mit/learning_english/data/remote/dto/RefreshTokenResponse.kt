@@ -6,5 +6,5 @@ package com.mit.learning_english.data.remote.dto
 data class RefreshTokenResponse(
     val accessToken: String,
     val refreshToken: String? = null, // Optional, có thể không trả về
-    val expiresIn: Long? = null // Thời gian hết hạn (seconds)
+    val expiresAt: Long,
 )

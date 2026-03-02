@@ -52,6 +52,39 @@ class PreferencesDatasource @Inject constructor(
         }
     }
 
+    suspend fun saveInteger(key: Preferences.Key<Int>, value: Int){
+        dataStore.edit { preferences ->
+            preferences[key]=value
+        }
+    }
+    suspend fun saveLong(key: Preferences.Key<Long>, value: Long){
+        dataStore.edit { preferences ->
+            preferences[key]=value
+        }
+    }
+
+    fun getInteger(key: Preferences.Key<Int>, defaultValue: Int):Flow<Int>{
+        return dataStore.data.map{ preferences ->
+            preferences[key]?: defaultValue
+        }
+    }
+
+
+
+    suspend fun saveExpiresTime(expiresAt: Long) {
+        // Mã hóa token trước khi lưu
+        val expiresAtString: String = expiresAt.toString()
+        val encryptedToken = encryptionService.encrypt(expiresAtString)
+        if (encryptedToken != null) {
+            saveString(PreferencesKeys.EXPIRES_AT, encryptedToken)
+        } else {
+            // Nếu mã hóa thất bại, có thể log error hoặc throw exception
+            // Ở đây chúng ta sẽ lưu plaintext như fallback (không khuyến khích trong production)
+            // Trong production nên throw exception hoặc retry
+            throw SecurityException("Failed to encrypt token")
+        }
+    }
+
     /**
      * Lưu user token đã được mã hóa
      * 
@@ -85,6 +118,15 @@ class PreferencesDatasource @Inject constructor(
                 encryptionService.decrypt(encryptedToken) ?: ""
             } else {
                 ""
+            }
+        }
+    }
+     fun getExpiresTime(): Flow<Long> {
+        return getString(PreferencesKeys.EXPIRES_AT).map { encryptedExpiresTime ->
+            if (encryptedExpiresTime.isNotEmpty()) {
+                encryptionService.decrypt(encryptedExpiresTime)?.toLong()?: 0L
+            } else {
+                0L
             }
         }
     }
@@ -146,4 +188,6 @@ class PreferencesDatasource @Inject constructor(
             preferences.clear()
         }
     }
+
+
 }
