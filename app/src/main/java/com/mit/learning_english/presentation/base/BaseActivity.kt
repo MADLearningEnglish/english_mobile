@@ -14,7 +14,20 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> : AppCompatAct
     protected abstract val viewModel: VM
 
     abstract fun inflateBinding(inflater: LayoutInflater): VB
+    /**
+     * Setup Toolbar
+     * Init RecyclerView
+     * Set adapter
+     * Set click listener
+     * Config animation, visibility ban đầu
+     */
     abstract fun setupView()
+
+    /**
+     * Gọi function trong ViewModel
+     * Set listener gọi ViewModel
+     * Bind dữ liệu ban đầu
+     */
     abstract fun bindView()
 
     override fun onCreate(savedInstanceState: Bundle?) {

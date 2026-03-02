@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
@@ -60,9 +61,9 @@ dependencies {
     implementation(libs.shimmer)
     implementation(libs.androidx.swiperefreshlayout)
 
-    // Dagger Hilt
+    // Dagger Hilt (dùng KAPT thay vì KSP - tránh lỗi KSTypeArgument với Kotlin 2.2.x)
     implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
+    kapt(libs.hilt.compiler)
 
     // Lifecycle & Fragment
     implementation(libs.fragment.ktx)
