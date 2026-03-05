@@ -14,4 +14,8 @@
     <string name="by_joining_i_declare_that_i_have_read_and_accent_the_n_terms_and_privacy_policy">By joining, I declare that I have read and accent the\n Terms and Privacy Policy</string>
     <string name="don_t_have_an_account_yet">Don\'t have an account yet?</string>
     <string name="signup">SignUp</string>
+    <string name="course">Course</string>
+    <string name="vocabulary">Vocabulary</string>
+    <string name="chat">Chat</string>
+    <string name="profile">Profile</string>
 </resources>

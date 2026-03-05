@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav"
     app:startDestination="@+id/auth_graph">
-    <include app:graph="@navigation/auth_graph"/>
-    <include app:graph="@navigation/main_graph"/>
+    <include app:graph="@navigation/auth_graph" />
+    <include app:graph="@navigation/main_graph" />
 
 </navigation>
