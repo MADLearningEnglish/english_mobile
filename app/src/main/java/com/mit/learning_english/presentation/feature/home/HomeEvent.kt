@@ -1,3 +1,3 @@
-package com.mit.learning_english.presentation.feature.course
+package com.mit.learning_english.presentation.feature.home
 
-class CourseEvent {}
+class HomeEvent {}

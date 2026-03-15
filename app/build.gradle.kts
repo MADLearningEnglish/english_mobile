@@ -82,6 +82,17 @@ dependencies {
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)
+
+    // Paging 3
+    implementation(libs.androidx.paging.runtime)
+
     // Lottie
     implementation(libs.lottie)
+
+    // Glide
+    implementation(libs.glide)
+    kapt(libs.glide.compiler)
+    // Paging 3
+implementation(libs.androidx.paging.runtime)
+
 }
