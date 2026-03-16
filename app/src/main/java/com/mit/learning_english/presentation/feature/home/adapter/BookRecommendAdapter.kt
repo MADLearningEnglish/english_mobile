@@ -9,8 +9,9 @@ import com.mit.learning_english.databinding.ItemBookRecommendBinding
 import com.mit.learning_english.domain.model.Book
 import com.mit.learning_english.presentation.extensions.loadImage
 
-class BookRecommendAdapter :
-    ListAdapter<Book, BookRecommendAdapter.BookRecommendViewHolder>(BookDiffCallback()) {
+class BookRecommendAdapter(
+    private val onBookClick: (Book) -> Unit
+) : ListAdapter<Book, BookRecommendAdapter.BookRecommendViewHolder>(BookDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookRecommendViewHolder {
         val binding = ItemBookRecommendBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
@@ -20,12 +21,13 @@ class BookRecommendAdapter :
 
     override fun onBindViewHolder(holder: BookRecommendViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item)
+        holder.bind(item) { onBookClick(item) }
     }
 
     class BookRecommendViewHolder(private val binding: ItemBookRecommendBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(book: Book) {
+        fun bind(book: Book, onBookClick: () -> Unit) {
+            binding.root.setOnClickListener { onBookClick() }
             binding.tvBookTitle.text = book.title
             binding.tvBookAuthor.text = book.authorsName
             binding.ivBookCover.loadImage(book.coverUrl)

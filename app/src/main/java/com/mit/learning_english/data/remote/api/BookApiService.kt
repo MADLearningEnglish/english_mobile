@@ -2,6 +2,7 @@ package com.mit.learning_english.data.remote.api
 
 import com.mit.learning_english.data.remote.dto.BaseResponse
 import com.mit.learning_english.domain.model.Book
+import com.mit.learning_english.domain.model.BookDetail
 import com.mit.learning_english.domain.model.BookHistory
 import com.mit.learning_english.domain.model.Genre
 import retrofit2.Response
@@ -25,4 +26,10 @@ interface BookApiService {
 
     @GET("api/book/genres")
     suspend fun getGenres(): Response<BaseResponse<List<Genre>>>
+
+    @GET("api/books/{bookId}")
+    suspend fun getBookDetailById(@Path("bookId") bookId: Int): Response<BaseResponse<BookDetail>>
+
+    @GET("api/books/{bookId}")
+    suspend fun updateFavoriteBook(@Path("bookId") bookId: Int)
 }

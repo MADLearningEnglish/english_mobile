@@ -2,12 +2,12 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_nav_graph"
-    app:startDestination="@id/course">
+    app:startDestination="@id/home">
 
     <fragment
-        android:id="@+id/course"
-        android:name="com.mit.learning_english.presentation.feature.course.CourseFragment"
-        android:label="Course" />
+        android:id="@+id/home"
+        android:name="com.mit.learning_english.presentation.feature.home.HomeFragment"
+        android:label="Home" />
 
     <fragment
         android:id="@+id/vocabulary"

@@ -2,6 +2,7 @@ package com.mit.learning_english.domain.repository
 
 import androidx.paging.PagingData
 import com.mit.learning_english.domain.model.Book
+import com.mit.learning_english.domain.model.BookDetail
 import com.mit.learning_english.domain.model.BookHistory
 import com.mit.learning_english.domain.model.Genre
 import com.mit.learning_english.domain.util.Result
@@ -15,5 +16,10 @@ interface BookRepository {
     suspend fun getGenres(): Result<List<Genre>>
 
     suspend fun getBooksHistory(): Flow<PagingData<BookHistory>>
+
+    suspend fun getBookDetailById(bookId: Int): Result<BookDetail>
+
+    suspend fun updateFavoriteBook(isFavorite: Boolean): Result<Boolean>
+
 
 }

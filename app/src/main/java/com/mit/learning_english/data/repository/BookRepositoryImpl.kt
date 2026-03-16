@@ -8,6 +8,7 @@ import com.mit.learning_english.data.paging.BookByGenresPagingSource
 import com.mit.learning_english.data.paging.BookHistoryPagingSource
 import com.mit.learning_english.data.remote.api.BookApiService
 import com.mit.learning_english.domain.model.Book
+import com.mit.learning_english.domain.model.BookDetail
 import com.mit.learning_english.domain.model.BookHistory
 import com.mit.learning_english.domain.model.Genre
 import com.mit.learning_english.domain.repository.BookRepository
@@ -40,5 +41,10 @@ class BookRepositoryImpl @Inject constructor(
             config = PagingConfig(
                 pageSize = 20, prefetchDistance = 5, enablePlaceholders = false
             ), pagingSourceFactory = { BookHistoryPagingSource(bookApi) }).flow
+    }
+
+    override suspend fun getBookDetailById(bookId: Int): Result<BookDetail> {
+        val response = bookApi.getBookDetailById(bookId)
+        return resultMapper.fromBaseResponse(response)
     }
 }
