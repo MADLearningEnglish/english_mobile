@@ -128,5 +128,51 @@ class AuthRepositoryImpl @Inject constructor(
         return authManager.isValidLoggedIn()
     }
 
+    override suspend fun requestForgotPasswordOtp(email: String): Result<Boolean> {
+        return try {
+            val request = com.mit.learning_english.data.remote.dto.ForgotPasswordRequest(email = email)
+            val response = authApiService.requestForgotPasswordOtp(request)
+            when (val result = resultMapper.fromResponse(response)) {
+                is Result.Success -> Result.Success(true)
+                is Result.Error -> result
+                else -> Result.Error("Unknown error")
+            }
+        } catch (e: Exception) {
+            resultMapper.fromException(e)
+        }
+    }
+
+    override suspend fun verifyForgotPasswordOtp(email: String, otp: String): Result<Boolean> {
+        return try {
+            val request = com.mit.learning_english.data.remote.dto.VerifyOtpRequest(email = email, otp = otp)
+            val response = authApiService.verifyForgotPasswordOtp(request)
+            when (val result = resultMapper.fromResponse(response)) {
+                is Result.Success -> Result.Success(true)
+                is Result.Error -> result
+                else -> Result.Error("Unknown error")
+            }
+        } catch (e: Exception) {
+            resultMapper.fromException(e)
+        }
+    }
+
+    override suspend fun resetForgotPassword(email: String, otp: String, newPassword: String): Result<Boolean> {
+        return try {
+            val request = com.mit.learning_english.data.remote.dto.ResetPasswordRequest(
+                email = email,
+                otp = otp,
+                newPassword = newPassword
+            )
+            val response = authApiService.resetPassword(request)
+            when (val result = resultMapper.fromResponse(response)) {
+                is Result.Success -> Result.Success(true)
+                is Result.Error -> result
+                else -> Result.Error("Unknown error")
+            }
+        } catch (e: Exception) {
+            resultMapper.fromException(e)
+        }
+    }
+
 
 }
