@@ -114,16 +114,32 @@ object NetworkModule {
     }
 
     /**
+     * Provide UserApiService via the auth retrofit (no Authenticator) since sign up is a public endpoint
+     */
+    @Provides
+    @Singleton
+    fun provideUserApiService(
+        @com.mit.learning_english.di.qualifier.AuthRetrofit retrofit: Retrofit
+    ): com.mit.learning_english.data.remote.api.UserApiService {
+        return retrofit.create(com.mit.learning_english.data.remote.api.UserApiService::class.java)
+    }
+
+    /**
      * Provide AuthRepository implementation
      */
     @Provides
     @Singleton
     fun provideAuthRepository(
         authApiService: AuthApiService,
+        userApiService: com.mit.learning_english.data.remote.api.UserApiService,
         authManager: com.mit.learning_english.data.remote.retrofit.AuthManager,
         resultMapper: ResultMapper
     ): com.mit.learning_english.domain.repository.AuthRepository {
         return com.mit.learning_english.data.repository.AuthRepositoryImpl(
+            authApiService = authApiService,
+            userApiService = userApiService,
+            authManager = authManager,
+            resultMapper = resultMapper
             authApiService = authApiService, authManager = authManager, resultMapper = resultMapper
         )
     }
