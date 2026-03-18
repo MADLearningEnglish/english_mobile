@@ -36,6 +36,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
         binding.btnSingUp.setOnClickListener {
             viewModel.onSignUpClick()
         }
+        binding.tvForgotPassword.setOnClickListener {
+            findNavController().navigate(R.id.forgotPasswordFragment)
+        }
         binding.edtEmail.doOnTextChanged { text, start, before, count ->
             viewModel.setEmail(text.toString())
         }

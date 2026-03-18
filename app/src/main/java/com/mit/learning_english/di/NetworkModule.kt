@@ -114,6 +114,17 @@ object NetworkModule {
     }
 
     /**
+     * Provide UserApiService via the auth retrofit (no Authenticator) since sign up is a public endpoint
+     */
+    @Provides
+    @Singleton
+    fun provideUserApiService(
+        @com.mit.learning_english.di.qualifier.AuthRetrofit retrofit: Retrofit
+    ): com.mit.learning_english.data.remote.api.UserApiService {
+        return retrofit.create(com.mit.learning_english.data.remote.api.UserApiService::class.java)
+    }
+
+    /**
      * Provide AuthRepository implementation
      */
     @Provides
@@ -151,6 +162,7 @@ object NetworkModule {
             networkMonitor = networkMonitor
         )
     }
+
     /**
      * Provide BookApiService
      */
@@ -166,9 +178,13 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideBookRepository(
-        bookApiService: com.mit.learning_english.data.remote.api.BookApiService
+        bookApiService: com.mit.learning_english.data.remote.api.BookApiService,
+        resultMapper: ResultMapper
     ): com.mit.learning_english.domain.repository.BookRepository {
-        return com.mit.learning_english.data.repository.BookRepositoryImpl(bookApiService)
+        return com.mit.learning_english.data.repository.BookRepositoryImpl(
+            bookApiService,
+            resultMapper
+        )
     }
 
 }

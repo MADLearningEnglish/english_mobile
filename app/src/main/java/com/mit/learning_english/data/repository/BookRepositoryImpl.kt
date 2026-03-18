@@ -47,4 +47,8 @@ class BookRepositoryImpl @Inject constructor(
         val response = bookApi.getBookDetailById(bookId)
         return resultMapper.fromBaseResponse(response)
     }
+
+    override suspend fun updateFavoriteBook(isFavorite: Boolean): Result<Boolean> {
+
+    }
 }
