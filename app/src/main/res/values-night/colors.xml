@@ -9,6 +9,7 @@
     <color name="background">#131313</color>
     <color name="surface">#262626</color>
     <color name="surface_variant">#00254D</color>
+    <color name="gray">#3C3C3C</color>
 
     <!-- Text -->
     <color name="body_primary">#FFFFFF</color>

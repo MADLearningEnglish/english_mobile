@@ -23,7 +23,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
     @Provides
     @Singleton
     fun provideGson(): Gson {
@@ -40,29 +39,24 @@ object NetworkModule {
 
     /**
      * Tạo OkHttpClient riêng cho AuthApiService (không có Authenticator)
-     * 
+     *
      * Điều này tránh circular dependency:
      * - Authenticator cần AuthApiService để refresh token
      * - AuthApiService cần Retrofit
      * - Retrofit cần OkHttpClient
      * - OkHttpClient có Authenticator -> Circular!
-     * 
+     *
      * Giải pháp: Tạo OkHttpClient riêng không có Authenticator cho AuthApiService
      */
     @Provides
     @Singleton
     @com.mit.learning_english.di.qualifier.AuthOkHttpClient
     fun provideAuthOkHttpClient(
-        loggingInterceptor: HttpLoggingInterceptor,
-        authInterceptor: AuthInterceptor
+        loggingInterceptor: HttpLoggingInterceptor, authInterceptor: AuthInterceptor
     ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .addInterceptor(authInterceptor)
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .build()
+        return OkHttpClient.Builder().addInterceptor(loggingInterceptor)
+            .addInterceptor(authInterceptor).connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS).writeTimeout(30, TimeUnit.SECONDS).build()
     }
 
     /**
@@ -75,14 +69,11 @@ object NetworkModule {
         authInterceptor: AuthInterceptor,
         tokenAuthenticator: TokenAuthenticator
     ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
+        return OkHttpClient.Builder().addInterceptor(loggingInterceptor)
             .addInterceptor(authInterceptor)
             .authenticator(tokenAuthenticator) // Thêm Authenticator để tự động refresh token
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .build()
+            .connectTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS).build()
     }
 
     /**
@@ -95,11 +86,8 @@ object NetworkModule {
         @com.mit.learning_english.di.qualifier.AuthOkHttpClient authOkHttpClient: OkHttpClient,
         gson: Gson
     ): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(authOkHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
+        return Retrofit.Builder().baseUrl(BASE_URL).client(authOkHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson)).build()
     }
 
     /**
@@ -108,16 +96,13 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
+        return Retrofit.Builder().baseUrl(BASE_URL).client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson)).build()
     }
 
     /**
      * Provide AuthApiService
-     * 
+     *
      * Sử dụng Retrofit riêng không có Authenticator để tránh circular dependency
      */
     @Provides
@@ -155,6 +140,7 @@ object NetworkModule {
             userApiService = userApiService,
             authManager = authManager,
             resultMapper = resultMapper
+            authApiService = authApiService, authManager = authManager, resultMapper = resultMapper
         )
     }
 
@@ -181,4 +167,24 @@ object NetworkModule {
             networkMonitor = networkMonitor
         )
     }
+    /**
+     * Provide BookApiService
+     */
+    @Provides
+    @Singleton
+    fun provideBookApiService(retrofit: Retrofit): com.mit.learning_english.data.remote.api.BookApiService {
+        return retrofit.create(com.mit.learning_english.data.remote.api.BookApiService::class.java)
+    }
+
+    /**
+     * Provide BookRepository implementation
+     */
+    @Provides
+    @Singleton
+    fun provideBookRepository(
+        bookApiService: com.mit.learning_english.data.remote.api.BookApiService
+    ): com.mit.learning_english.domain.repository.BookRepository {
+        return com.mit.learning_english.data.repository.BookRepositoryImpl(bookApiService)
+    }
+
 }

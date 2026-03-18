@@ -35,6 +35,24 @@ interface AuthApiService {
     suspend fun login(@Body request: LoginRequest): Response<BaseResponse<LoginResponse>>
 
     /**
+     * Request OTP for forgot password
+     */
+    @POST("auth/v1/forgot-password/request-otp")
+    suspend fun requestForgotPasswordOtp(@Body request: com.mit.learning_english.data.remote.dto.ForgotPasswordRequest): Response<BaseResponse<Any>>
+
+    /**
+     * Verify OTP for forgot password
+     */
+    @POST("auth/v1/forgot-password/verify-otp")
+    suspend fun verifyForgotPasswordOtp(@Body request: com.mit.learning_english.data.remote.dto.VerifyOtpRequest): Response<BaseResponse<Any>>
+
+    /**
+     * Reset password with otp
+     */
+    @POST("auth/v1/forgot-password/reset")
+    suspend fun resetPassword(@Body request: com.mit.learning_english.data.remote.dto.ResetPasswordRequest): Response<BaseResponse<Any>>
+
+    /**
      * Kiểm tra trạng thái đăng nhập hiện tại
      *
      * API này yêu cầu authentication token trong header:

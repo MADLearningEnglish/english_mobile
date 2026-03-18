@@ -23,4 +23,11 @@ interface AuthRepository {
 
     suspend fun isValidLoggedIn(): Boolean
 
+    // Forgotten password flow
+    suspend fun requestForgotPasswordOtp(email: String): Result<Boolean>
+
+    suspend fun verifyForgotPasswordOtp(email: String, otp: String): Result<Boolean>
+
+    suspend fun resetForgotPassword(email: String, otp: String, newPassword: String): Result<Boolean>
+
 }
