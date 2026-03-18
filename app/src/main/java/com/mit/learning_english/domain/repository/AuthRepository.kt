@@ -5,6 +5,7 @@ import com.mit.learning_english.domain.util.Result
 
 interface AuthRepository {
     suspend fun login(loginRequest: LoginRequest): Result<Boolean>
+    suspend fun signUp(email: String, password: String, fullName: String): com.mit.learning_english.domain.util.Result<Boolean>
     
     /**
      * Kiểm tra có token trong local storage hay không

@@ -1,3 +1,5 @@
 package com.mit.learning_english.presentation.feature.signup
 
-class SignUpEvent
+sealed class SignUpEvent {
+	object NavigateToLogin : SignUpEvent()
+}
