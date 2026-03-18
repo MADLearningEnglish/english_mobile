@@ -18,4 +18,10 @@
     <string name="vocabulary">Vocabulary</string>
     <string name="chat">Chat</string>
     <string name="profile">Profile</string>
+    <!-- Forgot password / reset strings -->
+    <string name="forgot_password">Forgot password?</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="submit">Submit</string>
+    <string name="re_enter_password">Re-enter password</string>
+    <string name="update_password">Update password</string>
 </resources>
