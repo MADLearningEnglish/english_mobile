@@ -11,6 +11,9 @@
     <color name="success">#38AD49</color>
     <color name="error_color">#D53F36</color>
 
+    <!-- Backwards-compatible alias used by layouts -->
+    <color name="error">#D53F36</color>
+
     <!-- Background -->
     <color name="background">#FFFFFF</color>
     <color name="surface">#F8F8F8</color>
