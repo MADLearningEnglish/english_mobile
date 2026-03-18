@@ -25,4 +25,10 @@
     <string name="search_book_conversation">Search book, conversation....</string>
     <string name="view_all">View all</string>
     <string name="recently_read">Recently Read</string>
+    <!-- Forgot password / reset strings -->
+    <string name="forgot_password">Forgot password?</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="submit">Submit</string>
+    <string name="re_enter_password">Re-enter password</string>
+    <string name="update_password">Update password</string>
 </resources>
