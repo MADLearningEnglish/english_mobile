@@ -4,14 +4,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentHomeBinding
 import com.mit.learning_english.presentation.base.BaseFragment
+import com.mit.learning_english.presentation.feature.home.adapter.BookHistoryAdapter
 import com.mit.learning_english.presentation.feature.home.adapter.BookRecommendAdapter
 import com.mit.learning_english.presentation.feature.home.adapter.GenreAdapter
-import com.mit.learning_english.presentation.feature.home.adapter.BookHistoryAdapter
-import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
+import com.mit.learning_english.presentation.feature.main.MainFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -30,7 +33,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     override fun setupView() {
-        recommendAdapter = BookRecommendAdapter()
+        recommendAdapter = BookRecommendAdapter { book -> navigateToBookDetail(book.id) }
         binding.rvRecommendBook.apply {
             adapter = recommendAdapter
             layoutManager =
@@ -51,6 +54,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     override fun bindView() {
+    }
+
+    private fun navigateToBookDetail(bookId: Int) {
+        findNavController(requireActivity(), R.id.nav_host_fragment)
+            .navigate(MainFragmentDirections.actionMainFragmentToBookDetailFragment(bookId))
     }
 
     override fun observeViewModel() {
