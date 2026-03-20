@@ -21,6 +21,9 @@ import javax.inject.Singleton
 class AuthManager @Inject constructor(
     private val preferencesDatasource: PreferencesDatasource
 ) {
+    private var cachedAccessToken: String? = null
+    private var cachedRefreshToken: String? = null
+
     /**
      * Lưu token (sẽ được mã hóa tự động)
      *
@@ -47,7 +50,10 @@ class AuthManager @Inject constructor(
      * @return Token đã giải mã, hoặc chuỗi rỗng nếu không có
      */
     suspend fun getTokenOnce(): String {
-        return preferencesDatasource.getUserTokenOnce()
+        cachedAccessToken?.let { return it }
+        val token = preferencesDatasource.getUserTokenOnce()
+        cachedAccessToken = token
+        return token
     }
 
     /**
@@ -71,13 +77,18 @@ class AuthManager @Inject constructor(
      * Lấy refresh token
      */
     suspend fun getRefreshToken(): String {
-        return preferencesDatasource.getRefreshTokenOnce()
+        cachedRefreshToken?.let { return it }
+        val token = preferencesDatasource.getRefreshTokenOnce()
+        cachedRefreshToken = token
+        return token
     }
 
     /**
      * Xóa token (logout)
      */
     suspend fun clearToken() {
+        cachedAccessToken = null
+        cachedRefreshToken = null
         preferencesDatasource.removeKey(
             com.mit.learning_english.data.local.datastore.PreferencesKeys.USER_TOKEN
         )
@@ -95,8 +106,14 @@ class AuthManager @Inject constructor(
     suspend fun saveTokens(
         accessToken: String?, refreshToken: String? = null, expiresAt: Long? = null
     ) {
-        accessToken?.let { saveToken(it) }
-        refreshToken?.let { saveRefreshToken(it) }
+        accessToken?.let { 
+            cachedAccessToken = it
+            saveToken(it) 
+        }
+        refreshToken?.let { 
+            cachedRefreshToken = it
+            saveRefreshToken(it) 
+        }
         expiresAt?.let {
             preferencesDatasource.saveExpiresTime(it)
         }

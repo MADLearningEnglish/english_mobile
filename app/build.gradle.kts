@@ -84,4 +84,9 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     // Lottie
     implementation(libs.lottie)
+    // GridLayout
+    implementation(libs.androidx.gridlayout)
+    // Glide
+    implementation(libs.glide)
 }
+
