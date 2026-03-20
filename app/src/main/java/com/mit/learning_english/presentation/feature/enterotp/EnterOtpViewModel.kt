@@ -1,4 +1,4 @@
-package com.mit.learning_english.presentation.feature.forgotpassword
+package com.mit.learning_english.presentation.feature.enterotp
 
 import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.domain.usecase.VerifyForgotPasswordOtpUseCase

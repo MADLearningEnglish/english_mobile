@@ -18,7 +18,6 @@ import com.mit.learning_english.data.remote.dto.LoginRequest as LoginRequestDto
  */
 class AuthRepositoryImpl @Inject constructor(
     private val authApiService: AuthApiService,
-    private val userApiService: com.mit.learning_english.data.remote.api.UserApiService,
     private val authManager: AuthManager,
     private val resultMapper: ResultMapper,
 ) : AuthRepository {
@@ -130,21 +129,16 @@ class AuthRepositoryImpl @Inject constructor(
         return authManager.isValidLoggedIn()
     }
 
-    override suspend fun signUp(email: String, password: String, fullName: String): com.mit.learning_english.domain.util.Result<Boolean> {
-        return try {
+    override suspend fun signUp(email: String, password: String, fullName: String): Result<Boolean> {
+         
             val request = CreateUserRequest(
                 email = email,
                 password = password,
                 fullName = fullName
             )
-            val response = userApiService.createUser(request)
-            when (val result = resultMapper.fromResponse(response)) {
-                is com.mit.learning_english.domain.util.Result.Success -> {
-                    // If API returns success (message/data), treat as success
-                    com.mit.learning_english.domain.util.Result.Success(true)
-                }
-                is com.mit.learning_english.domain.util.Result.Error -> result
-                else -> com.mit.learning_english.domain.util.Result.Error("Unknown error")
+            val response = authApiService.createUser(request)
+        return resultMapper.fromBaseResponse(response)
+        }
     override suspend fun requestForgotPasswordOtp(email: String): Result<Boolean> {
         return try {
             val request = com.mit.learning_english.data.remote.dto.ForgotPasswordRequest(email = email)

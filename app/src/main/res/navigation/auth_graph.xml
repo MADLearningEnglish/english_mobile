@@ -44,7 +44,7 @@
 
     <fragment
         android:id="@+id/enterOtpFragment"
-        android:name="com.mit.learning_english.presentation.feature.forgotpassword.EnterOtpFragment"
+        android:name="com.mit.learning_english.presentation.feature.enterotp.EnterOtpFragment"
         android:label="fragment_enter_otp"
         tools:layout="@layout/fragment_enter_otp">
         <action
@@ -54,7 +54,7 @@
 
     <fragment
         android:id="@+id/resetPasswordFragment"
-        android:name="com.mit.learning_english.presentation.feature.forgotpassword.ResetPasswordFragment"
+        android:name="com.mit.learning_english.presentation.feature.resetpassword.ResetPasswordFragment"
         android:label="fragment_reset_password"
         tools:layout="@layout/fragment_reset_password" />
 

@@ -131,15 +131,10 @@ object NetworkModule {
     @Singleton
     fun provideAuthRepository(
         authApiService: AuthApiService,
-        userApiService: com.mit.learning_english.data.remote.api.UserApiService,
         authManager: com.mit.learning_english.data.remote.retrofit.AuthManager,
         resultMapper: ResultMapper
     ): com.mit.learning_english.domain.repository.AuthRepository {
         return com.mit.learning_english.data.repository.AuthRepositoryImpl(
-            authApiService = authApiService,
-            userApiService = userApiService,
-            authManager = authManager,
-            resultMapper = resultMapper
             authApiService = authApiService, authManager = authManager, resultMapper = resultMapper
         )
     }
@@ -167,6 +162,7 @@ object NetworkModule {
             networkMonitor = networkMonitor
         )
     }
+
     /**
      * Provide BookApiService
      */
@@ -182,9 +178,13 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideBookRepository(
-        bookApiService: com.mit.learning_english.data.remote.api.BookApiService
+        bookApiService: com.mit.learning_english.data.remote.api.BookApiService,
+        resultMapper: ResultMapper
     ): com.mit.learning_english.domain.repository.BookRepository {
-        return com.mit.learning_english.data.repository.BookRepositoryImpl(bookApiService)
+        return com.mit.learning_english.data.repository.BookRepositoryImpl(
+            bookApiService,
+            resultMapper
+        )
     }
 
 }

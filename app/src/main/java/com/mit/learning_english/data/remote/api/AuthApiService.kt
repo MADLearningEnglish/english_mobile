@@ -1,6 +1,7 @@
 package com.mit.learning_english.data.remote.api
 
 import com.mit.learning_english.data.remote.dto.BaseResponse
+import com.mit.learning_english.data.remote.dto.CreateUserRequest
 import com.mit.learning_english.data.remote.dto.LoginRequest
 import com.mit.learning_english.data.remote.dto.LoginResponse
 import com.mit.learning_english.data.remote.dto.RefreshTokenRequest
@@ -68,6 +69,9 @@ interface AuthApiService {
      */
     @retrofit2.http.GET("auth/me")
     suspend fun checkLoggedIn(): Response<BaseResponse<UserInfo>>
+
+    @POST("user/v1")
+    suspend fun createUser(@Body request: CreateUserRequest): Response<BaseResponse<Boolean>>
 }
 
 
