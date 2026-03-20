@@ -1,4 +1,4 @@
-package com.mit.learning_english.presentation.feature.forgotpassword
+package com.mit.learning_english.presentation.feature.resetpassword
 
 import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.domain.usecase.ResetForgotPasswordUseCase
@@ -12,7 +12,6 @@ import javax.inject.Inject
 class ResetPasswordViewModel @Inject constructor(
     private val resetUseCase: ResetForgotPasswordUseCase
 ) : BaseViewModel<ResetPasswordState, ResetPasswordEvent>(ResetPasswordState()) {
-
     fun setPassword(password: String) {
         setState { copyWith(password = password, serverError = null) }
     }

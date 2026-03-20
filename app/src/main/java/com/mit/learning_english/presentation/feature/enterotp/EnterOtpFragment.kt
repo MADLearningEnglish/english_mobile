@@ -1,19 +1,20 @@
-package com.mit.learning_english.presentation.feature.forgotpassword
+package com.mit.learning_english.presentation.feature.enterotp
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentEnterOtpBinding
 import com.mit.learning_english.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class EnterOtpFragment : BaseFragment<FragmentEnterOtpBinding, EnterOtpViewModel>() {
@@ -48,7 +49,7 @@ class EnterOtpFragment : BaseFragment<FragmentEnterOtpBinding, EnterOtpViewModel
                         is EnterOtpEvent.NavigateToResetPassword -> {
                             val email = viewModel.uiState.value.email ?: ""
                             val otp = viewModel.uiState.value.otp ?: ""
-                            val bundle = androidx.core.os.bundleOf("email" to email, "otp" to otp)
+                            val bundle = bundleOf("email" to email, "otp" to otp)
                             findNavController().navigate(R.id.resetPasswordFragment, bundle)
                         }
                     }
