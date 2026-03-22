@@ -11,6 +11,7 @@ import com.mit.learning_english.domain.model.Book
 import com.mit.learning_english.domain.model.BookDetail
 import com.mit.learning_english.domain.model.BookHistory
 import com.mit.learning_english.domain.model.Genre
+import com.mit.learning_english.domain.model.Page
 import com.mit.learning_english.domain.repository.BookRepository
 import com.mit.learning_english.domain.util.Result
 import kotlinx.coroutines.flow.Flow
@@ -50,5 +51,13 @@ class BookRepositoryImpl @Inject constructor(
 
     override suspend fun updateFavoriteBook(isFavorite: Boolean): Result<Boolean> {
 
+    }
+
+    override suspend fun getPagesByChapter(
+        chapterId: Int,
+        pageNumbers: List<Int>
+    ): Result<List<Page>> {
+        val response = bookApi.getPagesByChapter(chapterId, pageNumbers)
+        return resultMapper.fromBaseResponse(response)
     }
 }

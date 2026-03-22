@@ -49,12 +49,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
 
     override fun observeViewModel() {
         super.observeViewModel()
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.event.collectLatest { event ->
-                    handleNavigate(event)
-                }
-            }
+        collectEvent(viewModel.event) { event ->
+            handleNavigate(event)
         }
     }
 

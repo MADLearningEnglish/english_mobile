@@ -37,16 +37,12 @@ class ForgotPasswordFragment : BaseFragment<FragmentForgotPasswordBinding, Forgo
 
     override fun observeViewModel() {
         super.observeViewModel()
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.event.collectLatest { event ->
-                    when (event) {
-                        is ForgotPasswordEvent.NavigateToEnterOtp -> {
-                            val email = viewModel.uiState.value.email
-                            val bundle = androidx.core.os.bundleOf("email" to email)
-                            findNavController().navigate(R.id.enterOtpFragment, bundle)
-                        }
-                    }
+        collectEvent(viewModel.event) { event ->
+            when (event) {
+                is ForgotPasswordEvent.NavigateToEnterOtp -> {
+                    val email = viewModel.uiState.value.email
+                    val bundle = androidx.core.os.bundleOf("email" to email)
+                    findNavController().navigate(R.id.enterOtpFragment, bundle)
                 }
             }
         }

@@ -51,29 +51,20 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
 
     override fun observeViewModel() {
         super.observeViewModel()
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // collect flows concurrently so one collector doesn't block the other
-                launch {
-                    viewModel.uiState.collectLatest { state ->
-                        binding.overlayLoading.isVisible = state.isLoading
-                        if (state.errorMessage != null) {
-                            binding.tvServerError.text = state.errorMessage
-                            binding.tvServerError.isVisible = true
-                        } else {
-                            binding.tvServerError.isVisible = false
-                        }
-                    }
-                }
+        collectState(viewModel.uiState) { state ->
+            binding.overlayLoading.isVisible = state.isLoading
+            if (state.errorMessage != null) {
+                binding.tvServerError.text = state.errorMessage
+                binding.tvServerError.isVisible = true
+            } else {
+                binding.tvServerError.isVisible = false
+            }
+        }
 
-                launch {
-                    viewModel.event.collectLatest { event ->
-                        when (event) {
-                            is SignUpEvent.NavigateToLogin -> {
-                                findNavController().navigate(R.id.loginFragment)
-                            }
-                        }
-                    }
+        collectEvent(viewModel.event) { event ->
+            when (event) {
+                is SignUpEvent.NavigateToLogin -> {
+                    findNavController().navigate(R.id.loginFragment)
                 }
             }
         }

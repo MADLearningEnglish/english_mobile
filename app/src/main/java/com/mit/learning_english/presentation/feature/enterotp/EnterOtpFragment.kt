@@ -42,17 +42,13 @@ class EnterOtpFragment : BaseFragment<FragmentEnterOtpBinding, EnterOtpViewModel
     override fun observeViewModel() {
         super.observeViewModel()
         // Collect one-time events from ViewModel (SharedFlow)
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.event.collectLatest { event ->
-                    when (event) {
-                        is EnterOtpEvent.NavigateToResetPassword -> {
-                            val email = viewModel.uiState.value.email ?: ""
-                            val otp = viewModel.uiState.value.otp ?: ""
-                            val bundle = bundleOf("email" to email, "otp" to otp)
-                            findNavController().navigate(R.id.resetPasswordFragment, bundle)
-                        }
-                    }
+        collectEvent(viewModel.event) { event ->
+            when (event) {
+                is EnterOtpEvent.NavigateToResetPassword -> {
+                    val email = viewModel.uiState.value.email ?: ""
+                    val otp = viewModel.uiState.value.otp ?: ""
+                    val bundle = bundleOf("email" to email, "otp" to otp)
+                    findNavController().navigate(R.id.resetPasswordFragment, bundle)
                 }
             }
         }
