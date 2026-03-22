@@ -5,6 +5,7 @@ import com.mit.learning_english.domain.model.Book
 import com.mit.learning_english.domain.model.BookDetail
 import com.mit.learning_english.domain.model.BookHistory
 import com.mit.learning_english.domain.model.Genre
+import com.mit.learning_english.domain.model.Page
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -32,4 +33,10 @@ interface BookApiService {
 
     @GET("api/books/{bookId}")
     suspend fun updateFavoriteBook(@Path("bookId") bookId: Int)
+
+    @GET("api/books/{bookId}/pages")
+    suspend fun getPagesByChapter(
+        @Path("bookId") bookId: Int,
+        @Query("pageNumbers") pageNumbers: List<Int>,
+    ): Response<BaseResponse<List<Page>>>
 }

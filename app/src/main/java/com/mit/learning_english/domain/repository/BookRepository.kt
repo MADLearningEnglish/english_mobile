@@ -5,6 +5,7 @@ import com.mit.learning_english.domain.model.Book
 import com.mit.learning_english.domain.model.BookDetail
 import com.mit.learning_english.domain.model.BookHistory
 import com.mit.learning_english.domain.model.Genre
+import com.mit.learning_english.domain.model.Page
 import com.mit.learning_english.domain.util.Result
 import kotlinx.coroutines.flow.Flow
 
@@ -21,5 +22,5 @@ interface BookRepository {
 
     suspend fun updateFavoriteBook(isFavorite: Boolean): Result<Boolean>
 
-
+    suspend fun getPagesByChapter(chapterId: Int, pageNumbers: List<Int>): Result<List<Page>>
 }

@@ -10,6 +10,7 @@ data class BookHistory(
     val genresName: String,
     val authorsName: String,
     val processPercent: Double,
+    val pageLastRead: Int,
     val lastRead: LocalDateTime,
     val isFavorite: Boolean
 )

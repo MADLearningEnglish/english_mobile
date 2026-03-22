@@ -35,14 +35,9 @@ class SplashFragment : BaseFragment<FragmentSplashBinding, SplashViewModel>() {
 
     override fun observeViewModel() {
         super.observeViewModel()
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.event.collectLatest { event ->
-                    handleNavigationEvent(event)
-                }
-            }
+        collectEvent(viewModel.event) { event ->
+            handleNavigationEvent(event)
         }
-
     }
 
     override fun showLoading() {
