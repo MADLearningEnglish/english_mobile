@@ -60,4 +60,8 @@
     <color name="amber_text">#92400E</color>
     <color name="amber_border">#F59E0B</color>
 
+    <!-- Quiz feedback colors -->
+    <color name="quiz_correct">#22C55E</color>
+    <color name="quiz_wrong">#EF4444</color>
+
 </resources>
