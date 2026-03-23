@@ -29,4 +29,12 @@
     <string name="read">Read</string>
     <string name="listen">Listen</string>
     <string name="speed_format">Speed: %1$s</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="submit">Submit</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="update_password">Update Password</string>
+    <string name="re_enter_password">Re-enter Password</string>
+    <string name="favorite">Favorite</string>
+    <string name="download">Download</string>
+    <string name="share">Share</string>
 </resources>

@@ -2,6 +2,7 @@ package com.mit.learning_english.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.mit.learning_english.data.mapper.toBook
 import com.mit.learning_english.data.remote.api.BookApiService
 import com.mit.learning_english.domain.model.Book
 
@@ -23,7 +24,7 @@ class BookByGenresPagingSource(
             val response =
                 api.getBooksByGenres(page = page, size = params.loadSize, genresId = genresId)
             if (response.isSuccessful) {
-                val items: List<Book> = response.body()?.data ?: emptyList()
+                val items: List<Book> = response.body()?.data?.map { it.toBook() } ?: emptyList()
                 LoadResult.Page(
                     data = items,
                     prevKey = if (page == 1) null else page - 1,

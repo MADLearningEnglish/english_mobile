@@ -36,6 +36,15 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
 
     override fun bindView() {
         viewModel.getBookDetail(args.bookId)
+
+        binding.apply {
+            btnReadBook.setOnClickListener {
+                viewModel.navigateToReadBook(0)
+            }
+            btnListenBook.setOnClickListener {
+                viewModel.navigateToReadBook(1)
+            }
+        }
     }
 
     override fun observeViewModel() {

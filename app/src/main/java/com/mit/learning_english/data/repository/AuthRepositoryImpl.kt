@@ -130,15 +130,18 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun signUp(email: String, password: String, fullName: String): Result<Boolean> {
-         
+        return try {
             val request = CreateUserRequest(
                 email = email,
                 password = password,
                 fullName = fullName
             )
             val response = authApiService.createUser(request)
-        return resultMapper.fromBaseResponse(response)
+            resultMapper.fromBaseResponse(response)
+        } catch (e: Exception) {
+            resultMapper.fromException(e)
         }
+    }
     override suspend fun requestForgotPasswordOtp(email: String): Result<Boolean> {
         return try {
             val request = com.mit.learning_english.data.remote.dto.ForgotPasswordRequest(email = email)

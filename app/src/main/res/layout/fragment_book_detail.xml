@@ -13,7 +13,6 @@
         android:layout_marginBottom="12dp"
         android:background="@drawable/border_24"
         android:backgroundTint="@color/primary"
-        android:clipToOutline="true"
         android:elevation="8dp"
         android:outlineAmbientShadowColor="@color/primary"
         android:outlineSpotShadowColor="@color/primary"
@@ -34,6 +33,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
+                android:id="@+id/btnReadBook"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:background="@drawable/ic_reading_book"
@@ -61,6 +61,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
+                android:id="@+id/btnListenBook"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:background="@drawable/ic_headphone"

@@ -6,4 +6,4 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor() :
-    BaseViewModel<ProfileState, ProfileEvent>(ProfileState()) {}
+    BaseViewModel<ProfileState, ProfileEvent>(ProfileState())
