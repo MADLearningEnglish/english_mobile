@@ -35,11 +35,11 @@
             <LinearLayout
                 android:id="@+id/layoutSearch"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/border_16"
                 android:backgroundTint="@color/gray"
                 android:orientation="horizontal"
-                android:padding="8dp"
+                android:padding="12dp"
                 app:flow_verticalAlign="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -51,8 +51,9 @@
                     android:src="@drawable/ic_search" />
 
                 <EditText
+                    style="@style/BodyMedium"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:background="@null"
                     android:hint="@string/search_book_conversation"
@@ -102,7 +103,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:divider="@drawable/space_12"
+                    android:orientation="horizontal"
+                    android:showDividers="middle">
 
                     <include layout="@layout/item_book_recommend_shimmer" />
 
@@ -146,7 +149,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:divider="@drawable/space_8"
+                    android:orientation="horizontal"
+                    android:showDividers="middle">
 
                     <include layout="@layout/item_genre_shimmer" />
 
@@ -162,7 +167,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvGenres"
                 android:layout_width="0dp"
-                android:layout_height="200dp"
+                android:layout_height="80dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -200,7 +205,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:divider="@drawable/space_12"
+                    android:orientation="vertical"
+                    android:showDividers="middle">
 
                     <include layout="@layout/item_shimmer" />
 

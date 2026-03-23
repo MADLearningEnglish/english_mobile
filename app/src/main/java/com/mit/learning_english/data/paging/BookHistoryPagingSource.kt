@@ -2,6 +2,7 @@ package com.mit.learning_english.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.mit.learning_english.data.mapper.toBookHistory
 import com.mit.learning_english.data.remote.api.BookApiService
 import com.mit.learning_english.domain.model.BookHistory
 
@@ -21,7 +22,7 @@ class BookHistoryPagingSource(
         return try {
             val response = api.getBookHistory(page = page, size = params.loadSize)
             if (response.isSuccessful) {
-                val items: List<BookHistory> = response.body()?.data ?: emptyList()
+                val items: List<BookHistory> = response.body()?.data?.map { it.toBookHistory() } ?: emptyList()
                 LoadResult.Page(
                     data = items,
                     prevKey = if (page == 1) null else page - 1,

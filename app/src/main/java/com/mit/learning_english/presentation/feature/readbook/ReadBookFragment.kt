@@ -3,6 +3,7 @@ package com.mit.learning_english.presentation.feature.readbook
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.mit.learning_english.databinding.FragmentReadBookBinding
@@ -12,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel>() {
     override val viewModel: ReadBookViewModel by viewModels()
+    val args: ReadBookFragmentArgs by navArgs()
     private lateinit var pageAdapter: ReadBookPageAdapter
     private lateinit var chapterAdapter: ChapterAdapter
 
@@ -27,7 +29,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
 
         chapterAdapter = ChapterAdapter { chapter ->
             binding.drawLayout.closeDrawers()
-            viewModel.goToChapter(chapter)
+            viewModel.goToChapter(chapter.id)
         }
         binding.rvChapters.apply {
             adapter = chapterAdapter
@@ -42,10 +44,8 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
     }
 
     override fun bindView() {
-        val bookId: Int = arguments?.getInt("bookId", -1) ?: -1
-        val pageNumberLastRead: Int = arguments?.getInt("pageNumberLastRead", 0) ?: 0
-        viewModel.loadInitialPages(bookId, pageNumberLastRead)
-        viewModel.loadInitChapters(bookId, pageNumberLastRead)
+        val readBookArgs = args.readBookArgs
+        viewModel.loadInit(readBookArgs)
     }
 
     override fun observeViewModel() {

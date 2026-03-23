@@ -21,6 +21,19 @@
         tools:layout="@layout/fragment_book_detail">
         <argument
             android:name="bookId"
-            app:argType="int" />
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_bookDetailFragment_to_readBookFragment"
+            app:destination="@id/readBookFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/readBookFragment"
+        android:name="com.mit.learning_english.presentation.feature.readbook.ReadBookFragment"
+        android:label="fragment_read_book"
+        tools:layout="@layout/fragment_read_book">
+        <argument
+            android:name="readBookArgs"
+            app:argType="com.mit.learning_english.presentation.feature.readbook.ReadBookArgs" />
+
     </fragment>
 </navigation>

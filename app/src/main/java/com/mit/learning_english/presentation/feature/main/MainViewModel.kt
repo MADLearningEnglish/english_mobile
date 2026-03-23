@@ -5,4 +5,4 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor() : BaseViewModel<MainState, MainEvent>(MainState()) {}
+class MainViewModel @Inject constructor() : BaseViewModel<MainState, MainEvent>(MainState())

@@ -33,7 +33,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun fetchRecommendBooks() {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             setState { copyWith(isRecommendBooksLoading = true) }
             val result = getBookRecommendUseCase.invoke()
             result.onSuccess { data ->
@@ -48,7 +48,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun fetchGenres() {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             setState { copyWith(isGenresLoading = true) }
             val result = getGenresUseCase.invoke()
             result.onSuccess { data ->

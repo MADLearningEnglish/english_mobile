@@ -67,20 +67,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             if (state.isRecommendBooksLoading) {
                 binding.shimmerRecommendBook.startShimmer()
                 binding.shimmerRecommendBook.visibility = View.VISIBLE
-                binding.rvRecommendBook.visibility = View.GONE
+                binding.rvRecommendBook.visibility = View.INVISIBLE
             } else {
                 binding.shimmerRecommendBook.stopShimmer()
-                binding.shimmerRecommendBook.visibility = View.GONE
+                binding.shimmerRecommendBook.visibility = View.INVISIBLE
                 binding.rvRecommendBook.visibility = View.VISIBLE
                 recommendAdapter.submitList(state.recommendBooks)
             }
             if (state.isGenresLoading) {
                 binding.shimmerGenres.startShimmer()
                 binding.shimmerGenres.visibility = View.VISIBLE
-                binding.rvGenres.visibility = View.GONE
+                binding.rvGenres.visibility = View.INVISIBLE
             } else {
                 binding.shimmerGenres.stopShimmer()
-                binding.shimmerGenres.visibility = View.GONE
+                binding.shimmerGenres.visibility = View.INVISIBLE
                 binding.rvGenres.visibility = View.VISIBLE
                 genreAdapter.submitList(state.genres)
             }
@@ -93,10 +93,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 if (loadState.source.refresh is LoadState.Loading) {
                     binding.shimmerRecentlyRead.startShimmer()
                     binding.shimmerRecentlyRead.visibility = View.VISIBLE
-                    binding.rvRecentlyRead.visibility = View.GONE
+                    binding.rvRecentlyRead.visibility = View.INVISIBLE
                 } else {
                     binding.shimmerRecentlyRead.stopShimmer()
-                    binding.shimmerRecentlyRead.visibility = View.GONE
+                    binding.shimmerRecentlyRead.visibility = View.INVISIBLE
                     binding.rvRecentlyRead.visibility = View.VISIBLE
                 }
             }

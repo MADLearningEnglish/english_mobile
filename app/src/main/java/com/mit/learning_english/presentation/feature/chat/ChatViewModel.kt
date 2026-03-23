@@ -5,5 +5,4 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatViewModel @Inject constructor() :
-    BaseViewModel<ChatState, ChatEvent>(ChatState()) {}
+class ChatViewModel @Inject constructor() : BaseViewModel<ChatState, ChatEvent>(ChatState())

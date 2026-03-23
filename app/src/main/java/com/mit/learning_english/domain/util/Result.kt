@@ -13,6 +13,12 @@ sealed class Result<out T> {
     val isError: Boolean get() = this is Error
     val isLoading: Boolean get() = this is Loading
 
+    fun <R> map(transform: (T) -> R): Result<R> = when (this) {
+        is Success -> Success(transform(data))
+        is Error -> Error(message, code, exception)
+        is Loading -> Loading
+    }
+
     fun getOrNull(): T? = when (this) {
         is Success -> data
         else -> null

@@ -7,5 +7,6 @@ data class BookDetail(
     val coverUrl: String,
     val genresName: String,
     val authorsName: String,
-    val chapters: List<Chapter>
+    val chapters: List<Chapter>,
+    val lastReadNumberPage: Int
 )
