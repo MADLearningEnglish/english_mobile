@@ -3,16 +3,11 @@ package com.mit.learning_english.presentation.feature.splash
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentSplashBinding
 import com.mit.learning_english.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SplashFragment : BaseFragment<FragmentSplashBinding, SplashViewModel>() {
@@ -35,15 +30,8 @@ class SplashFragment : BaseFragment<FragmentSplashBinding, SplashViewModel>() {
 
     override fun observeViewModel() {
         super.observeViewModel()
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Gọi checkAndNavigate() ở đây để đảm bảo collector đã active
-                // trước khi ViewModel emit navigation event
-                viewModel.checkAndNavigate()
-                viewModel.event.collectLatest { event ->
-                    handleNavigationEvent(event)
-                }
-            }
+        collectEvent(viewModel.event) { event ->
+            handleNavigationEvent(event)
         }
     }
 

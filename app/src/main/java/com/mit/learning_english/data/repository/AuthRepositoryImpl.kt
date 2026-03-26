@@ -3,6 +3,7 @@ package com.mit.learning_english.data.repository
 import android.util.Log
 import com.mit.learning_english.data.mapper.ResultMapper
 import com.mit.learning_english.data.remote.api.AuthApiService
+import com.mit.learning_english.data.remote.dto.CreateUserRequest
 import com.mit.learning_english.data.remote.retrofit.AuthManager
 import com.mit.learning_english.domain.model.LoginRequest
 import com.mit.learning_english.domain.repository.AuthRepository
@@ -126,6 +127,65 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun isValidLoggedIn(): Boolean {
         return authManager.isValidLoggedIn()
+    }
+
+    override suspend fun signUp(email: String, password: String, fullName: String): Result<Boolean> {
+        return try {
+            val request = CreateUserRequest(
+                email = email,
+                password = password,
+                fullName = fullName
+            )
+            val response = authApiService.createUser(request)
+            resultMapper.fromBaseResponse(response)
+        } catch (e: Exception) {
+            resultMapper.fromException(e)
+        }
+    }
+    override suspend fun requestForgotPasswordOtp(email: String): Result<Boolean> {
+        return try {
+            val request = com.mit.learning_english.data.remote.dto.ForgotPasswordRequest(email = email)
+            val response = authApiService.requestForgotPasswordOtp(request)
+            when (val result = resultMapper.fromResponse(response)) {
+                is Result.Success -> Result.Success(true)
+                is Result.Error -> result
+                else -> Result.Error("Unknown error")
+            }
+        } catch (e: Exception) {
+            resultMapper.fromException(e)
+        }
+    }
+
+    override suspend fun verifyForgotPasswordOtp(email: String, otp: String): Result<Boolean> {
+        return try {
+            val request = com.mit.learning_english.data.remote.dto.VerifyOtpRequest(email = email, otp = otp)
+            val response = authApiService.verifyForgotPasswordOtp(request)
+            when (val result = resultMapper.fromResponse(response)) {
+                is Result.Success -> Result.Success(true)
+                is Result.Error -> result
+                else -> Result.Error("Unknown error")
+            }
+        } catch (e: Exception) {
+            resultMapper.fromException(e)
+        }
+    }
+
+    override suspend fun resetForgotPassword(email: String, otp: String, newPassword: String): Result<Boolean> {
+        return try {
+            val request = com.mit.learning_english.data.remote.dto.ResetPasswordRequest(
+                email = email,
+                otp = otp,
+                newPassword = newPassword
+            )
+            val response = authApiService.resetPassword(request)
+            when (val result = resultMapper.fromResponse(response)) {
+                is Result.Success -> Result.Success(true)
+                is Result.Error -> result
+                else -> Result.Error("Unknown error")
+            }
+        } catch (e: Exception) {
+            resultMapper.fromException(e)
+        }
     }
 
 

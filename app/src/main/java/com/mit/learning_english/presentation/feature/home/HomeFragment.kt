@@ -1,57 +1,122 @@
 package com.mit.learning_english.presentation.feature.home
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation.findNavController
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.mit.learning_english.R
+import com.mit.learning_english.databinding.FragmentHomeBinding
+import com.mit.learning_english.presentation.base.BaseFragment
+import com.mit.learning_english.presentation.feature.home.adapter.BookHistoryAdapter
+import com.mit.learning_english.presentation.feature.home.adapter.BookRecommendAdapter
+import com.mit.learning_english.presentation.feature.home.adapter.GenreAdapter
+import com.mit.learning_english.presentation.feature.main.MainFragmentDirections
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+@AndroidEntryPoint
+class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
+    override val viewModel: HomeViewModel by viewModels()
+    private lateinit var recommendAdapter: BookRecommendAdapter
+    private lateinit var genreAdapter: GenreAdapter
+    private lateinit var recentBooksAdapter: BookHistoryAdapter
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    override fun verifyBinding(
+        inflater: LayoutInflater, container: ViewGroup?
+    ): FragmentHomeBinding {
+        return FragmentHomeBinding.inflate(inflater, container, false)
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    override fun setupView() {
+        recommendAdapter = BookRecommendAdapter { book -> navigateToBookDetail(book.id) }
+        binding.rvRecommendBook.apply {
+            adapter = recommendAdapter
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        }
+        genreAdapter = GenreAdapter()
+        binding.rvGenres.apply {
+            adapter = genreAdapter
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        }
+        recentBooksAdapter = BookHistoryAdapter()
+        binding.rvRecentlyRead.apply {
+            adapter = recentBooksAdapter
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+    override fun bindView() {
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic fun newInstance(param1: String, param2: String) =
-                HomeFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
-                    }
-                }
+    private fun navigateToBookDetail(bookId: Int) {
+        findNavController(requireActivity(), R.id.nav_host_fragment)
+            .navigate(MainFragmentDirections.actionMainFragmentToBookDetailFragment(bookId))
     }
+
+    override fun observeViewModel() {
+        super.observeViewModel()
+        collectState(viewModel.uiState) { state ->
+            if (state.isRecommendBooksLoading) {
+                binding.shimmerRecommendBook.startShimmer()
+                binding.shimmerRecommendBook.visibility = View.VISIBLE
+                binding.rvRecommendBook.visibility = View.INVISIBLE
+            } else {
+                binding.shimmerRecommendBook.stopShimmer()
+                binding.shimmerRecommendBook.visibility = View.INVISIBLE
+                binding.rvRecommendBook.visibility = View.VISIBLE
+                recommendAdapter.submitList(state.recommendBooks)
+            }
+            if (state.isGenresLoading) {
+                binding.shimmerGenres.startShimmer()
+                binding.shimmerGenres.visibility = View.VISIBLE
+                binding.rvGenres.visibility = View.INVISIBLE
+            } else {
+                binding.shimmerGenres.stopShimmer()
+                binding.shimmerGenres.visibility = View.INVISIBLE
+                binding.rvGenres.visibility = View.VISIBLE
+                genreAdapter.submitList(state.genres)
+            }
+        }
+        collectState(viewModel.recentBooks) { pagingData ->
+            recentBooksAdapter.submitData(lifecycle, pagingData)
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            recentBooksAdapter.loadStateFlow.collectLatest { loadState ->
+                if (loadState.source.refresh is LoadState.Loading) {
+                    binding.shimmerRecentlyRead.startShimmer()
+                    binding.shimmerRecentlyRead.visibility = View.VISIBLE
+                    binding.rvRecentlyRead.visibility = View.INVISIBLE
+                } else {
+                    binding.shimmerRecentlyRead.stopShimmer()
+                    binding.shimmerRecentlyRead.visibility = View.INVISIBLE
+                    binding.rvRecentlyRead.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+//    fun handleRecycleView(
+//        state: HomeState,
+//        shimmerFrameLayout: ShimmerFrameLayout,
+//        recyclerView: RecyclerView,
+//    ) {
+//        if (state.isGenresLoading) {
+//            shimmerFrameLayout.startShimmer()
+//            shimmerFrameLayout.visibility = View.VISIBLE
+//            recyclerView.visibility = View.GONE
+//        } else {
+//            shimmerFrameLayout.stopShimmer()
+//            shimmerFrameLayout.visibility = View.GONE
+//            recyclerView.visibility = View.VISIBLE
+//            recommendAdapter.submitList(state.recommendBooks)
+//        }
+//    }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">learning_english</string>
+    <string name="app_name">FluLingO</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="your_personal_language_n_learning_tutor">Your personal language\n learning tutor</string>
@@ -14,4 +14,27 @@
     <string name="by_joining_i_declare_that_i_have_read_and_accent_the_n_terms_and_privacy_policy">By joining, I declare that I have read and accent the\n Terms and Privacy Policy</string>
     <string name="don_t_have_an_account_yet">Don\'t have an account yet?</string>
     <string name="signup">SignUp</string>
+    <string name="course">Course</string>
+    <string name="vocabulary">Vocabulary</string>
+    <string name="chat">Chat</string>
+    <string name="profile">Profile</string>
+    <string name="recommended_books">Recommended Books</string>
+    <string name="genres">Genres</string>
+    <string name="recommended_conversation">Recommended Conversation</string>
+    <string name="topics">Topics</string>
+    <string name="search_book_conversation">Search book, conversation....</string>
+    <string name="view_all">View all</string>
+    <string name="recently_read">Recently Read</string>
+    <string name="chapter">Chapter</string>
+    <string name="read">Read</string>
+    <string name="listen">Listen</string>
+    <string name="speed_format">Speed: %1$s</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="submit">Submit</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="update_password">Update Password</string>
+    <string name="re_enter_password">Re-enter Password</string>
+    <string name="favorite">Favorite</string>
+    <string name="download">Download</string>
+    <string name="share">Share</string>
 </resources>

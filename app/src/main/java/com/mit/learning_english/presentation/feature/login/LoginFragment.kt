@@ -5,16 +5,11 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentLoginBinding
 import com.mit.learning_english.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
@@ -36,6 +31,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
         binding.btnSingUp.setOnClickListener {
             viewModel.onSignUpClick()
         }
+        binding.tvForgotPassword.setOnClickListener {
+            findNavController().navigate(R.id.forgotPasswordFragment)
+        }
         binding.edtEmail.doOnTextChanged { text, start, before, count ->
             viewModel.setEmail(text.toString())
         }
@@ -46,12 +44,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
 
     override fun observeViewModel() {
         super.observeViewModel()
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.event.collectLatest { event ->
-                    handleNavigate(event)
-                }
-            }
+        collectEvent(viewModel.event) { event ->
+            handleNavigate(event)
         }
     }
 

@@ -1,9 +1,12 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.androidx.navigation.safeargs.kotlin)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -82,11 +85,17 @@ dependencies {
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)
+
+    // Paging 3
+    implementation(libs.androidx.paging.runtime)
+
     // Lottie
     implementation(libs.lottie)
-    // GridLayout
-    implementation(libs.androidx.gridlayout)
+
     // Glide
     implementation(libs.glide)
+    kapt(libs.glide.compiler)
+    // Paging 3
+implementation(libs.androidx.paging.runtime)
+
 }
-
