@@ -8,16 +8,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
  * Base Activity với ViewBinding và ViewModel integration.
- * Loading và error lấy từ uiState (BaseUiState) - single source of truth.
+ * Loading lấy từ uiState, error lấy từ errorEvent (one-time SharedFlow).
  *
  * @param VB ViewBinding type
- * @param VM BaseViewModel type (STATE phải extend BaseUiState)
+ * @param VM BaseViewModel type
  */
 abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*, *>> : AppCompatActivity() {
 
@@ -52,22 +53,17 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*, *>> : AppCom
     }
 
     /**
-     * Observe ViewModel. Mặc định observe loading và error từ uiState.
+     * Observe ViewModel. Mặc định observe loading từ uiState và error từ errorEvent.
      */
     protected open fun observeViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collectLatest { state ->
-                    if (state.isLoading) showLoading() else hideLoading()
-                    state.errorMessage?.let { showError(it) }
-                }
-            }
+        collectState(viewModel.isLoading) { loading ->
+            if (loading) showLoading() else hideLoading()
+        }
+        collectEvent(viewModel.errorEvent) { message ->
+            showError(message)
         }
     }
 
-    /**
-     * Collect StateFlow an toàn với lifecycle.
-     */
     protected fun <T> collectState(
         flow: StateFlow<T>,
         action: suspend (T) -> Unit
@@ -75,6 +71,17 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*, *>> : AppCom
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 flow.collectLatest(action)
+            }
+        }
+    }
+
+    protected fun <T> collectEvent(
+        flow: SharedFlow<T>,
+        action: suspend (T) -> Unit
+    ) {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                flow.collect(action)
             }
         }
     }

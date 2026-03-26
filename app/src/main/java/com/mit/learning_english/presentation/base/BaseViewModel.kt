@@ -12,71 +12,53 @@ import kotlinx.coroutines.flow.update
 
 /**
  * Base ViewModel theo pattern MVI (Model-View-Intent).
- * Loading và error nằm trong STATE (BaseUiState) - single source of truth.
+ * - Loading: StateFlow riêng (isLoading).
+ * - Error: SharedFlow one-time event (errorEvent).
+ * - Feature state: StateFlow generic (uiState).
  *
- * @param STATE Kiểu UI state, phải implement BaseUiState
+ * @param STATE Kiểu UI state chứa dữ liệu feature-specific
  * @param EVENT Kiểu one-time events (navigation, snackbar, dialog...)
- * @param initialState State khởi tạo ban đầu
  */
-abstract class BaseViewModel<STATE : BaseUiState<STATE>, EVENT>(
+abstract class BaseViewModel<STATE : Any, EVENT>(
     initialState: STATE
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(initialState)
     val uiState: StateFlow<STATE> = _uiState.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
     private val _event = MutableSharedFlow<EVENT>(extraBufferCapacity = 1)
     val event: SharedFlow<EVENT> = _event.asSharedFlow()
 
-    /**
-     * CoroutineExceptionHandler dùng cho viewModelScope.launch.
-     */
+    private val _errorEvent = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val errorEvent: SharedFlow<String> = _errorEvent.asSharedFlow()
+
     protected val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         onError(throwable)
     }
 
-    /**
-     * Cập nhật UI state bằng reducer.
-     */
     protected fun setState(reducer: STATE.() -> STATE) {
         _uiState.update { it.reducer() }
     }
 
-    /**
-     * Emit one-time event (navigation, snackbar, dialog...).
-     */
     protected fun emitEvent(event: EVENT) {
         _event.tryEmit(event)
     }
 
-    /**
-     * Cập nhật loading trong state.
-     */
+    protected fun emitError(message: String) {
+        _errorEvent.tryEmit(message)
+    }
+
     protected fun setLoading(loading: Boolean) {
-        setState { copyWith(isLoading = loading) }
-    }
-
-    /**
-     * Cập nhật error message trong state.
-     */
-    protected fun setError(message: String?) {
-        setState { copyWith(errorMessage = message) }
-    }
-
-    /**
-     * Xóa error trong state.
-     */
-    protected fun clearError() {
-        setState { copyWith(errorMessage = null) }
+        _isLoading.value = loading
     }
 
     /**
      * Xử lý khi có exception. Override để custom (log, analytics...).
      */
     protected open fun onError(throwable: Throwable) {
-        setState {
-            copyWith(
-                isLoading = false,
-                errorMessage = throwable.message ?: "Unknown error"
-            )
-        }
+        _isLoading.value = false
+        emitError(throwable.message ?: "Unknown error")
     }
 }

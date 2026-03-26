@@ -18,29 +18,27 @@ class LoginViewModel @Inject constructor(
                 setLoading(true)
                 val result = loginUseCase(uiState.value.email!!, uiState.value.password!!)
                 if (result.isSuccess) {
+                    setLoading(false)
                     if (result.getOrNull() == true) {
-                        setState { copyWith(isSuccess = true, isLoading = false) }
+                        setState { copy(isSuccess = true) }
                         emitEvent(LoginEvent.NavigateToHome)
                     } else {
-                        setState { copyWith(isSuccess = false, isLoading = false) }
+                        setState { copy(isSuccess = false) }
                     }
                 } else if (result is Result.Error) {
-                    setState { copyWith(errorMessage = result.message, isLoading = false) }
+                    setLoading(false)
+                    emitError(result.message ?: "Login failed")
                 }
             }
         }
     }
 
     fun setEmail(email: String) {
-        setState {
-            copyWith(email = email)
-        }
+        setState { copy(email = email) }
     }
 
     fun setPassword(password: String) {
-        setState {
-            copyWith(password = password)
-        }
+        setState { copy(password = password) }
     }
 
     fun onSignUpClick() {

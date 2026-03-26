@@ -8,5 +8,5 @@ import javax.inject.Inject
 @HiltViewModel
 class VocabularyViewModel @Inject constructor(
     bookRepository: BookRepository
-) : BaseViewModel<VocabularyState, VocabularyEvent>(VocabularyState()) {}
+) : BaseViewModel<Unit, VocabularyEvent>(Unit)
 

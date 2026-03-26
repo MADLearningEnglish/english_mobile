@@ -16,7 +16,7 @@ class ReadBookViewModel @Inject constructor(
 ) : BaseViewModel<ReadBookState, ReadBookEvent>(ReadBookState()) {
     fun loadInit(readBookArgs: ReadBookArgs) {
         viewModelScope.launch(exceptionHandler) {
-            setState { copy(isLoading = true) }
+            setLoading(true)
             val bookId = readBookArgs.bookId
             val chapterId = readBookArgs.chapterId
             val readModeValue = readBookArgs.readModeValue
@@ -36,9 +36,10 @@ class ReadBookViewModel @Inject constructor(
                     goToChapter(chapterId)
                 }
             }.onError { e ->
-                setState { copy(errorMessage = e.message ?: "Failed to load book detail") }
+                emitError(e.message ?: "Failed to load book detail")
             }
-            setState { copy(isLoading = false, readMode = ReadMode.fromValue(readModeValue)) }
+            setLoading(false)
+            setState { copy(readMode = ReadMode.fromValue(readModeValue)) }
         }
     }
 

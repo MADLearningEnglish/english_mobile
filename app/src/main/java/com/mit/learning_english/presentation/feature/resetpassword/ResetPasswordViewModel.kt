@@ -13,19 +13,19 @@ class ResetPasswordViewModel @Inject constructor(
     private val resetUseCase: ResetForgotPasswordUseCase
 ) : BaseViewModel<ResetPasswordState, ResetPasswordEvent>(ResetPasswordState()) {
     fun setPassword(password: String) {
-        setState { copyWith(password = password, serverError = null) }
+        setState { copy(password = password, serverError = null) }
     }
 
     fun setRePassword(rePassword: String) {
-        setState { copyWith(rePassword = rePassword, serverError = null) }
+        setState { copy(rePassword = rePassword, serverError = null) }
     }
 
     fun setEmail(email: String) {
-        setState { copyWith(email = email, serverError = null) }
+        setState { copy(email = email, serverError = null) }
     }
 
     fun setOtp(otp: String) {
-        setState { copyWith(otp = otp, serverError = null) }
+        setState { copy(otp = otp, serverError = null) }
     }
 
     fun onUpdatePassword() {
@@ -36,7 +36,7 @@ class ResetPasswordViewModel @Inject constructor(
             val otp = uiState.value.otp ?: ""
 
             if (pwd.isNullOrEmpty() || rePwd.isNullOrEmpty() || pwd != rePwd) {
-                setState { copyWith(serverError = "Password mismatch or empty") }
+                setState { copy(serverError = "Password mismatch or empty") }
                 return@launch
             }
 
@@ -46,8 +46,8 @@ class ResetPasswordViewModel @Inject constructor(
 
             when (result) {
                 is Result.Success -> emitEvent(ResetPasswordEvent.NavigateToLogin)
-                is Result.Error -> setState { copyWith(serverError = result.message) }
-                else -> setState { copyWith(serverError = "Unknown error") }
+                is Result.Error -> setState { copy(serverError = result.message) }
+                else -> setState { copy(serverError = "Unknown error") }
             }
         }
     }

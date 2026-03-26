@@ -14,23 +14,13 @@ class SignUpViewModel @Inject constructor(
 ) : BaseViewModel<SignUpState, SignUpEvent>(SignUpState()) {
 
     fun setEmail(email: String) {
-        setState { copyWith(errorMessage = null) }
-        setState { copyWith() } // keep placeholder pattern
-        setState { copyWith() }
-        setState { copyWith() }
-        setState { copyWith() }
-        setState { copyWith() }
-        // store email in state by extending state object if needed
-        // For now we keep sign-up inputs in local variables via ViewModel scope
-        setState { copyWith() }
+        setState { copy(serverError = null) }
     }
 
     fun setPassword(password: String) {
-        // no-op placeholder to match pattern; state currently only tracks loading and errorMessage
     }
 
     fun setFullName(fullName: String) {
-        // no-op placeholder
     }
 
     fun onSignUpClick(email: String?, password: String?, fullName: String?) {
@@ -38,17 +28,16 @@ class SignUpViewModel @Inject constructor(
             if (!email.isNullOrEmpty() && !password.isNullOrEmpty() && !fullName.isNullOrEmpty()) {
                 setLoading(true)
                 val result = signUpUseCase(email, password, fullName)
+                setLoading(false)
                 if (result.isSuccess) {
-                    // treat success boolean true as success
                     if (result.getOrNull() == true) {
-                        setState { copyWith(isLoading = false, errorMessage = null) }
-                        // emit navigation event to go back to login screen
+                        setState { copy(serverError = null) }
                         emitEvent(SignUpEvent.NavigateToLogin)
                     } else {
-                        setState { copyWith(isLoading = false, errorMessage = "Sign up failed") }
+                        setState { copy(serverError = "Sign up failed") }
                     }
                 } else if (result is Result.Error) {
-                    setState { copyWith(errorMessage = result.message, isLoading = false) }
+                    setState { copy(serverError = result.message) }
                 }
             }
         }

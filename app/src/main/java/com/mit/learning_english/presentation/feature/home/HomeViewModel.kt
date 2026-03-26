@@ -34,31 +34,31 @@ class HomeViewModel @Inject constructor(
 
     fun fetchRecommendBooks() {
         viewModelScope.launch(exceptionHandler) {
-            setState { copyWith(isRecommendBooksLoading = true) }
+            setState { copy(isRecommendBooksLoading = true) }
             val result = getBookRecommendUseCase.invoke()
             result.onSuccess { data ->
-                setState { copyWith(recommendBooks = data) }
+                setState { copy(recommendBooks = data) }
             }.onLoading {
-                setState { copyWith(isRecommendBooksLoading = true) }
+                setState { copy(isRecommendBooksLoading = true) }
             }.onError { error ->
-                setError(error.message)
+                emitError(error.message ?: "Unknown error")
             }
-            setState { copyWith(isRecommendBooksLoading = false) }
+            setState { copy(isRecommendBooksLoading = false) }
         }
     }
 
     fun fetchGenres() {
         viewModelScope.launch(exceptionHandler) {
-            setState { copyWith(isGenresLoading = true) }
+            setState { copy(isGenresLoading = true) }
             val result = getGenresUseCase.invoke()
             result.onSuccess { data ->
-                setState { copyWith(genres = data) }
+                setState { copy(genres = data) }
             }.onLoading {
-                setState { copyWith(isGenresLoading = true) }
+                setState { copy(isGenresLoading = true) }
             }.onError { error ->
-                setError(error.message)
+                emitError(error.message ?: "Unknown error")
             }
-            setState { copyWith(isGenresLoading = false) }
+            setState { copy(isGenresLoading = false) }
         }
     }
 
