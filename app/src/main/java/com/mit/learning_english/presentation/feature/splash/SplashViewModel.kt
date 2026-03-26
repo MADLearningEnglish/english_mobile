@@ -23,20 +23,25 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
     private val checkLoggedInUseCase: CheckLoggedInUseCase
 ) : BaseViewModel<SplashState, SplashEvent>(SplashState()) {
+
+    private var isNavigationStarted = false
+
     /**
      * Khởi động logic - chỉ gọi UseCase, map domain model sang UI event
      */
     fun checkAndNavigate() {
+        if (isNavigationStarted) return
+        isNavigationStarted = true
         viewModelScope.launch(exceptionHandler) {
             setLoading(true)
             delay(500)
             if (checkLoggedInUseCase()) {
                 emitEvent(SplashEvent.NavigateToHome)
-            } else (emitEvent(SplashEvent.NavigateToLogin))
-            setState {
-                copyWith(isLoading = true)
+            } else {
+                emitEvent(SplashEvent.NavigateToLogin)
             }
             setLoading(false)
         }
     }
 }
+

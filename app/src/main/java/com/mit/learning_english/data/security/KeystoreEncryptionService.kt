@@ -36,45 +36,43 @@ class KeystoreEncryptionService @Inject constructor(
         private const val GCM_TAG_LENGTH = 128 // 128 bits cho authentication tag
     }
 
-    private val keyStore: KeyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
-        load(null)
-    }
-
-    init {
-        // Tạo key nếu chưa tồn tại
-        if (!keyStore.containsAlias(KEY_ALIAS)) {
-            createKey()
+    private val keyStore: KeyStore by lazy {
+        KeyStore.getInstance(ANDROID_KEYSTORE).apply {
+            load(null)
         }
     }
 
     /**
-     * Tạo key trong Android Keystore
+     * Tạo key trong Android Keystore nếu chưa có
      */
-    private fun createKey() {
-        val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
-        val keyGenParameterSpec = KeyGenParameterSpec.Builder(
-            KEY_ALIAS,
-            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
-        )
-            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-            .setKeySize(256) // 256-bit key
-            .build()
+    private fun ensureKey() {
+        if (!keyStore.containsAlias(KEY_ALIAS)) {
+            val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
+            val keyGenParameterSpec = KeyGenParameterSpec.Builder(
+                KEY_ALIAS,
+                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+            )
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setKeySize(256) // 256-bit key
+                .build()
 
-        keyGenerator.init(keyGenParameterSpec)
-        keyGenerator.generateKey()
+            keyGenerator.init(keyGenParameterSpec)
+            keyGenerator.generateKey()
+        }
     }
 
     /**
      * Lấy SecretKey từ Keystore
      */
     private fun getSecretKey(): SecretKey {
+        ensureKey()
         val keyStoreEntry = keyStore.getEntry(KEY_ALIAS, null) as KeyStore.SecretKeyEntry
         return keyStoreEntry.secretKey
     }
 
-    override suspend fun encrypt(plaintext: String): String? {
-        return try {
+    override suspend fun encrypt(plaintext: String): String? = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        try {
             val cipher = Cipher.getInstance(TRANSFORMATION)
             cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
             
@@ -96,8 +94,8 @@ class KeystoreEncryptionService @Inject constructor(
         }
     }
 
-    override suspend fun decrypt(ciphertext: String): String? {
-        return try {
+    override suspend fun decrypt(ciphertext: String): String? = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        try {
             // Decode Base64
             val combined = Base64.decode(ciphertext, Base64.NO_WRAP)
             

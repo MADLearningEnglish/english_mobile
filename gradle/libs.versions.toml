@@ -24,6 +24,8 @@ swiperefreshlayout = "1.2.0"
 navigation = "2.8.3"
 room = "2.6.1"
 datastore = "1.1.1"
+gridlayout = "1.0.0"
+glide = "4.16.0"
 paging = "3.3.5"
 
 [libraries]
@@ -57,7 +59,9 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+androidx-gridlayout = { group = "androidx.gridlayout", name = "gridlayout", version.ref = "gridlayout" }
 androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "paging" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -3,13 +3,82 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_graph"
-    app:startDestination="@id/mainFragment">
+    app:startDestination="@id/deckListFragment">
 
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.mit.learning_english.presentation.feature.main.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main">
+
+        <action
+            android:id="@+id/action_main_to_deckList"
+            app:destination="@id/deckListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/deckListFragment"
+        android:name="com.mit.learning_english.presentation.feature.decklist.DeckListFragment"
+        android:label="Bài học của bạn"
+        tools:layout="@layout/fragment_deck_list">
+
+        <action
+            android:id="@+id/action_deckList_to_createDeck"
+            app:destination="@id/createDeckFragment"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_down" />
+
+        <action
+            android:id="@+id/action_deckList_to_study"
+            app:destination="@id/studyFragment"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_down" />
+        <action
+            android:id="@+id/action_deckList_to_editDeck"
+            app:destination="@id/editDeckFragment"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_down" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editDeckFragment"
+        android:name="com.mit.learning_english.presentation.feature.editdeck.EditDeckFragment"
+        android:label="Chỉnh sửa bộ thẻ"
+        tools:layout="@layout/fragment_edit_deck">
+        <argument
+            android:name="deckId"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createDeckFragment"
+        android:name="com.mit.learning_english.presentation.feature.createdeck.CreateDeckFragment"
+        android:label="Tạo bộ thẻ mới"
+        tools:layout="@layout/fragment_create_deck" />
+
+    <fragment
+        android:id="@+id/studyFragment"
+        android:name="com.mit.learning_english.presentation.feature.study.StudyFragment"
+        android:label="Luyện tập"
+        tools:layout="@layout/fragment_study">
+
+        <argument
+            android:name="deckId"
+            app:argType="integer"
+            android:defaultValue="0" />
+
+        <argument
+            android:name="deckTitle"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
+
         <action
             android:id="@+id/action_mainFragment_to_bookDetailFragment"
             app:destination="@id/bookDetailFragment" />
