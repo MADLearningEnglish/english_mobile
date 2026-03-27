@@ -12,7 +12,6 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
     private val checkLoggedInUseCase: CheckLoggedInUseCase
 ) : BaseViewModel<Unit, SplashEvent>(Unit) {
-
     fun checkAndNavigate() {
         viewModelScope.launch(exceptionHandler) {
             setLoading(true)

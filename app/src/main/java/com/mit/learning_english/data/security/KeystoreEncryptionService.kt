@@ -17,12 +17,12 @@ import javax.inject.Singleton
 
 /**
  * Implementation của EncryptionService sử dụng Android Keystore
- * 
+ *
  * Android Keystore là hệ thống bảo mật phần cứng của Android, cho phép:
  * - Lưu trữ keys an toàn trong secure hardware (nếu thiết bị hỗ trợ)
  * - Keys không thể được extract ra ngoài
  * - Tự động mã hóa keys khi lưu trữ
- * 
+ *
  * Sử dụng AES/GCM/NoPadding - một trong những thuật toán mã hóa an toàn nhất
  */
 @Singleton

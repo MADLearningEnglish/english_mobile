@@ -25,7 +25,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding, SplashViewModel>() {
     }
 
     override fun bindView() {
-        viewModel.checkAndNavigate()
+        // checkAndNavigate() được gọi sau khi observer đã ready trong observeViewModel()
     }
 
     override fun observeViewModel() {
@@ -36,26 +36,31 @@ class SplashFragment : BaseFragment<FragmentSplashBinding, SplashViewModel>() {
     }
 
     override fun showLoading() {
-        binding.loadingLottie.
-            playAnimation()
-
+        binding.loadingLottie.playAnimation()
     }
 
     override fun hideLoading() {
-binding.loadingLottie.cancelAnimation()
+        binding.loadingLottie.cancelAnimation()
     }
 
     private fun handleNavigationEvent(event: SplashEvent) {
         val navController = findNavController()
-        val navOptions = androidx.navigation.NavOptions.Builder()
-            .setPopUpTo(R.id.splashFragment, true)
-            .build()
         when (event) {
             SplashEvent.NavigateToLogin -> {
-                navController.navigate(R.id.loginFragment, null, navOptions)
+                navController.navigate(
+                    R.id.action_splashFragment_to_loginFragment,
+                    null,
+                    androidx.navigation.NavOptions.Builder()
+                        .setPopUpTo(R.id.splashFragment, true)
+                        .build()
+                )
             }
             SplashEvent.NavigateToHome -> {
-                navController.navigate(R.id.main_graph, null, navOptions)
+                navController.navigate(
+                    R.id.action_splashFragment_to_main,
+                    null,
+                    null // popUpTo đã được định nghĩa trong action XML
+                )
             }
         }
     }

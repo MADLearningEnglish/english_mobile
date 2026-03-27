@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Collapsed card item showing word + phonetic + edit button -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:background="@color/background"
+    android:elevation="2dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="14dp">
+
+    <!-- Index badge -->
+    <TextView
+        android:id="@+id/tvIndex"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_status_badge"
+        android:gravity="center"
+        android:textColor="@color/primary"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        tools:text="1" />
+
+    <!-- Word + phonetic -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvWord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/body_primary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="Resilience" />
+
+        <TextView
+            android:id="@+id/tvPhonetic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="monospace"
+            android:textColor="@color/gray_400"
+            android:textSize="12sp"
+            tools:text="/rəˈzɪliəns/" />
+    </LinearLayout>
+
+    <!-- Edit button -->
+    <ImageButton
+        android:id="@+id/btnEdit"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Chỉnh sửa"
+        android:src="@drawable/ic_edit"
+        app:tint="@color/gray_400" />
+
+</LinearLayout>

@@ -2,20 +2,29 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_graph"
-    app:startDestination="@id/mainFragment">
+    android:id="@+id/main_graph">
 
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.mit.learning_english.presentation.feature.main.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main">
+
         <action
             android:id="@+id/action_mainFragment_to_bookDetailFragment"
             app:destination="@id/bookDetailFragment" />
         <action
             android:id="@+id/action_mainFragment_to_searchBookFragment"
             app:destination="@id/searchBookFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_editDeckFragment2"
+            app:destination="@id/editDeckFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_studyFragment"
+            app:destination="@id/studyFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_createDeckFragment"
+            app:destination="@id/createDeckFragment" />
     </fragment>
     <fragment
         android:id="@+id/bookDetailFragment"
@@ -47,5 +56,39 @@
         <action
             android:id="@+id/action_searchBookFragment_to_bookDetailFragment"
             app:destination="@id/bookDetailFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/editDeckFragment"
+        android:name="com.mit.learning_english.presentation.feature.editdeck.EditDeckFragment"
+        android:label="Chỉnh sửa bộ thẻ"
+        tools:layout="@layout/fragment_edit_deck">
+        <argument
+            android:name="deckId"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createDeckFragment"
+        android:name="com.mit.learning_english.presentation.feature.createdeck.CreateDeckFragment"
+        android:label="Tạo bộ thẻ mới"
+        tools:layout="@layout/fragment_create_deck" />
+
+    <fragment
+        android:id="@+id/studyFragment"
+        android:name="com.mit.learning_english.presentation.feature.study.StudyFragment"
+        android:label="Luyện tập"
+        tools:layout="@layout/fragment_study">
+
+        <argument
+            android:name="deckId"
+            android:defaultValue="0"
+            app:argType="integer" />
+
+        <argument
+            android:name="deckTitle"
+            android:defaultValue=""
+            app:argType="string" />
     </fragment>
 </navigation>
