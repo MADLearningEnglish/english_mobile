@@ -14,21 +14,19 @@ class EnterOtpViewModel @Inject constructor(
 ) : BaseViewModel<EnterOtpState, EnterOtpEvent>(EnterOtpState()) {
 
     fun setOtp(otp: String) {
-        setState { copyWith(otp = otp, serverError = null) }
+        setState { copy(otp = otp, serverError = null) }
     }
 
     fun setEmail(email: String) {
-        setState { copyWith(email = email, serverError = null) }
+        setState { copy(email = email, serverError = null) }
     }
 
     fun onSubmitOtp() {
         viewModelScope.launch(exceptionHandler) {
             val otp = uiState.value.otp
-            // We expect the email to be provided via navigation args or a shared ViewModel.
-            // For simplicity, we assume repository/UseCase will use stored email or the app passes email via saved state.
             val email = uiState.value.email ?: ""
             if (otp.isNullOrEmpty() || email.isEmpty()) {
-                setState { copyWith(serverError = "OTP or email missing") }
+                setState { copy(serverError = "OTP or email missing") }
                 return@launch
             }
 
@@ -38,8 +36,8 @@ class EnterOtpViewModel @Inject constructor(
 
             when (result) {
                 is Result.Success -> emitEvent(EnterOtpEvent.NavigateToResetPassword)
-                is Result.Error -> setState { copyWith(serverError = result.message) }
-                else -> setState { copyWith(serverError = "Unknown error") }
+                is Result.Error -> setState { copy(serverError = result.message) }
+                else -> setState { copy(serverError = "Unknown error") }
             }
         }
     }

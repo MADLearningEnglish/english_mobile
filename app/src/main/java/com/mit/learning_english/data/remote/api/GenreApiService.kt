@@ -6,6 +6,6 @@ import retrofit2.Response
 import retrofit2.http.GET
 
 interface GenreApiService {
-    @GET("api/book/genres")
+    @GET("genre/v1")
     suspend fun getGenres(): Response<BaseResponse<List<GenreResponse>>>
 }

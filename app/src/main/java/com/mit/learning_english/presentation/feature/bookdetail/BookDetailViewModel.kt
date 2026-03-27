@@ -16,10 +16,11 @@ class BookDetailViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             setLoading(true)
             getBookDetailByIdUseCase(bookId).onSuccess { book ->
-                setState { copyWith(isLoading = false, errorMessage = null, book = book) }
-            }.onError { error ->
-                setError(error.message)
                 setLoading(false)
+                setState { copy(book = book) }
+            }.onError { error ->
+                setLoading(false)
+                emitError(error.message ?: "Unknown error")
             }
         }
     }

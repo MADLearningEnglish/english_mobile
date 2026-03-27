@@ -14,14 +14,14 @@ class ForgotPasswordViewModel @Inject constructor(
 ) : BaseViewModel<ForgotPasswordState, ForgotPasswordEvent>(ForgotPasswordState()) {
 
     fun setEmail(email: String) {
-        setState { copyWith(email = email, serverError = null) }
+        setState { copy(email = email, serverError = null) }
     }
 
     fun onRequestOtp() {
         viewModelScope.launch(exceptionHandler) {
             val email = uiState.value.email
             if (email.isNullOrEmpty()) {
-                setState { copyWith(serverError = "Email is required") }
+                setState { copy(serverError = "Email is required") }
                 return@launch
             }
 
@@ -31,8 +31,8 @@ class ForgotPasswordViewModel @Inject constructor(
 
             when (result) {
                 is Result.Success -> emitEvent(ForgotPasswordEvent.NavigateToEnterOtp)
-                is Result.Error -> setState { copyWith(serverError = result.message) }
-                else -> setState { copyWith(serverError = "Unknown error") }
+                is Result.Error -> setState { copy(serverError = result.message) }
+                else -> setState { copy(serverError = "Unknown error") }
             }
         }
     }

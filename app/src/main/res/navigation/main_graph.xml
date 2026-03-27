@@ -2,8 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_graph"
-    app:startDestination="@id/deckListFragment">
+    android:id="@+id/main_graph">
 
     <fragment
         android:id="@+id/mainFragment"
@@ -12,39 +11,53 @@
         tools:layout="@layout/fragment_main">
 
         <action
-            android:id="@+id/action_main_to_deckList"
-            app:destination="@id/deckListFragment" />
+            android:id="@+id/action_mainFragment_to_bookDetailFragment"
+            app:destination="@id/bookDetailFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_searchBookFragment"
+            app:destination="@id/searchBookFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_editDeckFragment2"
+            app:destination="@id/editDeckFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_studyFragment"
+            app:destination="@id/studyFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_createDeckFragment"
+            app:destination="@id/createDeckFragment" />
     </fragment>
-
     <fragment
-        android:id="@+id/deckListFragment"
-        android:name="com.mit.learning_english.presentation.feature.decklist.DeckListFragment"
-        android:label="Bài học của bạn"
-        tools:layout="@layout/fragment_deck_list">
-
+        android:id="@+id/bookDetailFragment"
+        android:name="com.mit.learning_english.presentation.feature.bookdetail.BookDetailFragment"
+        android:label="fragment_book_detail"
+        tools:layout="@layout/fragment_book_detail">
+        <argument
+            android:name="bookId"
+            app:argType="integer" />
         <action
-            android:id="@+id/action_deckList_to_createDeck"
-            app:destination="@id/createDeckFragment"
-            app:enterAnim="@anim/slide_in_up"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out_down" />
-
-        <action
-            android:id="@+id/action_deckList_to_study"
-            app:destination="@id/studyFragment"
-            app:enterAnim="@anim/slide_in_up"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out_down" />
-        <action
-            android:id="@+id/action_deckList_to_editDeck"
-            app:destination="@id/editDeckFragment"
-            app:enterAnim="@anim/slide_in_up"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out_down" />
+            android:id="@+id/action_bookDetailFragment_to_readBookFragment"
+            app:destination="@id/readBookFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/readBookFragment"
+        android:name="com.mit.learning_english.presentation.feature.readbook.ReadBookFragment"
+        android:label="fragment_read_book"
+        tools:layout="@layout/fragment_read_book">
+        <argument
+            android:name="readBookArgs"
+            app:argType="com.mit.learning_english.presentation.feature.readbook.ReadBookArgs" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/searchBookFragment"
+        android:name="com.mit.learning_english.presentation.feature.searchbook.SearchBookFragment"
+        android:label="fragment_search_book"
+        tools:layout="@layout/fragment_search_book">
+        <action
+            android:id="@+id/action_searchBookFragment_to_bookDetailFragment"
+            app:destination="@id/bookDetailFragment" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/editDeckFragment"
@@ -70,39 +83,12 @@
 
         <argument
             android:name="deckId"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
 
         <argument
             android:name="deckTitle"
-            app:argType="string"
-            android:defaultValue="" />
-    </fragment>
-
-        <action
-            android:id="@+id/action_mainFragment_to_bookDetailFragment"
-            app:destination="@id/bookDetailFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/bookDetailFragment"
-        android:name="com.mit.learning_english.presentation.feature.bookdetail.BookDetailFragment"
-        android:label="fragment_book_detail"
-        tools:layout="@layout/fragment_book_detail">
-        <argument
-            android:name="bookId"
-            app:argType="integer" />
-        <action
-            android:id="@+id/action_bookDetailFragment_to_readBookFragment"
-            app:destination="@id/readBookFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/readBookFragment"
-        android:name="com.mit.learning_english.presentation.feature.readbook.ReadBookFragment"
-        android:label="fragment_read_book"
-        tools:layout="@layout/fragment_read_book">
-        <argument
-            android:name="readBookArgs"
-            app:argType="com.mit.learning_english.presentation.feature.readbook.ReadBookArgs" />
-
+            android:defaultValue=""
+            app:argType="string" />
     </fragment>
 </navigation>

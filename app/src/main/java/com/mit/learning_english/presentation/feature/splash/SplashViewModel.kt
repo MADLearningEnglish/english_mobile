@@ -8,30 +8,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Sealed class định nghĩa navigation events từ Splash (Presentation layer)
- */
-/**
- * SplashViewModel - Clean Architecture
- *
- * Chỉ phụ thuộc Domain layer (UseCase).
- * Không inject TokenManager, NetworkMonitor hay bất kỳ Data layer component nào.
- *
- * Flow: ViewModel → UseCase → Repository (interface) → RepositoryImpl (data)
- */
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val checkLoggedInUseCase: CheckLoggedInUseCase
-) : BaseViewModel<SplashState, SplashEvent>(SplashState()) {
-
-    private var isNavigationStarted = false
-
-    /**
-     * Khởi động logic - chỉ gọi UseCase, map domain model sang UI event
-     */
+) : BaseViewModel<Unit, SplashEvent>(Unit) {
     fun checkAndNavigate() {
-        if (isNavigationStarted) return
-        isNavigationStarted = true
         viewModelScope.launch(exceptionHandler) {
             setLoading(true)
             delay(500)
@@ -44,4 +25,3 @@ class SplashViewModel @Inject constructor(
         }
     }
 }
-

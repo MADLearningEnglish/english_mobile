@@ -161,6 +161,12 @@ object NetworkModule {
         return retrofit.create(com.mit.learning_english.data.remote.api.BookApiService::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideGenreApiService(retrofit: Retrofit): com.mit.learning_english.data.remote.api.GenreApiService {
+        return retrofit.create(com.mit.learning_english.data.remote.api.GenreApiService::class.java)
+    }
+
     /**
      * Provide BookRepository implementation
      */

@@ -1,6 +1,7 @@
 package com.mit.learning_english.presentation.base
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,10 +18,10 @@ import kotlinx.coroutines.launch
 
 /**
  * Base Fragment với ViewBinding và ViewModel integration.
- * Loading và error lấy từ uiState (BaseUiState) - single source of truth.
+ * Loading lấy từ uiState, error lấy từ errorEvent (one-time SharedFlow).
  *
  * @param VB ViewBinding type
- * @param VM BaseViewModel type (STATE phải extend BaseUiState)
+ * @param VM BaseViewModel type
  */
 abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragment() {
 
@@ -61,17 +62,15 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
     }
 
     /**
-     * Observe ViewModel. Mặc định observe loading và error từ uiState.
+     * Observe ViewModel. Mặc định observe loading từ uiState và error từ errorEvent.
      * Override để thêm observe uiState chi tiết, event...
      */
     protected open fun observeViewModel() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collectLatest { state ->
-                    if (state.isLoading) showLoading() else hideLoading()
-                    state.errorMessage?.let { showError(it) }
-                }
-            }
+        collectState(viewModel.isLoading) { loading ->
+            if (loading) showLoading() else hideLoading()
+        }
+        collectEvent(viewModel.errorEvent) { message ->
+            showError(message)
         }
     }
 
@@ -102,7 +101,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
     }
 
     protected open fun showLoading() {
-        // Override để hiển thị loading dialog/progress
+
     }
 
     protected open fun hideLoading() {
@@ -111,6 +110,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
 
     protected open fun showError(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        Log.d("Error Fragment ",message)
     }
 
     override fun onDestroyView() {

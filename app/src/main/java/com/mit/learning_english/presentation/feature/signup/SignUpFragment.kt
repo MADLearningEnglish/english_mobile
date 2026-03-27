@@ -46,10 +46,12 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
 
     override fun observeViewModel() {
         super.observeViewModel()
+        collectState(viewModel.isLoading) { loading ->
+            binding.overlayLoading.isVisible = loading
+        }
         collectState(viewModel.uiState) { state ->
-            binding.overlayLoading.isVisible = state.isLoading
-            if (state.errorMessage != null) {
-                binding.tvServerError.text = state.errorMessage
+            if (state.serverError != null) {
+                binding.tvServerError.text = state.serverError
                 binding.tvServerError.isVisible = true
             } else {
                 binding.tvServerError.isVisible = false

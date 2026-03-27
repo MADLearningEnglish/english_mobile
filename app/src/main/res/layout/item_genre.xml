@@ -23,7 +23,7 @@
 
         <TextView
             android:id="@+id/tvGenreName"
-            style="@style/LabelMedium"
+            style="@style/LabelLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"

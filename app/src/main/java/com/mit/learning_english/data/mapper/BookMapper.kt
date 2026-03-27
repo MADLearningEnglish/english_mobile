@@ -3,7 +3,7 @@ package com.mit.learning_english.data.mapper
 import com.mit.learning_english.data.remote.dto.BookResponse
 import com.mit.learning_english.domain.model.Book
 import com.mit.learning_english.domain.model.BookDetail
-import com.mit.learning_english.domain.model.BookHistory
+import com.mit.learning_english.domain.model.BookReponse
 import java.time.LocalDateTime
 
 fun BookResponse.toBookDetail(): BookDetail {
@@ -30,8 +30,8 @@ fun BookResponse.toBook(): Book {
     )
 }
 
-fun BookResponse.toBookHistory(): BookHistory {
-    return BookHistory(
+fun BookResponse.toBookHistory(): BookReponse {
+    return BookReponse(
         id = id,
         title = title,
         language = language,
@@ -40,7 +40,7 @@ fun BookResponse.toBookHistory(): BookHistory {
         authorsName = authorsName,
         processPercent = progressPercent,
         pageLastRead = lastReadNumberPage,
-        lastRead = lastReadTime ?: LocalDateTime.now(),
+        lastRead = lastReadTime ?: LocalDateTime.MIN,
         isFavorite = isFavorite
     )
 }
