@@ -5,6 +5,8 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -74,49 +76,46 @@ class KeystoreEncryptionService @Inject constructor(
     }
 
     override suspend fun encrypt(plaintext: String): String? {
-        return try {
-            val cipher = Cipher.getInstance(TRANSFORMATION)
-            cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
-            
-            // Mã hóa
-            val encryptedBytes = cipher.doFinal(plaintext.toByteArray(Charsets.UTF_8))
-            
-            // Lấy IV từ cipher (GCM tự động tạo IV)
-            val iv = cipher.iv
-            
-            // Kết hợp IV + encrypted data và encode Base64
-            val combined = ByteArray(iv.size + encryptedBytes.size)
-            System.arraycopy(iv, 0, combined, 0, iv.size)
-            System.arraycopy(encryptedBytes, 0, combined, iv.size, encryptedBytes.size)
-            
-            Base64.encodeToString(combined, Base64.NO_WRAP)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+        return withContext(Dispatchers.Default) {
+            try {
+                val cipher = Cipher.getInstance(TRANSFORMATION)
+                cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
+
+                val encryptedBytes = cipher.doFinal(plaintext.toByteArray(Charsets.UTF_8))
+                val iv = cipher.iv
+
+                val combined = ByteArray(iv.size + encryptedBytes.size)
+                System.arraycopy(iv, 0, combined, 0, iv.size)
+                System.arraycopy(encryptedBytes, 0, combined, iv.size, encryptedBytes.size)
+
+                Base64.encodeToString(combined, Base64.NO_WRAP)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
         }
     }
 
     override suspend fun decrypt(ciphertext: String): String? {
-        return try {
-            // Decode Base64
-            val combined = Base64.decode(ciphertext, Base64.NO_WRAP)
-            
-            // Tách IV và encrypted data
-            val iv = ByteArray(GCM_IV_LENGTH)
-            val encryptedBytes = ByteArray(combined.size - GCM_IV_LENGTH)
-            System.arraycopy(combined, 0, iv, 0, GCM_IV_LENGTH)
-            System.arraycopy(combined, GCM_IV_LENGTH, encryptedBytes, 0, encryptedBytes.size)
-            
-            // Giải mã
-            val cipher = Cipher.getInstance(TRANSFORMATION)
-            val spec = GCMParameterSpec(GCM_TAG_LENGTH, iv)
-            cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), spec)
-            
-            val decryptedBytes = cipher.doFinal(encryptedBytes)
-            String(decryptedBytes, Charsets.UTF_8)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+        return withContext(Dispatchers.Default) {
+            try {
+                val combined = Base64.decode(ciphertext, Base64.NO_WRAP)
+
+                val iv = ByteArray(GCM_IV_LENGTH)
+                val encryptedBytes = ByteArray(combined.size - GCM_IV_LENGTH)
+                System.arraycopy(combined, 0, iv, 0, GCM_IV_LENGTH)
+                System.arraycopy(combined, GCM_IV_LENGTH, encryptedBytes, 0, encryptedBytes.size)
+
+                val cipher = Cipher.getInstance(TRANSFORMATION)
+                val spec = GCMParameterSpec(GCM_TAG_LENGTH, iv)
+                cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), spec)
+
+                val decryptedBytes = cipher.doFinal(encryptedBytes)
+                String(decryptedBytes, Charsets.UTF_8)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
         }
     }
 }

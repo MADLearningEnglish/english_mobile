@@ -7,7 +7,6 @@
     android:backgroundTint="@color/surface"
     android:padding="12dp">
 
-
     <androidx.cardview.widget.CardView
         android:id="@+id/cardCoverBook"
         android:layout_width="68dp"
@@ -22,7 +21,8 @@
             android:id="@+id/ivBookCover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_image_place_holder" />
     </androidx.cardview.widget.CardView>
 
     <LinearLayout
@@ -34,7 +34,6 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="7"
         app:layout_constraintStart_toEndOf="@id/cardCoverBook"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -45,7 +44,6 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="Suy Tưởng (Meditations)"
             android:textColor="@color/body_primary" />
 
         <TextView
@@ -53,17 +51,19 @@
             style="@style/BodyExtraSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Marcus Aurelius" />
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1" />
 
-        <ProgressBar
-            android:id="@+id/pbProgress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
+        <TextView
+            android:id="@+id/tvBookLanguage"
+            style="@style/BodyExtraSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:max="100"
-            android:progress="80"
-            android:progressDrawable="@drawable/progress_bg" />
+            android:ellipsize="end"
+            android:maxLines="1" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

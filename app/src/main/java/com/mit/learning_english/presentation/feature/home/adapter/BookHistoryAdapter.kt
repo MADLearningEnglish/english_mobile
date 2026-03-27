@@ -6,11 +6,11 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.mit.learning_english.databinding.ItemHistoryBookBinding
-import com.mit.learning_english.domain.model.BookHistory
+import com.mit.learning_english.domain.model.BookReponse
 import com.mit.learning_english.presentation.extensions.loadImage
 
 class BookHistoryAdapter :
-    PagingDataAdapter<BookHistory, BookHistoryAdapter.BookHistoryViewHolder>(BookHistoryComparator) {
+    PagingDataAdapter<BookReponse, BookHistoryAdapter.BookHistoryViewHolder>(BookHistoryComparator) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookHistoryViewHolder {
         val binding = ItemHistoryBookBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
@@ -27,22 +27,22 @@ class BookHistoryAdapter :
 
     inner class BookHistoryViewHolder(private val binding: ItemHistoryBookBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: BookHistory) {
+        fun bind(item: BookReponse) {
             binding.apply {
                 tvBookTitle.text = item.title
                 ivBookCover.loadImage(item.coverUrl)
                 tvBookAuthor.text = item.authorsName
-                pbProgress.progress = (item.processPercent * 100).toInt()
+                pbProgress.progress = (item.processPercent).toInt()
             }
         }
     }
 
-    object BookHistoryComparator : DiffUtil.ItemCallback<BookHistory>() {
-        override fun areItemsTheSame(oldItem: BookHistory, newItem: BookHistory): Boolean {
+    object BookHistoryComparator : DiffUtil.ItemCallback<BookReponse>() {
+        override fun areItemsTheSame(oldItem: BookReponse, newItem: BookReponse): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: BookHistory, newItem: BookHistory): Boolean {
+        override fun areContentsTheSame(oldItem: BookReponse, newItem: BookReponse): Boolean {
             return oldItem == newItem
         }
     }

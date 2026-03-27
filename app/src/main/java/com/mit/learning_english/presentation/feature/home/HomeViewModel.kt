@@ -3,16 +3,13 @@ package com.mit.learning_english.presentation.feature.home
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.mit.learning_english.domain.model.BookHistory
+import com.mit.learning_english.domain.model.BookReponse
 import com.mit.learning_english.domain.usecase.GetBookRecommendUseCase
 import com.mit.learning_english.domain.usecase.GetGenresUseCase
 import com.mit.learning_english.domain.usecase.GetRecentlyReadBookUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,14 +19,12 @@ class HomeViewModel @Inject constructor(
     private val getGenresUseCase: GetGenresUseCase,
     private val getRecentlyReadBookUseCase: GetRecentlyReadBookUseCase
 ) : BaseViewModel<HomeState, HomeEvent>(HomeState()) {
-    
-    private val _recentBooks = MutableStateFlow<PagingData<BookHistory>>(PagingData.empty())
-    val recentBooks: StateFlow<PagingData<BookHistory>> = _recentBooks.asStateFlow()
+    val recentBooks: Flow<PagingData<BookReponse>> =
+        getRecentlyReadBookUseCase().cachedIn(viewModelScope)
 
     init {
         fetchRecommendBooks()
         fetchGenres()
-        fetchRecentBooks()
     }
 
     fun fetchRecommendBooks() {
@@ -62,12 +57,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun fetchRecentBooks() {
-        viewModelScope.launch {
-            getRecentlyReadBookUseCase().cachedIn(viewModelScope).collectLatest {
-                _recentBooks.value = it
-            }
-        }
+    fun navigateToSearchBook() {
+        emitEvent(HomeEvent.NavigateToSearchFragment)
+    }
+
+    fun navigateToBookDetail(bookId: Int) {
+        emitEvent(HomeEvent.NavigateToBookDetailFragment(bookId))
+    }
+
+    fun setErrorMessage(message: String) {
+        emitError(message)
     }
 
 }

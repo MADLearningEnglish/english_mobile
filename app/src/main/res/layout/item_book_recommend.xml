@@ -22,15 +22,14 @@
     <!-- Book Title -->
     <TextView
         android:id="@+id/tvBookTitle"
-        style="@style/LabelMedium"
+        style="@style/LabelSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:ellipsize="end"
         android:maxLines="2"
         android:text="Xứ Cát (Dune)"
-        android:textColor="@color/body_primary"
-        android:textSize="13sp" />
+        android:textColor="@color/body_primary" />
 
     <!-- Author Name -->
     <TextView
@@ -42,8 +41,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:text="Frank Herbert"
-        android:textColor="@color/body_primary"
-        android:textSize="11sp" />
+        android:textColor="@color/body_primary" />
 
 </LinearLayout>
 

@@ -4,10 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.appbar.AppBarLayout
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentHomeBinding
 import com.mit.learning_english.presentation.base.BaseFragment
@@ -15,9 +18,12 @@ import com.mit.learning_english.presentation.feature.home.adapter.BookHistoryAda
 import com.mit.learning_english.presentation.feature.home.adapter.BookRecommendAdapter
 import com.mit.learning_english.presentation.feature.home.adapter.GenreAdapter
 import com.mit.learning_english.presentation.feature.main.MainFragmentDirections
+import com.mit.learning_english.presentation.utils.HorizontalSpacingItemDecoration
+import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
@@ -33,32 +39,56 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     override fun setupView() {
-        recommendAdapter = BookRecommendAdapter { book -> navigateToBookDetail(book.id) }
+//        setupAppBarCollapseAnimation()
+
+        recommendAdapter = BookRecommendAdapter { book -> viewModel.navigateToBookDetail(book.id) }
         binding.rvRecommendBook.apply {
             adapter = recommendAdapter
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            addItemDecoration(HorizontalSpacingItemDecoration(16))
         }
         genreAdapter = GenreAdapter()
         binding.rvGenres.apply {
             adapter = genreAdapter
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            addItemDecoration(HorizontalSpacingItemDecoration(16))
         }
         recentBooksAdapter = BookHistoryAdapter()
         binding.rvRecentlyRead.apply {
             adapter = recentBooksAdapter
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            addItemDecoration(VerticalSpacingItemDecoration(8))
         }
     }
 
-    override fun bindView() {
+    private fun setupAppBarCollapseAnimation() {
+        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            val totalScrollRange = appBarLayout.totalScrollRange
+            if (totalScrollRange == 0) return@OnOffsetChangedListener
+            val collapseRatio = abs(verticalOffset).toFloat() / totalScrollRange
+            val scale = 1f - collapseRatio
+            val alpha = 1f - collapseRatio * 1.5f
+
+            binding.layoutAppNameAvatar.apply {
+                scaleX = scale.coerceIn(0.5f, 1f)
+                scaleY = scale.coerceIn(0.5f, 1f)
+                this.alpha = alpha.coerceAtLeast(0f)
+                pivotX = 0f
+                pivotY = height.toFloat() / 2
+            }
+        })
     }
 
-    private fun navigateToBookDetail(bookId: Int) {
-        findNavController(requireActivity(), R.id.nav_host_fragment)
-            .navigate(MainFragmentDirections.actionMainFragmentToBookDetailFragment(bookId))
+    override fun bindView() {
+        binding.apply {
+            layoutSearch.setOnClickListener {
+                viewModel.navigateToSearchBook()
+            }
+            btnSearchBook.setOnClickListener { viewModel.navigateToSearchBook() }
+        }
     }
 
     override fun observeViewModel() {
@@ -85,38 +115,68 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 genreAdapter.submitList(state.genres)
             }
         }
-        collectState(viewModel.recentBooks) { pagingData ->
-            recentBooksAdapter.submitData(lifecycle, pagingData)
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            recentBooksAdapter.loadStateFlow.collectLatest { loadState ->
-                if (loadState.source.refresh is LoadState.Loading) {
-                    binding.shimmerRecentlyRead.startShimmer()
-                    binding.shimmerRecentlyRead.visibility = View.VISIBLE
-                    binding.rvRecentlyRead.visibility = View.INVISIBLE
-                } else {
-                    binding.shimmerRecentlyRead.stopShimmer()
-                    binding.shimmerRecentlyRead.visibility = View.INVISIBLE
-                    binding.rvRecentlyRead.visibility = View.VISIBLE
+
+        collectEvent(viewModel.event) { event ->
+            when (event) {
+                is HomeEvent.NavigateToBookDetailFragment -> {
+                    val action =
+                        MainFragmentDirections.actionMainFragmentToBookDetailFragment(event.bookId)
+                    findNavController(
+                        requireActivity(), R.id.nav_host_fragment
+                    ).navigate(action)
+                }
+
+                is HomeEvent.NavigateToRecentlyReadBook -> {
+
+                }
+
+                is HomeEvent.NavigateToRecommentBookFragment -> {
+
+                }
+
+                is HomeEvent.NavigateToSearchFragment -> {
+                    val action = MainFragmentDirections.actionMainFragmentToSearchBookFragment()
+                    findNavController(requireActivity(), R.id.nav_host_fragment).navigate(action)
                 }
             }
         }
-    }
 
-//    fun handleRecycleView(
-//        state: HomeState,
-//        shimmerFrameLayout: ShimmerFrameLayout,
-//        recyclerView: RecyclerView,
-//    ) {
-//        if (state.isGenresLoading) {
-//            shimmerFrameLayout.startShimmer()
-//            shimmerFrameLayout.visibility = View.VISIBLE
-//            recyclerView.visibility = View.GONE
-//        } else {
-//            shimmerFrameLayout.stopShimmer()
-//            shimmerFrameLayout.visibility = View.GONE
-//            recyclerView.visibility = View.VISIBLE
-//            recommendAdapter.submitList(state.recommendBooks)
-//        }
-//    }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.recentBooks.collectLatest { pagingData ->
+                    recentBooksAdapter.submitData(pagingData)
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                recentBooksAdapter.loadStateFlow.collectLatest { loadState ->
+                    when (val refreshState = loadState.source.refresh) {
+                        is LoadState.Loading -> {
+                            binding.shimmerRecentlyRead.startShimmer()
+                            binding.shimmerRecentlyRead.visibility = View.VISIBLE
+                            binding.rvRecentlyRead.visibility = View.INVISIBLE
+                        }
+
+                        is LoadState.Error -> {
+                            binding.shimmerRecentlyRead.stopShimmer()
+                            binding.shimmerRecentlyRead.visibility = View.INVISIBLE
+                            binding.rvRecentlyRead.visibility = View.VISIBLE
+                            viewModel.setErrorMessage(
+                                refreshState.error.localizedMessage ?: "Failed to load books"
+                            )
+                        }
+
+                        is LoadState.NotLoading -> {
+                            binding.shimmerRecentlyRead.stopShimmer()
+                            binding.shimmerRecentlyRead.visibility = View.INVISIBLE
+                            binding.rvRecentlyRead.visibility = View.VISIBLE
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
 }

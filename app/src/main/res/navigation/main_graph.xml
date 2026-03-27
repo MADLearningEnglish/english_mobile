@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_mainFragment_to_bookDetailFragment"
             app:destination="@id/bookDetailFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_searchBookFragment"
+            app:destination="@id/searchBookFragment" />
     </fragment>
     <fragment
         android:id="@+id/bookDetailFragment"
@@ -35,5 +38,14 @@
             android:name="readBookArgs"
             app:argType="com.mit.learning_english.presentation.feature.readbook.ReadBookArgs" />
 
+    </fragment>
+    <fragment
+        android:id="@+id/searchBookFragment"
+        android:name="com.mit.learning_english.presentation.feature.searchbook.SearchBookFragment"
+        android:label="fragment_search_book"
+        tools:layout="@layout/fragment_search_book">
+        <action
+            android:id="@+id/action_searchBookFragment_to_bookDetailFragment"
+            app:destination="@id/bookDetailFragment" />
     </fragment>
 </navigation>
