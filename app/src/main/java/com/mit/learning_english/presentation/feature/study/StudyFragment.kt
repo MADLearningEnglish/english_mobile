@@ -27,6 +27,7 @@ import com.mit.learning_english.domain.model.QuizType
 import com.mit.learning_english.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -105,7 +106,9 @@ class StudyFragment : BaseFragment<FragmentStudyBinding, StudyViewModel>() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collectLatest { state -> renderState(state) }
+                combine(viewModel.uiState, viewModel.isLoading) { state, isLoading ->
+                    Pair(state, isLoading)
+                }.collectLatest { (state, isLoading) -> renderState(state, isLoading) }
             }
         }
 
@@ -125,11 +128,10 @@ class StudyFragment : BaseFragment<FragmentStudyBinding, StudyViewModel>() {
 
     private var lastIsFlipped: Boolean? = null
 
-    private fun renderState(state: StudyState) {
-        binding.progressLoading.isVisible = state.isLoading
+    private fun renderState(state: StudyState, isLoading: Boolean) {
+        binding.progressLoading.isVisible = isLoading
 
-        // Empty state
-        if (!state.isLoading && state.flashcards.isEmpty() && !state.isComplete) {
+        if (!isLoading && state.flashcards.isEmpty() && !state.isComplete) {
             binding.layoutEmpty.visibility = View.VISIBLE
             binding.cardContainer.visibility = View.GONE
             binding.btnNextCard.visibility = View.GONE

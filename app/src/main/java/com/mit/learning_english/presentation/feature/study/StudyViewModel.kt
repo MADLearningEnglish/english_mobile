@@ -35,16 +35,19 @@ class StudyViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             setLoading(true)
             when (val result = getStudyFlashcardsUseCase(deckId)) {
-                is Result.Success -> setState {
-                    copy(
-                        flashcards = result.data,
-                        isLoading = false,
-                        currentIndex = 0,
-                        isFlipped = false
-                    )
+                is Result.Success -> {
+                    setLoading(false)
+                    setState {
+                        copy(
+                            flashcards = result.data,
+                            currentIndex = 0,
+                            isFlipped = false
+                        )
+                    }
                 }
-                is Result.Error -> setState {
-                    copyWith(isLoading = false, errorMessage = result.message)
+                is Result.Error -> {
+                    setLoading(false)
+                    emitError(result.message ?: "Lỗi tải dữ liệu")
                 }
                 else -> setLoading(false)
             }
