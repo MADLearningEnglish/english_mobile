@@ -23,14 +23,11 @@ class DeckListViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             setLoading(true)
             val result = getAllDecksUseCase()
+            setLoading(false)
             when (result) {
-                is Result.Success -> setState {
-                    copy(decks = result.data, isLoading = false, errorMessage = null)
-                }
-                is Result.Error -> setState {
-                    copyWith(isLoading = false, errorMessage = result.message)
-                }
-                else -> setLoading(false)
+                is Result.Success -> setState { copy(decks = result.data) }
+                is Result.Error -> emitError(result.message ?: "Lỗi tải dữ liệu")
+                else -> Unit
             }
         }
     }
@@ -53,16 +50,12 @@ class DeckListViewModel @Inject constructor(
             val result = deleteDeckUseCase(deckId)
             when (result) {
                 is Result.Success -> {
-                    setState {
-                        copy(
-                            decks = decks.filter { it.id != deckId },
-                            isLoading = false
-                        )
-                    }
+                    setLoading(false)
+                    setState { copy(decks = decks.filter { it.id != deckId }) }
                     emitEvent(DeckListEvent.ShowSnackbar("Xóa bộ thẻ thành công"))
                 }
                 is Result.Error -> {
-                    setState { copyWith(isLoading = false) }
+                    setLoading(false)
                     emitEvent(DeckListEvent.ShowSnackbar("Xóa thất bại, thử lại sau"))
                 }
                 else -> setLoading(false)

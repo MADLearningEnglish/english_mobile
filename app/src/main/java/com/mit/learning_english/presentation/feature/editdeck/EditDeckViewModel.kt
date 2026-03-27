@@ -35,14 +35,15 @@ class EditDeckViewModel @Inject constructor(
 
     private fun loadDeckData(deckId: Int) {
         viewModelScope.launch(exceptionHandler) {
-            setState { copy(isLoading = true, deckId = deckId) }
+            setLoading(true)
+            setState { copy(deckId = deckId) }
             val result = getDeckByIdUseCase(deckId)
             when (result) {
                 is Result.Success -> {
+                    setLoading(false)
                     val deck = result.data
                     setState {
                         copy(
-                            isLoading = false,
                             title = deck.title,
                             coverImageUrl = deck.coverImageUrl,
                             status = deck.status
@@ -51,10 +52,10 @@ class EditDeckViewModel @Inject constructor(
                     loadFlashcards(deck)
                 }
                 is Result.Error -> {
-                    setState { copy(isLoading = false) }
+                    setLoading(false)
                     emitEvent(EditDeckEvent.ShowSnackbar(result.message ?: "Lỗi tải dữ liệu"))
                 }
-                else -> setState { copy(isLoading = false) }
+                else -> setLoading(false)
             }
         }
     }

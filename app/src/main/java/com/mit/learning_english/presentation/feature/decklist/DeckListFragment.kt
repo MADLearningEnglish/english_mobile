@@ -17,6 +17,7 @@ import com.mit.learning_english.databinding.FragmentDeckListBinding
 import com.mit.learning_english.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -62,25 +63,21 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
     override fun observeViewModel() {
         super.observeViewModel()
 
-        // Observe state
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collectLatest { state ->
-                    android.util.Log.d("DeckListFragment", "renderState: isLoading=${state.isLoading}, decks=${state.decks.size}")
-
-                    // Loading
+                combine(viewModel.uiState, viewModel.isLoading) { state, isLoading ->
+                    Pair(state, isLoading)
+                }.collectLatest { (state, isLoading) ->
                     binding.swipeRefresh.isRefreshing = false
-                    if (state.isLoading && adapter.itemCount == 0) {
+                    if (isLoading && adapter.itemCount == 0) {
                         showShimmer()
                     } else {
                         hideShimmer()
                     }
 
-                    // Deck list
                     adapter.submitList(state.decks)
 
-                    // Empty state
-                    if (!state.isLoading) {
+                    if (!isLoading) {
                         if (state.decks.isEmpty()) {
                             binding.layoutEmpty.visibility = View.VISIBLE
                             binding.rvDecks.visibility = View.INVISIBLE
