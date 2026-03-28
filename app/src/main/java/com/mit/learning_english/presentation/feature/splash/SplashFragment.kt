@@ -26,6 +26,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding, SplashViewModel>() {
 
     override fun bindView() {
         // checkAndNavigate() được gọi sau khi observer đã ready trong observeViewModel()
+        viewModel.checkAndNavigate()
     }
 
     override fun observeViewModel() {
