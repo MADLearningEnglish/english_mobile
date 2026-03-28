@@ -1,6 +1,5 @@
 package com.mit.learning_english.presentation.feature.decklist
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,13 +7,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import androidx.navigation.fragment.findNavController
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentDeckListBinding
 import com.mit.learning_english.presentation.base.BaseFragment
+import com.mit.learning_english.presentation.feature.main.MainFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -96,20 +96,19 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
                 viewModel.event.collectLatest { event ->
                     when (event) {
                         is DeckListEvent.NavigateToStudy -> {
-                            val bundle = android.os.Bundle().apply {
-                                putInt("deckId", event.deckId)
-                                putString("deckTitle", event.deckTitle)
-                            }
-                            findNavController().navigate(R.id.action_deckList_to_study, bundle)
+                            val action = MainFragmentDirections.actionMainFragmentToStudyFragment(deckId = event.deckId, deckTitle = event.deckTitle)
+
+                            findNavController().navigate(action)
                         }
                         is DeckListEvent.NavigateToEditDeck -> {
-                            val bundle = android.os.Bundle().apply {
-                                putInt("deckId", event.deckId)
-                            }
-                            findNavController().navigate(R.id.action_deckList_to_editDeck, bundle)
+                            val action = MainFragmentDirections.actionMainFragmentToEditDeckFragment(deckId = event.deckId)
+
+                            findNavController().navigate(action)
                         }
                         is DeckListEvent.NavigateToCreateDeck -> {
-                            findNavController().navigate(R.id.action_deckList_to_createDeck)
+                            val action = MainFragmentDirections.actionMainFragmentToCreateDeckFragment()
+
+                            findNavController().navigate(action)
                         }
                         is DeckListEvent.ShowDeleteConfirmDialog -> {
                             showDeleteDialog(event.deckId, event.deckTitle)
