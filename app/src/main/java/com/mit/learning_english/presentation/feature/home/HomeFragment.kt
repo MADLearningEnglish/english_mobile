@@ -60,7 +60,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             adapter = recentBooksAdapter
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            addItemDecoration(VerticalSpacingItemDecoration(8))
+            addItemDecoration(VerticalSpacingItemDecoration(12))
         }
     }
 

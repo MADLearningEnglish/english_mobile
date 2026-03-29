@@ -2,8 +2,9 @@ package com.mit.learning_english.presentation.feature.readbook
 
 import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.domain.model.Chapter
-import com.mit.learning_english.domain.usecase.GetBookDetailByIdUseCase
-import com.mit.learning_english.domain.usecase.GetPagesByChapterUseCase
+import com.mit.learning_english.domain.usecase.book.GetBookDetailByIdUseCase
+import com.mit.learning_english.domain.usecase.page.GetPagesByBookUseCase
+import com.mit.learning_english.domain.usecase.page.GetPagesByChapterUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -12,7 +13,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ReadBookViewModel @Inject constructor(
     private val getPagesByChapterUseCase: GetPagesByChapterUseCase,
-    private val getBookDetailByIdUseCase: GetBookDetailByIdUseCase
+    private val getBookDetailByIdUseCase: GetBookDetailByIdUseCase,
+    private val getPagesByBookUseCase: GetPagesByBookUseCase
 ) : BaseViewModel<ReadBookState, ReadBookEvent>(ReadBookState()) {
     fun loadInit(readBookArgs: ReadBookArgs) {
         viewModelScope.launch(exceptionHandler) {
@@ -71,11 +73,14 @@ class ReadBookViewModel @Inject constructor(
         val pagesNumbersNeedLoad = createPagesNumberNeedLoad()
         if (pagesNumbersNeedLoad.isNotEmpty()) {
             viewModelScope.launch(exceptionHandler) {
-                val result = getPagesByChapterUseCase(book.id, pagesNumbersNeedLoad)
+                val result = getPagesByBookUseCase(book.id, pagesNumbersNeedLoad)
                 result.onSuccess { data ->
-                    setState { copy(isLoadingMore = false) }
                     val newPages = data.associateBy { it.number }
-                    setState { copy(pages = (pages + newPages).toSortedMap()) }
+                    setState {
+                        copy(
+                            isLoadingMore = false, pages = (pages + newPages).toSortedMap()
+                        )
+                    }
                 }.onError {
                     setState { copy(isLoadingMore = false) }
                 }
@@ -90,10 +95,9 @@ class ReadBookViewModel @Inject constructor(
         val currentPageNumber = pageNumber ?: state.currentPageNumber
         val lastPageNumber: Int = state.book?.chapters?.sumOf { it.totalPages } ?: 0
         val pages = state.pages
-        val aroundSubPage: List<Int> = listOf(-3, -2, -1, 0, 1, 2, 3)
-        return aroundSubPage.map { sub -> currentPageNumber + sub }.filter { pageNum ->
-            pageNum >= 0 && pageNum < lastPageNumber && !pages.containsKey(pageNum)
-        }
+        val offsets = listOf(-1, 0, 1, 2, 3)
+        return offsets.map { offset -> currentPageNumber + offset }
+            .filter { it in 0 until lastPageNumber && !pages.containsKey(it) }
     }
 
     fun onPageChanged(position: Int) {
@@ -122,11 +126,14 @@ class ReadBookViewModel @Inject constructor(
         if (pagesNumbersNeedLoad.isNotEmpty()) {
             setState { copy(isLoadingMore = true) }
             viewModelScope.launch(exceptionHandler) {
-                val result = getPagesByChapterUseCase(book.id, pagesNumbersNeedLoad)
+                val result = getPagesByBookUseCase(book.id, pagesNumbersNeedLoad)
                 result.onSuccess { data ->
-                    setState { copy(isLoadingMore = false) }
                     val newPages = data.associateBy { it.number }
-                    setState { copy(pages = (pages + newPages).toSortedMap()) }
+                    setState {
+                        copy(
+                            isLoadingMore = false, pages = (pages + newPages).toSortedMap()
+                        )
+                    }
                     val updatedState = uiState.value
                     val position = updatedState.pages.values.toList()
                         .indexOfFirst { it.number == firstNumberPagerChapter }

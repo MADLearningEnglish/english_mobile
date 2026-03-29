@@ -13,7 +13,7 @@ class VerticalSpacingItemDecoration(
         val position = parent.getChildAdapterPosition(view)
         val itemCount = state.itemCount
 
-        if (position == itemCount - 1) {
+        if (position != itemCount - 1) {
             outRect.bottom = spacing
         }
     }

@@ -4,9 +4,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.mit.learning_english.domain.model.BookReponse
-import com.mit.learning_english.domain.usecase.GetBookRecommendUseCase
-import com.mit.learning_english.domain.usecase.GetGenresUseCase
-import com.mit.learning_english.domain.usecase.GetRecentlyReadBookUseCase
+import com.mit.learning_english.domain.usecase.book.GetBookRecommendUseCase
+import com.mit.learning_english.domain.usecase.book.GetRecentlyReadBookUseCase
+import com.mit.learning_english.domain.usecase.genre.GetGenresUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow

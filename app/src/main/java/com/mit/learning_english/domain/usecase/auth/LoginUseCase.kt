@@ -1,4 +1,4 @@
-package com.mit.learning_english.domain.usecase
+package com.mit.learning_english.domain.usecase.auth
 
 import com.mit.learning_english.domain.model.LoginRequest
 import com.mit.learning_english.domain.repository.AuthRepository

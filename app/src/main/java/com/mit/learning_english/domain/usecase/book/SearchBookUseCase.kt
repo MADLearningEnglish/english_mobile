@@ -1,4 +1,4 @@
-package com.mit.learning_english.domain.usecase
+package com.mit.learning_english.domain.usecase.book
 
 import androidx.paging.PagingData
 import com.mit.learning_english.domain.model.Book

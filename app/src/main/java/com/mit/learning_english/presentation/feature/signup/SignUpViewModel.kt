@@ -1,7 +1,7 @@
 package com.mit.learning_english.presentation.feature.signup
 
 import androidx.lifecycle.viewModelScope
-import com.mit.learning_english.domain.usecase.SignUpUseCase
+import com.mit.learning_english.domain.usecase.auth.SignUpUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +12,6 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase
 ) : BaseViewModel<SignUpState, SignUpEvent>(SignUpState()) {
-
     fun setEmail(email: String) {
         setState { copy(serverError = null) }
     }

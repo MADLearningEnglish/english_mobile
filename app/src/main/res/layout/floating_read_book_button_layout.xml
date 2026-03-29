@@ -26,26 +26,4 @@
 
     </androidx.cardview.widget.CardView>
 
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/btnListenMode"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/read_mode_button"
-        app:cardCornerRadius="32dp"
-        app:cardElevation="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnReadMode">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp"
-            android:src="@drawable/ic_headphone"
-            app:tint="@color/icon_read_mode_color" />
-
-    </androidx.cardview.widget.CardView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,14 +1,13 @@
-package com.mit.learning_english.domain.usecase
+package com.mit.learning_english.domain.usecase.theme
 
 import com.mit.learning_english.domain.model.ThemeMode
 import com.mit.learning_english.domain.repository.PreferencesRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetThemeUseCase @Inject constructor(
+class SaveThemeUseCase @Inject constructor(
     private val preferencesRepository: PreferencesRepository
 ) {
-    operator fun invoke(): Flow<ThemeMode>{
-        return preferencesRepository.getTheme()
+    suspend operator fun invoke(themeMode: ThemeMode) {
+        return preferencesRepository.saveTheme(themeMode)
     }
 }

@@ -5,7 +5,7 @@ import com.mit.learning_english.domain.repository.DeckRepository
 import com.mit.learning_english.domain.util.Result
 import javax.inject.Inject
 
-class GetStudyFlashcardsUseCase @Inject constructor(
+class GetStudyFlashCardsUseCase @Inject constructor(
     private val repository: DeckRepository
 ) {
     suspend operator fun invoke(deckId: Int): Result<List<Flashcard>> {

@@ -26,6 +26,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
     override fun setupView() {
         pageAdapter = ReadBookPageAdapter()
         binding.viewPager.adapter = pageAdapter
+        binding.viewPager.offscreenPageLimit = 3
 
         chapterAdapter = ChapterAdapter { chapter ->
             binding.drawLayout.closeDrawers()
@@ -51,9 +52,19 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
     override fun observeViewModel() {
         super.observeViewModel()
         collectState(viewModel.uiState) { state ->
-            pageAdapter.submitList(state.pages.values.toList())
-            chapterAdapter.submitList(state.chapters)
-            state.activeChapterId?.let { chapterAdapter.setActiveChapterId(it) }
+            val newPageList = state.pages.values.toList()
+            if (newPageList.size != pageAdapter.currentList.size || newPageList != pageAdapter.currentList) {
+                pageAdapter.submitList(newPageList)
+            }
+            if (state.chapters != chapterAdapter.currentList) {
+                chapterAdapter.submitList(state.chapters)
+            }
+
+            state.activeChapterId?.let {
+                if (it != chapterAdapter.getActiveChapterId()) {
+                    chapterAdapter.setActiveChapterId(it)
+                }
+            }
         }
         collectEvent(viewModel.event) { event ->
             when (event) {

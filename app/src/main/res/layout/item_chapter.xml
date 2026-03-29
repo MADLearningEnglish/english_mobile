@@ -22,10 +22,12 @@
 
     <TextView
         android:id="@+id/tvChapterTitle"
-        style="@style/HeadlineExtraSmall"
+        style="@style/LabelMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:text="The Library of Choices"
         android:textColor="@color/body_primary"
         app:layout_constraintBottom_toTopOf="@+id/tvTotalPages"

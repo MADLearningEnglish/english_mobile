@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.domain.model.Flashcard
 import com.mit.learning_english.domain.model.QuizQuestion
 import com.mit.learning_english.domain.model.QuizType
-import com.mit.learning_english.domain.usecase.deck.GetStudyFlashcardsUseCase
+import com.mit.learning_english.domain.usecase.deck.GetStudyFlashCardsUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +18,7 @@ private const val QUIZ_INTERVAL = 4
 @HiltViewModel
 class StudyViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getStudyFlashcardsUseCase: GetStudyFlashcardsUseCase
+    private val getStudyFlashcardsUseCase: GetStudyFlashCardsUseCase
 ) : BaseViewModel<StudyState, StudyEvent>(StudyState()) {
 
     private val deckId: Int = savedStateHandle.get<Int>("deckId") ?: 0

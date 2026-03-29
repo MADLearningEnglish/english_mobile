@@ -3,11 +3,14 @@ package com.mit.learning_english.presentation.feature.bookdetail
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
+import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentBookDetailBinding
 import com.mit.learning_english.presentation.base.BaseFragment
+import com.mit.learning_english.presentation.extensions.loadImage
+import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,6 +34,7 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
         binding.rvChapter.apply {
             adapter = chapterAdapter
             layoutManager = LinearLayoutManager(requireContext())
+            addItemDecoration(VerticalSpacingItemDecoration(12))
         }
     }
 
@@ -44,6 +48,9 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
             btnListenBook.setOnClickListener {
                 viewModel.navigateToReadBook(1)
             }
+            btnBack.setOnClickListener {
+                findNavController().navigateUp()
+            }
         }
     }
 
@@ -54,14 +61,20 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
                 binding.apply {
                     tvBookTitle.text = book.title
                     tvBookAuthor.text = book.authorsName
-                    // For tvBlurb, using title as fallback, should be actual description
-                    tvBlurb.text = book.title 
-
-                    Glide.with(requireContext())
-                        .load(book.coverUrl)
-                        .into(ivBookCover)
-
+                    pbProgress.progress = book.progressPercent.toInt()
+                    tvBlurb.text = book.title
+                    ivBookCover.loadImage(book.coverUrl)
                     chapterAdapter.submitList(book.chapters)
+                    tvReadTime.text = getString(R.string.minutes_format, book.chapters.sumOf { chapter-> chapter.totalDuration })
+                    tvTotalPages.text = getString(R.string.total_page_format,book.chapters.sumOf { chapter ->  chapter.totalPages })
+                }
+            }
+        }
+        collectEvent(viewModel.event){event->
+            when(event){
+                is BookDetailEvent.NavigateToReadBook ->{
+                    val action = BookDetailFragmentDirections.actionBookDetailFragmentToReadBookFragment(event.readBookArgs)
+                    findNavController().navigate(action)
                 }
             }
         }

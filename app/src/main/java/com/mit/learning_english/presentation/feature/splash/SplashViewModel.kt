@@ -1,7 +1,7 @@
 package com.mit.learning_english.presentation.feature.splash
 
 import androidx.lifecycle.viewModelScope
-import com.mit.learning_english.domain.usecase.CheckLoggedInUseCase
+import com.mit.learning_english.domain.usecase.auth.CheckLoggedInUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay

@@ -75,6 +75,18 @@
                     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
 
             </LinearLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnReadMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginBottom="240dp"
+                android:background="@color/gray"
+                android:backgroundTint="@color/background"
+                android:elevation="16dp"
+                android:src="@drawable/ic_reading_book"
+                android:tint="@color/primary" />
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <com.google.android.material.navigation.NavigationView
@@ -90,12 +102,5 @@
         </com.google.android.material.navigation.NavigationView>
     </androidx.drawerlayout.widget.DrawerLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:layout_margin="16dp"
-        app:srcCompat="@layout/floating_read_book_button_layout" />
 
 </FrameLayout>
