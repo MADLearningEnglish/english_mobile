@@ -1,5 +1,6 @@
 package com.mit.learning_english.data.repository
 
+import android.util.Log
 import com.mit.learning_english.data.mapper.ResultMapper
 import com.mit.learning_english.data.mapper.toPage
 import com.mit.learning_english.data.remote.api.PageApiService
@@ -37,6 +38,7 @@ class PageRepositoryImpl @Inject constructor(
                 val response = pageApi.getPagesByBook(bookId = bookId, pageNumbers = pageNumbers)
                 val result = resultMapper.fromBaseResponse(response)
                     .map { pageResponses -> pageResponses.map { it.toPage() } }
+                Log.d("getPagesBYBook",result.toString())
                 result
             } catch (e: Exception) {
                 resultMapper.fromException(e)

@@ -29,7 +29,7 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
 
     override fun setupView() {
         chapterAdapter = ChapterAdapter { chapter ->
-            // Handle chapter click if needed
+            viewModel.navigateToReadBook(readMode = 0, chapterId = chapter.id)
         }
         binding.rvChapter.apply {
             adapter = chapterAdapter
@@ -56,17 +56,17 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
 
     override fun observeViewModel() {
         super.observeViewModel()
-        collectState(viewModel.uiState) { state ->
-            state.book?.let { book ->
+        collectStateProperty(viewModel.uiState, { it.book }) { book ->
+            book?.let {
                 binding.apply {
-                    tvBookTitle.text = book.title
-                    tvBookAuthor.text = book.authorsName
-                    pbProgress.progress = book.progressPercent.toInt()
-                    tvBlurb.text = book.title
-                    ivBookCover.loadImage(book.coverUrl)
-                    chapterAdapter.submitList(book.chapters)
-                    tvReadTime.text = getString(R.string.minutes_format, book.chapters.sumOf { chapter-> chapter.totalDuration })
-                    tvTotalPages.text = getString(R.string.total_page_format,book.chapters.sumOf { chapter ->  chapter.totalPages })
+                    tvBookTitle.text = it.title
+                    tvBookAuthor.text = it.authorsName
+                    pbProgress.progress = it.progressPercent.toInt()
+                    tvBlurb.text = it.title
+                    ivBookCover.loadImage(it.coverUrl)
+                    chapterAdapter.submitList(it.chapters)
+                    tvReadTime.text = getString(R.string.minutes_format, it.chapters.sumOf { chapter -> chapter.totalDuration })
+                    tvTotalPages.text = getString(R.string.total_page_format, it.chapters.sumOf { chapter -> chapter.totalPages })
                 }
             }
         }

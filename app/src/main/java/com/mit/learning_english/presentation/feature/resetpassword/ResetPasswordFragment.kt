@@ -40,8 +40,8 @@ class ResetPasswordFragment : BaseFragment<FragmentResetPasswordBinding, ResetPa
             }
         }
 
-        collectState(viewModel.uiState) { state ->
-            binding.tvPasswordError.text = state.serverError ?: ""
+        collectStateProperty(viewModel.uiState, { it.serverError }) { serverError ->
+            binding.tvPasswordError.text = serverError ?: ""
         }
     }
 }

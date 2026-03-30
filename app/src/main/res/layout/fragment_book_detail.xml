@@ -9,10 +9,11 @@
 
     <ImageView
         android:id="@+id/btnBack"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:background="@drawable/ic_back"
-        android:backgroundTint="@color/body_primary"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:padding="2dp"
+        android:src="@drawable/ic_back"
+        app:tint="@color/body_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -145,7 +146,6 @@
                 android:layout_marginTop="16dp"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:text="Phát triển thói quen người dùng"
                 android:textColor="@color/body_primary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cardCoverBook" />
@@ -158,7 +158,6 @@
                 android:layout_marginTop="8dp"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:text="Phuc Thai Van"
                 android:textColor="@color/body_primary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvBookTitle" />
@@ -239,10 +238,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Between life and death there is a library, and within
-that library, the shelves go on forever. Every book
-provides a chance to try another life you could have
-lived."
+
                 android:textColor="@color/body_primary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

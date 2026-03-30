@@ -1,5 +1,6 @@
 package com.mit.learning_english.presentation.feature.readbook
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.domain.model.Chapter
 import com.mit.learning_english.domain.usecase.book.GetBookDetailByIdUseCase
@@ -23,7 +24,6 @@ class ReadBookViewModel @Inject constructor(
             val chapterId = readBookArgs.chapterId
             val readModeValue = readBookArgs.readModeValue
             val result = getBookDetailByIdUseCase(bookId)
-
             result.onSuccess { bookDetail ->
                 setState {
                     copy(
@@ -68,9 +68,9 @@ class ReadBookViewModel @Inject constructor(
         val state = uiState.value
         if (state.isLoadingMore) return
         val book = state.book ?: return
-
         setState { copy(isLoadingMore = true) }
         val pagesNumbersNeedLoad = createPagesNumberNeedLoad()
+        Log.d("danh sach pageNumber load",pagesNumbersNeedLoad.toString())
         if (pagesNumbersNeedLoad.isNotEmpty()) {
             viewModelScope.launch(exceptionHandler) {
                 val result = getPagesByBookUseCase(book.id, pagesNumbersNeedLoad)
@@ -81,6 +81,7 @@ class ReadBookViewModel @Inject constructor(
                             isLoadingMore = false, pages = (pages + newPages).toSortedMap()
                         )
                     }
+                    Log.d("state hien tai",uiState.value.pages.keys.toString())
                 }.onError {
                     setState { copy(isLoadingMore = false) }
                 }
@@ -118,11 +119,12 @@ class ReadBookViewModel @Inject constructor(
             if (chapterId == it.id) break
             firstNumberPagerChapter += it.totalPages
         }
+        Log.d("firstNumberPages",firstNumberPagerChapter.toString())
+        setState { copy(currentPageNumber = firstNumberPagerChapter, activeChapterId = chapterId) }
 
-        setState { copy(currentPageNumber = firstNumberPagerChapter) }
         val book = state.book ?: return
         val pagesNumbersNeedLoad = createPagesNumberNeedLoad(firstNumberPagerChapter)
-
+        Log.d("pagesNumbersNeedLoad2",pagesNumbersNeedLoad.toString())
         if (pagesNumbersNeedLoad.isNotEmpty()) {
             setState { copy(isLoadingMore = true) }
             viewModelScope.launch(exceptionHandler) {
@@ -138,6 +140,7 @@ class ReadBookViewModel @Inject constructor(
                     val position = updatedState.pages.values.toList()
                         .indexOfFirst { it.number == firstNumberPagerChapter }
                     if (position != -1) emitEvent(ReadBookEvent.GoToChapter(position))
+                    Log.d("pages",uiState.value.pages.keys.toString())
                 }.onError {
                     setState { copy(isLoadingMore = false) }
                 }
@@ -151,5 +154,10 @@ class ReadBookViewModel @Inject constructor(
 
     fun setReadMode(readMode: Int) {
         setState { copy(readMode = ReadMode.fromValue(readMode)) }
+    }
+
+    fun readModeClicked(){
+        val currentReadValue = uiState.value.readMode.value
+        setState { copy(readMode = ReadMode.fromValue(1-currentReadValue))}
     }
 }

@@ -11,9 +11,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 /**
@@ -85,6 +88,22 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 flow.collectLatest(action)
+            }
+        }
+    }
+
+    /**
+     * Collect một thuộc tính cụ thể của StateFlow, chỉ trigger khi giá trị thực sự thay đổi.
+     * Tránh unnecessary UI update khi các thuộc tính khác trong state thay đổi.
+     */
+    protected fun <T, R> collectStateProperty(
+        flow: StateFlow<T>,
+        selector: (T) -> R,
+        action: suspend (R) -> Unit
+    ) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                flow.map(selector).distinctUntilChanged().collectLatest(action)
             }
         }
     }

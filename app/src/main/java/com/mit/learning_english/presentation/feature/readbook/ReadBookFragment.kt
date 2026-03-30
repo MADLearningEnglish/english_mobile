@@ -1,13 +1,17 @@
 package com.mit.learning_english.presentation.feature.readbook
 
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.mit.learning_english.databinding.FragmentReadBookBinding
 import com.mit.learning_english.presentation.base.BaseFragment
+import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,6 +39,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         binding.rvChapters.apply {
             adapter = chapterAdapter
             layoutManager = LinearLayoutManager(requireContext())
+            addItemDecoration(VerticalSpacingItemDecoration(12))
         }
 
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -42,29 +47,50 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
                 viewModel.onPageChanged(position)
             }
         })
+
     }
 
     override fun bindView() {
         val readBookArgs = args.readBookArgs
         viewModel.loadInit(readBookArgs)
+        binding.btnBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
+        binding.btnShowNavView.setOnClickListener {
+            binding.drawLayout.openDrawer(GravityCompat.END)
+        }
+        binding.btnReadMode.setOnClickListener {
+            viewModel.readModeClicked()
+        }
     }
 
     override fun observeViewModel() {
         super.observeViewModel()
-        collectState(viewModel.uiState) { state ->
-            val newPageList = state.pages.values.toList()
-            if (newPageList.size != pageAdapter.currentList.size || newPageList != pageAdapter.currentList) {
-                pageAdapter.submitList(newPageList)
-            }
-            if (state.chapters != chapterAdapter.currentList) {
-                chapterAdapter.submitList(state.chapters)
-            }
+        collectStateProperty(viewModel.uiState, { it.pages }) { pages ->
+            pageAdapter.submitList(pages.values.toList())
+        }
 
-            state.activeChapterId?.let {
-                if (it != chapterAdapter.getActiveChapterId()) {
-                    chapterAdapter.setActiveChapterId(it)
-                }
+        collectStateProperty(viewModel.uiState, { it.chapters }) { chapters ->
+            chapterAdapter.submitList(chapters)
+        }
+
+        collectStateProperty(
+            viewModel.uiState,
+            { Pair(it.activeChapterId, it.chapters) }
+        ) { (activeChapterId, chapters) ->
+            activeChapterId?.let { id ->
+                chapterAdapter.setActiveChapterId(id)
+                binding.tvTitleChapter.text =
+                    chapters.find { it.id == id }?.title ?: ""
             }
+        }
+        collectStateProperty(viewModel.uiState,{it.readMode}){readMode ->
+          if(readMode == ReadMode.ReadMode){
+              hideBottomSheet()
+          }else{
+              showBottomSheet()
+          }
+
         }
         collectEvent(viewModel.event) { event ->
             when (event) {
@@ -76,10 +102,16 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
 
                 }
 
-                ReadBookEvent.ShowTabBar -> {
 
-                }
             }
         }
     }
+
+    private fun showBottomSheet() {
+
+    }
+    private fun hideBottomSheet() {
+
+    }
+
 }

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mit.learning_english.databinding.ItemReadBookPageBinding
 import com.mit.learning_english.domain.model.Page
+import java.io.File.separator
 
 class ReadBookPageAdapter :
     ListAdapter<Page, ReadBookPageAdapter.PageViewHolder>(PageDiffCallback()) {
@@ -27,7 +28,7 @@ class ReadBookPageAdapter :
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(page: Page) {
-            binding.tvPageContent.text = "Page ${page.number}"
+            binding.tvPageContent.text = page.number.toString()+" - "+ page.sentences.joinToString(separator = " ") { it.content }
         }
     }
 

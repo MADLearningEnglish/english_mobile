@@ -15,5 +15,5 @@ data class ReadBookState(
     val hasMorePage: Boolean = true,
     val chapters: List<Chapter> = emptyList(),
     val activeChapterId: Int? = null,
-    val book: BookDetail? = null
+    val book: BookDetail? = null,
 )
