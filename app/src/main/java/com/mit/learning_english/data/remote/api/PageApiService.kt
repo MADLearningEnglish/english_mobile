@@ -11,12 +11,7 @@ interface PageApiService {
     @GET("book/v1/{bookId}/pages")
     suspend fun getPagesByBook(
         @Path("bookId") bookId: Int,
-        @Query("pageNumbers") pageNumbers: List<Int>,
-    ): Response<BaseResponse<List<PageResponse>>>
-
-    @GET("chapter/{chapterId}/pages")
-    suspend fun getPagesByChapter(
-        @Path("chapterId") chapterId: Int,
-        @Query("pageNumbers") pageNumbers: List<Int>,
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int,
     ): Response<BaseResponse<List<PageResponse>>>
 }

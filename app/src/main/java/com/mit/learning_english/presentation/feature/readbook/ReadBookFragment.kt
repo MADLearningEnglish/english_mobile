@@ -1,18 +1,24 @@
 package com.mit.learning_english.presentation.feature.readbook
 
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.mit.learning_english.databinding.FragmentReadBookBinding
 import com.mit.learning_english.presentation.base.BaseFragment
 import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel>() {
@@ -47,7 +53,6 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
                 viewModel.onPageChanged(position)
             }
         })
-
     }
 
     override fun bindView() {
@@ -66,8 +71,30 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
 
     override fun observeViewModel() {
         super.observeViewModel()
-        collectStateProperty(viewModel.uiState, { it.pages }) { pages ->
-            pageAdapter.submitList(pages.values.toList())
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.pagesFlow.collectLatest { pagingData ->
+                    pageAdapter.submitData(pagingData)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                pageAdapter.loadStateFlow.collectLatest { loadStates ->
+                    val errorState = loadStates.refresh as? LoadState.Error
+                        ?: loadStates.append as? LoadState.Error
+                        ?: loadStates.prepend as? LoadState.Error
+                    errorState?.let {
+                        Toast.makeText(
+                            requireContext(),
+                            it.error.localizedMessage ?: "Failed to load pages",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
         }
 
         collectStateProperty(viewModel.uiState, { it.chapters }) { chapters ->
@@ -84,34 +111,29 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
                     chapters.find { it.id == id }?.title ?: ""
             }
         }
-        collectStateProperty(viewModel.uiState,{it.readMode}){readMode ->
-          if(readMode == ReadMode.ReadMode){
-              hideBottomSheet()
-          }else{
-              showBottomSheet()
-          }
 
+        collectStateProperty(viewModel.uiState, { it.readMode }) { readMode ->
+            if (readMode == ReadMode.ReadMode) {
+                hideBottomSheet()
+            } else {
+                showBottomSheet()
+            }
         }
+
         collectEvent(viewModel.event) { event ->
             when (event) {
                 is ReadBookEvent.GoToChapter -> {
-                    binding.viewPager.currentItem = event.index
+                    binding.viewPager.setCurrentItem(event.index, false)
                 }
 
-                ReadBookEvent.ShareBook -> {
-
-                }
-
-
+                ReadBookEvent.ShareBook -> {}
             }
         }
     }
 
     private fun showBottomSheet() {
-
     }
+
     private fun hideBottomSheet() {
-
     }
-
 }

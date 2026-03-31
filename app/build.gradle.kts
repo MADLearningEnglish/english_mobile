@@ -101,7 +101,4 @@ dependencies {
     // Glide
     implementation(libs.glide)
     kapt(libs.glide.compiler)
-    // Paging 3
-implementation(libs.androidx.paging.runtime)
-
 }

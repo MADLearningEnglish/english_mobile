@@ -1,22 +1,40 @@
 package com.mit.learning_english.presentation.feature.readbook
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.mit.learning_english.domain.model.Chapter
+import com.mit.learning_english.domain.model.Page
 import com.mit.learning_english.domain.usecase.book.GetBookDetailByIdUseCase
 import com.mit.learning_english.domain.usecase.page.GetPagesByBookUseCase
-import com.mit.learning_english.domain.usecase.page.GetPagesByChapterUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ReadBookViewModel @Inject constructor(
-    private val getPagesByChapterUseCase: GetPagesByChapterUseCase,
     private val getBookDetailByIdUseCase: GetBookDetailByIdUseCase,
     private val getPagesByBookUseCase: GetPagesByBookUseCase
 ) : BaseViewModel<ReadBookState, ReadBookEvent>(ReadBookState()) {
+
+    private data class PagingParams(val bookId: Int, val totalPages: Int)
+
+    private val pagingParams = MutableStateFlow<PagingParams?>(null)
+
+    val pagesFlow: Flow<PagingData<Page>> = pagingParams
+        .filterNotNull()
+        .flatMapLatest { params ->
+            getPagesByBookUseCase(params.bookId, params.totalPages)
+        }
+        .cachedIn(viewModelScope)
+
     fun loadInit(readBookArgs: ReadBookArgs) {
         viewModelScope.launch(exceptionHandler) {
             setLoading(true)
@@ -25,23 +43,24 @@ class ReadBookViewModel @Inject constructor(
             val readModeValue = readBookArgs.readModeValue
             val result = getBookDetailByIdUseCase(bookId)
             result.onSuccess { bookDetail ->
+                val totalPages = bookDetail.chapters.sumOf { it.totalPages }
                 setState {
                     copy(
                         book = bookDetail,
                         chapters = bookDetail.chapters,
-                        readMode = ReadMode.fromValue(readModeValue)
+                        readMode = ReadMode.fromValue(readModeValue),
+                        totalPages = totalPages
                     )
                 }
-                if (chapterId == null) {
-                    loadMorePages()
-                } else {
+                pagingParams.value = PagingParams(bookId, totalPages)
+
+                if (chapterId != null) {
                     goToChapter(chapterId)
                 }
             }.onError { e ->
                 emitError(e.message ?: "Failed to load book detail")
             }
             setLoading(false)
-            setState { copy(readMode = ReadMode.fromValue(readModeValue)) }
         }
     }
 
@@ -58,106 +77,36 @@ class ReadBookViewModel @Inject constructor(
                 break
             }
         }
-        val activeChapter = foundChapter
-        activeChapter?.let {
+        foundChapter?.let {
             setState { copy(activeChapterId = it.id) }
         }
     }
 
-    fun loadMorePages() {
-        val state = uiState.value
-        if (state.isLoadingMore) return
-        val book = state.book ?: return
-        setState { copy(isLoadingMore = true) }
-        val pagesNumbersNeedLoad = createPagesNumberNeedLoad()
-        Log.d("danh sach pageNumber load",pagesNumbersNeedLoad.toString())
-        if (pagesNumbersNeedLoad.isNotEmpty()) {
-            viewModelScope.launch(exceptionHandler) {
-                val result = getPagesByBookUseCase(book.id, pagesNumbersNeedLoad)
-                result.onSuccess { data ->
-                    val newPages = data.associateBy { it.number }
-                    setState {
-                        copy(
-                            isLoadingMore = false, pages = (pages + newPages).toSortedMap()
-                        )
-                    }
-                    Log.d("state hien tai",uiState.value.pages.keys.toString())
-                }.onError {
-                    setState { copy(isLoadingMore = false) }
-                }
-            }
-        } else {
-            setState { copy(isLoadingMore = false) }
-        }
-    }
-
-    fun createPagesNumberNeedLoad(pageNumber: Int? = null): List<Int> {
-        val state = uiState.value
-        val currentPageNumber = pageNumber ?: state.currentPageNumber
-        val lastPageNumber: Int = state.book?.chapters?.sumOf { it.totalPages } ?: 0
-        val pages = state.pages
-        val offsets = listOf(-1, 0, 1, 2, 3)
-        return offsets.map { offset -> currentPageNumber + offset }
-            .filter { it in 0 until lastPageNumber && !pages.containsKey(it) }
-    }
-
     fun onPageChanged(position: Int) {
-        val pageList = uiState.value.pages.values.toList()
-        pageList.getOrNull(position)?.let { page ->
-            setState { copy(currentPageNumber = page.number) }
-            updateActiveChapter(page.number)
-            loadMorePages()
-        }
+        setState { copy(currentPageNumber = position) }
+        updateActiveChapter(position)
     }
 
     fun goToChapter(chapterId: Int) {
-        val state = uiState.value
-        val chapters = state.chapters
+        val chapters = uiState.value.chapters
         if (chapters.isEmpty()) return
-        var firstNumberPagerChapter = 0
-        for (it in chapters.sortedBy { it.number }) {
-            if (chapterId == it.id) break
-            firstNumberPagerChapter += it.totalPages
-        }
-        Log.d("firstNumberPages",firstNumberPagerChapter.toString())
-        setState { copy(currentPageNumber = firstNumberPagerChapter, activeChapterId = chapterId) }
 
-        val book = state.book ?: return
-        val pagesNumbersNeedLoad = createPagesNumberNeedLoad(firstNumberPagerChapter)
-        Log.d("pagesNumbersNeedLoad2",pagesNumbersNeedLoad.toString())
-        if (pagesNumbersNeedLoad.isNotEmpty()) {
-            setState { copy(isLoadingMore = true) }
-            viewModelScope.launch(exceptionHandler) {
-                val result = getPagesByBookUseCase(book.id, pagesNumbersNeedLoad)
-                result.onSuccess { data ->
-                    val newPages = data.associateBy { it.number }
-                    setState {
-                        copy(
-                            isLoadingMore = false, pages = (pages + newPages).toSortedMap()
-                        )
-                    }
-                    val updatedState = uiState.value
-                    val position = updatedState.pages.values.toList()
-                        .indexOfFirst { it.number == firstNumberPagerChapter }
-                    if (position != -1) emitEvent(ReadBookEvent.GoToChapter(position))
-                    Log.d("pages",uiState.value.pages.keys.toString())
-                }.onError {
-                    setState { copy(isLoadingMore = false) }
-                }
-            }
-        } else {
-            val position =
-                state.pages.values.toList().indexOfFirst { it.number == firstNumberPagerChapter }
-            if (position != -1) emitEvent(ReadBookEvent.GoToChapter(position))
+        var firstPageOfChapter = 0
+        for (chapter in chapters.sortedBy { it.number }) {
+            if (chapterId == chapter.id) break
+            firstPageOfChapter += chapter.totalPages
         }
+
+        setState { copy(currentPageNumber = firstPageOfChapter, activeChapterId = chapterId) }
+        emitEvent(ReadBookEvent.GoToChapter(firstPageOfChapter))
     }
 
     fun setReadMode(readMode: Int) {
         setState { copy(readMode = ReadMode.fromValue(readMode)) }
     }
 
-    fun readModeClicked(){
+    fun readModeClicked() {
         val currentReadValue = uiState.value.readMode.value
-        setState { copy(readMode = ReadMode.fromValue(1-currentReadValue))}
+        setState { copy(readMode = ReadMode.fromValue(1 - currentReadValue)) }
     }
 }

@@ -1,6 +1,5 @@
 package com.mit.learning_english.di
 
-import com.mit.learning_english.data.mapper.ResultMapper
 import com.mit.learning_english.data.remote.api.PageApiService
 import com.mit.learning_english.data.repository.PageRepositoryImpl
 import com.mit.learning_english.domain.repository.PageRepository
@@ -24,9 +23,8 @@ object PageModule {
     @Provides
     @Singleton
     fun providePageRepository(
-        pageApiService: PageApiService,
-        resultMapper: ResultMapper
+        pageApiService: PageApiService
     ): PageRepository {
-        return PageRepositoryImpl(pageApiService, resultMapper)
+        return PageRepositoryImpl(pageApiService)
     }
 }
