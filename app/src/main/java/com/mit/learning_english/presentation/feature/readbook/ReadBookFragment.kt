@@ -26,6 +26,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
     val args: ReadBookFragmentArgs by navArgs()
     private lateinit var pageAdapter: ReadBookPageAdapter
     private lateinit var chapterAdapter: ChapterAdapter
+    private var pendingScrollPosition: Int? = null
 
     override fun verifyBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -36,8 +37,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
     override fun setupView() {
         pageAdapter = ReadBookPageAdapter()
         binding.viewPager.adapter = pageAdapter
-        binding.viewPager.offscreenPageLimit = 3
-
+        binding.viewPager.offscreenPageLimit=2
         chapterAdapter = ChapterAdapter { chapter ->
             binding.drawLayout.closeDrawers()
             viewModel.goToChapter(chapter.id)
@@ -53,6 +53,13 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
                 viewModel.onPageChanged(position)
             }
         })
+
+        pageAdapter.addOnPagesUpdatedListener {
+            pendingScrollPosition?.let { pos ->
+                binding.viewPager.setCurrentItem(pos, false)
+                pendingScrollPosition = null
+            }
+        }
     }
 
     override fun bindView() {
@@ -83,8 +90,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 pageAdapter.loadStateFlow.collectLatest { loadStates ->
-                    val errorState = loadStates.refresh as? LoadState.Error
-                        ?: loadStates.append as? LoadState.Error
+                    val errorState = loadStates.refresh as? LoadState.Error ?: loadStates.append as? LoadState.Error
                         ?: loadStates.prepend as? LoadState.Error
                     errorState?.let {
                         Toast.makeText(
@@ -123,9 +129,11 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         collectEvent(viewModel.event) { event ->
             when (event) {
                 is ReadBookEvent.GoToChapter -> {
-                    binding.viewPager.setCurrentItem(event.index, false)
+                    pendingScrollPosition = event.index
+                    if (pageAdapter.itemCount > event.index) {
+                        binding.viewPager.setCurrentItem(event.index, false)
+                    }
                 }
-
                 ReadBookEvent.ShareBook -> {}
             }
         }

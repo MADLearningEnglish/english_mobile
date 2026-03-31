@@ -1,5 +1,6 @@
 package com.mit.learning_english.data.paging
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.mit.learning_english.data.mapper.toPage
@@ -15,11 +16,14 @@ class PagePagingSource(
     override val jumpingSupported = true
 
     override fun getRefreshKey(state: PagingState<Int, Page>): Int? {
-        return state.anchorPosition
+
+        return state.anchorPosition?.let { position ->
+            (position / state.config.pageSize)*state.config.pageSize
+        }
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Page> {
-        val start = params.key ?: 0
+       val start = if ((params.key ?: -1) >= 0) params.key!! else 0
         val loadSize = params.loadSize
         val end = minOf(start + loadSize, totalPages)
 
@@ -38,9 +42,10 @@ class PagePagingSource(
             val body = response.body()
             if (response.isSuccessful && body?.data != null) {
                 val pages = body.data.map { it.toPage() }.sortedBy { it.number }
+                Log.d("PagePagingSource",pages.toString())
                 LoadResult.Page(
                     data = pages,
-                    prevKey = if (start > 0) start - loadSize else null,
+                    prevKey = if (start > 0) maxOf(start - loadSize, 0) else null,
                     nextKey = if (end < totalPages) end else null,
                     itemsBefore = start,
                     itemsAfter = maxOf(totalPages - end, 0)

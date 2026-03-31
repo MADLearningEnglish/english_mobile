@@ -40,5 +40,7 @@
     <string name="search">Search</string>
     <string name="minutes_format">%1$d Minutes</string>
     <string name="total_page_format">%1$d Pages</string>
+    <string name="hh_mm_format">%1$02d:%2$02d</string>
     <string name="about_this_book">About this book</string>
+    <string name="failed_to_load_book_detail">Failed to load book detail</string>
 </resources>

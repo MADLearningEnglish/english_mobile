@@ -8,6 +8,7 @@ import com.mit.learning_english.domain.model.Page
 import com.mit.learning_english.domain.usecase.book.GetBookDetailByIdUseCase
 import com.mit.learning_english.domain.usecase.page.GetPagesByBookUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.Constant
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -24,14 +25,14 @@ class ReadBookViewModel @Inject constructor(
     private val getPagesByBookUseCase: GetPagesByBookUseCase
 ) : BaseViewModel<ReadBookState, ReadBookEvent>(ReadBookState()) {
 
-    private data class PagingParams(val bookId: Int, val totalPages: Int)
+    private data class PagingParams(val bookId: Int, val totalPages: Int, val initialKey: Int)
 
     private val pagingParams = MutableStateFlow<PagingParams?>(null)
 
     val pagesFlow: Flow<PagingData<Page>> = pagingParams
         .filterNotNull()
         .flatMapLatest { params ->
-            getPagesByBookUseCase(params.bookId, params.totalPages)
+            getPagesByBookUseCase(params.bookId, params.totalPages, params.initialKey)
         }
         .cachedIn(viewModelScope)
 
@@ -44,21 +45,28 @@ class ReadBookViewModel @Inject constructor(
             val result = getBookDetailByIdUseCase(bookId)
             result.onSuccess { bookDetail ->
                 val totalPages = bookDetail.chapters.sumOf { it.totalPages }
+                val sortedChapters = bookDetail.chapters.sortedBy { it.number }
+                val resolvedChapterId = chapterId ?: sortedChapters.firstOrNull()?.id
                 setState {
                     copy(
                         book = bookDetail,
-                        chapters = bookDetail.chapters,
+                        chapters = sortedChapters,
                         readMode = ReadMode.fromValue(readModeValue),
                         totalPages = totalPages
                     )
                 }
-                pagingParams.value = PagingParams(bookId, totalPages)
 
-                if (chapterId != null) {
-                    goToChapter(chapterId)
+                val firstPage = if (chapterId != null) {
+                    calculateFirstPage(chapterId, sortedChapters)
+                } else {
+                    0
                 }
+                val initialKey = (firstPage / Constant.PAGE_SIZE_PAGE) * Constant.PAGE_SIZE_PAGE
+                setState { copy(currentPageNumber = firstPage, activeChapterId = resolvedChapterId) }
+                emitEvent(ReadBookEvent.GoToChapter(firstPage))
+                pagingParams.value = PagingParams(bookId, totalPages, initialKey)
             }.onError { e ->
-                emitError(e.message ?: "Failed to load book detail")
+                emitError(e.message)
             }
             setLoading(false)
         }
@@ -70,7 +78,7 @@ class ReadBookViewModel @Inject constructor(
         var accumulatedPages = 0
         var foundChapter: Chapter? = null
 
-        for (chapter in chapters.sortedBy { it.number }) {
+        for (chapter in chapters) {
             accumulatedPages += chapter.totalPages
             if (pageNumber < accumulatedPages) {
                 foundChapter = chapter
@@ -88,17 +96,27 @@ class ReadBookViewModel @Inject constructor(
     }
 
     fun goToChapter(chapterId: Int) {
-        val chapters = uiState.value.chapters
+        val state = uiState.value
+        val chapters = state.chapters
         if (chapters.isEmpty()) return
+        val bookId = state.book?.id ?: return
+        val totalPages = state.totalPages
 
-        var firstPageOfChapter = 0
-        for (chapter in chapters.sortedBy { it.number }) {
-            if (chapterId == chapter.id) break
-            firstPageOfChapter += chapter.totalPages
-        }
+        val firstPageOfChapter = calculateFirstPage(chapterId, chapters)
+        val initialKey = (firstPageOfChapter / Constant.PAGE_SIZE_PAGE) * Constant.PAGE_SIZE_PAGE
 
         setState { copy(currentPageNumber = firstPageOfChapter, activeChapterId = chapterId) }
         emitEvent(ReadBookEvent.GoToChapter(firstPageOfChapter))
+        pagingParams.value = PagingParams(bookId, totalPages, initialKey)
+    }
+
+    private fun calculateFirstPage(chapterId: Int, sortedChapters: List<Chapter>): Int {
+        var firstPage = 0
+        for (chapter in sortedChapters) {
+            if (chapter.id == chapterId) break
+            firstPage += chapter.totalPages
+        }
+        return firstPage
     }
 
     fun setReadMode(readMode: Int) {
