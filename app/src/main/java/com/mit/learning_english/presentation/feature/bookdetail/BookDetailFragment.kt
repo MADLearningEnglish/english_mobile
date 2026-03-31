@@ -3,11 +3,14 @@ package com.mit.learning_english.presentation.feature.bookdetail
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
+import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentBookDetailBinding
 import com.mit.learning_english.presentation.base.BaseFragment
+import com.mit.learning_english.presentation.extensions.loadImage
+import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,11 +29,12 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
 
     override fun setupView() {
         chapterAdapter = ChapterAdapter { chapter ->
-            // Handle chapter click if needed
+            viewModel.navigateToReadBook(readMode = 0, chapterId = chapter.id)
         }
         binding.rvChapter.apply {
             adapter = chapterAdapter
             layoutManager = LinearLayoutManager(requireContext())
+            addItemDecoration(VerticalSpacingItemDecoration(12))
         }
     }
 
@@ -44,24 +48,33 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
             btnListenBook.setOnClickListener {
                 viewModel.navigateToReadBook(1)
             }
+            btnBack.setOnClickListener {
+                findNavController().navigateUp()
+            }
         }
     }
 
     override fun observeViewModel() {
         super.observeViewModel()
-        collectState(viewModel.uiState) { state ->
-            state.book?.let { book ->
+        collectStateProperty(viewModel.uiState, { it.book }) { book ->
+            book?.let {
                 binding.apply {
-                    tvBookTitle.text = book.title
-                    tvBookAuthor.text = book.authorsName
-                    // For tvBlurb, using title as fallback, should be actual description
-                    tvBlurb.text = book.title 
-
-                    Glide.with(requireContext())
-                        .load(book.coverUrl)
-                        .into(ivBookCover)
-
-                    chapterAdapter.submitList(book.chapters)
+                    tvBookTitle.text = it.title
+                    tvBookAuthor.text = it.authorsName
+                    pbProgress.progress = it.progressPercent.toInt()
+                    tvBlurb.text = it.title
+                    ivBookCover.loadImage(it.coverUrl)
+                    chapterAdapter.submitList(it.chapters)
+                    tvReadTime.text = getString(R.string.minutes_format, it.chapters.sumOf { chapter -> chapter.totalDuration })
+                    tvTotalPages.text = getString(R.string.total_page_format, it.chapters.sumOf { chapter -> chapter.totalPages })
+                }
+            }
+        }
+        collectEvent(viewModel.event){event->
+            when(event){
+                is BookDetailEvent.NavigateToReadBook ->{
+                    val action = BookDetailFragmentDirections.actionBookDetailFragmentToReadBookFragment(event.readBookArgs)
+                    findNavController().navigate(action)
                 }
             }
         }

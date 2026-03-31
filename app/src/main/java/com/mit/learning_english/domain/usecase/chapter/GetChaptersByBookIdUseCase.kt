@@ -1,4 +1,4 @@
-package com.mit.learning_english.domain.usecase
+package com.mit.learning_english.domain.usecase.chapter
 
 import com.mit.learning_english.domain.model.Chapter
 import com.mit.learning_english.domain.repository.BookRepository

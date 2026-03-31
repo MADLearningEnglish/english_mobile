@@ -1,7 +1,7 @@
 package com.mit.learning_english.presentation.feature.login
 
 import androidx.lifecycle.viewModelScope
-import com.mit.learning_english.domain.usecase.LoginUseCase
+import com.mit.learning_english.domain.usecase.auth.LoginUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

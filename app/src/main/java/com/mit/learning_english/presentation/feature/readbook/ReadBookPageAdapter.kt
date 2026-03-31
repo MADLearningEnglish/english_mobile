@@ -2,14 +2,15 @@ package com.mit.learning_english.presentation.feature.readbook
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mit.learning_english.databinding.ItemReadBookPageBinding
 import com.mit.learning_english.domain.model.Page
+import java.io.File.separator
 
 class ReadBookPageAdapter :
-    ListAdapter<Page, ReadBookPageAdapter.PageViewHolder>(PageDiffCallback()) {
+    PagingDataAdapter<Page, ReadBookPageAdapter.PageViewHolder>(PageDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageViewHolder {
         val binding = ItemReadBookPageBinding.inflate(
@@ -26,8 +27,13 @@ class ReadBookPageAdapter :
         private val binding: ItemReadBookPageBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(page: Page) {
-            binding.tvPageContent.text = "Page ${page.number}"
+        fun bind(page: Page?) {
+            if (page != null) {
+                val content = "${page.number} ${page.sentences.joinToString(" ") { it.content }}"
+                binding.tvPageContent.text = content
+            } else {
+                binding.tvPageContent.text = ""
+            }
         }
     }
 

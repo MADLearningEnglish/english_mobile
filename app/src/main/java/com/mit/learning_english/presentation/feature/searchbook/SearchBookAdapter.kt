@@ -12,7 +12,6 @@ import com.mit.learning_english.presentation.extensions.loadImage
 class SearchBookAdapter(
     private val onItemClick: (Book) -> Unit
 ) : PagingDataAdapter<Book, SearchBookAdapter.SearchBookViewHolder>(SearchBookComparator) {
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchBookViewHolder {
         val binding = ItemSearchBookBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
@@ -34,7 +33,7 @@ class SearchBookAdapter(
             binding.apply {
                 tvBookTitle.text = item.title
                 tvBookAuthor.text = item.authorsName
-                tvBookLanguage.text = item.language
+                tvGenre.text = item.language
                 ivBookCover.loadImage(item.coverUrl)
                 root.setOnClickListener { onItemClick(item) }
             }

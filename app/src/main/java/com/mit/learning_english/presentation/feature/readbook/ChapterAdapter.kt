@@ -16,7 +16,11 @@ class ChapterAdapter(
     private val onChapterClick: (Chapter) -> Unit
 ) : ListAdapter<Chapter, ChapterAdapter.ChapterViewHolder>(ChapterDiffCallback()) {
 
-    private var activeChapterId: Int = -1
+ private var activeChapterId: Int = -1
+
+    fun getActiveChapterId():Int{
+        return activeChapterId
+    }
 
     fun setActiveChapterId(chapterId: Int) {
         if (activeChapterId != chapterId) {
@@ -31,6 +35,7 @@ class ChapterAdapter(
             if (newActiveIndex != -1) notifyItemChanged(newActiveIndex)
         }
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChapterViewHolder {
         val binding = ItemChapterReadBookBinding.inflate(

@@ -1,4 +1,4 @@
-package com.mit.learning_english.domain.usecase
+package com.mit.learning_english.domain.usecase.genre
 
 import com.mit.learning_english.domain.model.Genre
 import com.mit.learning_english.domain.repository.GenreRepository
@@ -12,4 +12,3 @@ class GetGenresUseCase @Inject constructor(
         return genreRepository.getGenres()
     }
 }
-

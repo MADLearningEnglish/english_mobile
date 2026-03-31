@@ -6,6 +6,5 @@ data class Book(
     val language: String,
     val coverUrl: String,
     val genresName: String,
-   // @ParameterName("authors")
     val authorsName: String,
 )

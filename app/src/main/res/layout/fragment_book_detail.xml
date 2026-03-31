@@ -4,7 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".presentation.feature.bookdetail.BookDetailFragment">
+
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:padding="2dp"
+        android:src="@drawable/ic_back"
+        app:tint="@color/body_primary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
@@ -82,48 +93,50 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/btnBack">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:padding="16dp">
+            android:layout_height="wrap_content">
 
-
-            <ImageView
-                android:id="@+id/btnBack"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@drawable/ic_back"
-                android:backgroundTint="@color/body_primary"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/ivBookCover"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardCoverBook"
                 android:layout_width="0dp"
-                android:layout_height="400dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/border_16"
+                android:layout_marginEnd="32dp"
+                android:elevation="8dp"
+                android:outlineSpotShadowColor="@color/primary"
+                app:cardCornerRadius="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnBack" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/ivBookCover"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter" />
+            </androidx.cardview.widget.CardView>
 
             <ProgressBar
                 android:id="@+id/pbProgress"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="4dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:max="100"
-                android:progress="80"
+                android:progress="0"
                 android:progressDrawable="@drawable/progress_bg"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ivBookCover" />
+                app:layout_constraintEnd_toEndOf="@id/cardCoverBook"
+                app:layout_constraintStart_toStartOf="@id/cardCoverBook"
+                app:layout_constraintTop_toBottomOf="@+id/cardCoverBook" />
 
             <TextView
                 android:id="@+id/tvBookTitle"
@@ -133,10 +146,9 @@
                 android:layout_marginTop="16dp"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:text="Phát triển thói quen người dùng"
                 android:textColor="@color/body_primary"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ivBookCover" />
+                app:layout_constraintTop_toBottomOf="@+id/cardCoverBook" />
 
             <TextView
                 android:id="@+id/tvBookAuthor"
@@ -146,7 +158,6 @@
                 android:layout_marginTop="8dp"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:text="Phuc Thai Van"
                 android:textColor="@color/body_primary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvBookTitle" />
@@ -186,7 +197,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="16 minutes"
+                android:text="@string/minutes_format"
                 android:textColor="@color/body_primary"
                 app:layout_constraintBottom_toBottomOf="@id/icClock"
                 app:layout_constraintStart_toEndOf="@+id/icClock"
@@ -203,10 +214,11 @@
                 app:layout_constraintTop_toBottomOf="@+id/divide1" />
 
             <TextView
+                android:id="@+id/tvTotalPages"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="116 pages"
+                android:text="@string/total_page_format"
                 app:layout_constraintBottom_toBottomOf="@id/icPage"
                 app:layout_constraintStart_toEndOf="@+id/icPage"
                 app:layout_constraintTop_toTopOf="@+id/icPage" />
@@ -217,7 +229,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="About this book"
+                android:text="@string/about_this_book"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/icClock" />
 
@@ -226,10 +238,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Between life and death there is a library, and within
-that library, the shelves go on forever. Every book
-provides a chance to try another life you could have
-lived."
+
                 android:textColor="@color/body_primary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -250,7 +259,7 @@ lived."
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="64dp"
+                android:layout_marginBottom="68dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

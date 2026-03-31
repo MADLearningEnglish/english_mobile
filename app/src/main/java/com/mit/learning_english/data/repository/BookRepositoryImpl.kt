@@ -7,7 +7,6 @@ import androidx.paging.PagingData
 import com.mit.learning_english.data.mapper.ResultMapper
 import com.mit.learning_english.data.mapper.toBook
 import com.mit.learning_english.data.mapper.toBookDetail
-import com.mit.learning_english.data.mapper.toPage
 import com.mit.learning_english.data.paging.BookByGenresPagingSource
 import com.mit.learning_english.data.paging.BookHistoryPagingSource
 import com.mit.learning_english.data.paging.SearchBookPagingSource
@@ -15,7 +14,6 @@ import com.mit.learning_english.data.remote.api.BookApiService
 import com.mit.learning_english.domain.model.Book
 import com.mit.learning_english.domain.model.BookDetail
 import com.mit.learning_english.domain.model.BookReponse
-import com.mit.learning_english.domain.model.Page
 import com.mit.learning_english.domain.repository.BookRepository
 import com.mit.learning_english.domain.util.Result
 import kotlinx.coroutines.Dispatchers
@@ -65,6 +63,7 @@ class BookRepositoryImpl @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val response = bookApi.getBookDetailById(bookId)
+                Log.d("BookRepositoryImpl", response.body().toString())
                 resultMapper.fromBaseResponse(response).map { it.toBookDetail() }
             } catch (e: Exception) {
                 resultMapper.fromException(e)
@@ -83,19 +82,6 @@ class BookRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getPagesByChapter(
-        chapterId: Int, pageNumbers: List<Int>
-    ): Result<List<Page>> {
-        return withContext(Dispatchers.IO) {
-            try {
-                val response = bookApi.getPagesReadBook(chapterId, pageNumbers)
-                resultMapper.fromBaseResponse(response).map { list -> list.map { it.toPage() } }
-            } catch (e: Exception) {
-                resultMapper.fromException(e)
-            }
-        }
-    }
-
     override fun searchBooks(keyword: String): Flow<PagingData<Book>> {
         return Pager(
             config = PagingConfig(
@@ -103,8 +89,6 @@ class BookRepositoryImpl @Inject constructor(
                 prefetchDistance = 5,
                 enablePlaceholders = false,
                 initialLoadSize = SearchBookPagingSource.PAGE_SIZE
-            ),
-            pagingSourceFactory = { SearchBookPagingSource(bookApi, keyword) }
-        ).flow
+            ), pagingSourceFactory = { SearchBookPagingSource(bookApi, keyword) }).flow
     }
 }

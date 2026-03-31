@@ -56,7 +56,7 @@
             android:maxLines="1" />
 
         <TextView
-            android:id="@+id/tvBookLanguage"
+            android:id="@+id/tvGenre"
             style="@style/BodyExtraSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

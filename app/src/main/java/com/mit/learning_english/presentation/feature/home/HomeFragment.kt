@@ -60,7 +60,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             adapter = recentBooksAdapter
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            addItemDecoration(VerticalSpacingItemDecoration(8))
+            addItemDecoration(VerticalSpacingItemDecoration(12))
         }
     }
 
@@ -93,8 +93,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun observeViewModel() {
         super.observeViewModel()
-        collectState(viewModel.uiState) { state ->
-            if (state.isRecommendBooksLoading) {
+        collectStateProperty(
+            viewModel.uiState,
+            { Pair(it.isRecommendBooksLoading, it.recommendBooks) }
+        ) { (isLoading, books) ->
+            if (isLoading) {
                 binding.shimmerRecommendBook.startShimmer()
                 binding.shimmerRecommendBook.visibility = View.VISIBLE
                 binding.rvRecommendBook.visibility = View.INVISIBLE
@@ -102,9 +105,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 binding.shimmerRecommendBook.stopShimmer()
                 binding.shimmerRecommendBook.visibility = View.INVISIBLE
                 binding.rvRecommendBook.visibility = View.VISIBLE
-                recommendAdapter.submitList(state.recommendBooks)
+                recommendAdapter.submitList(books)
             }
-            if (state.isGenresLoading) {
+        }
+
+        collectStateProperty(
+            viewModel.uiState,
+            { Pair(it.isGenresLoading, it.genres) }
+        ) { (isLoading, genres) ->
+            if (isLoading) {
                 binding.shimmerGenres.startShimmer()
                 binding.shimmerGenres.visibility = View.VISIBLE
                 binding.rvGenres.visibility = View.INVISIBLE
@@ -112,7 +121,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 binding.shimmerGenres.stopShimmer()
                 binding.shimmerGenres.visibility = View.INVISIBLE
                 binding.rvGenres.visibility = View.VISIBLE
-                genreAdapter.submitList(state.genres)
+                genreAdapter.submitList(genres)
             }
         }
 

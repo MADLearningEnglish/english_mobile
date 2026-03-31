@@ -12,7 +12,7 @@ fun PageResponse.toPage(): Page {
         id = id,
         number = number,
         audio = audio.toAudio(),
-        sentence = sentence.map { it.toSentence() }
+        sentences = sentence.map { it.toSentence() }
     )
 }
 

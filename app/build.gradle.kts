@@ -36,8 +36,14 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+
+            freeCompilerArgs.add(
+                "-XXLanguage:+PropertyParamAnnotationDefaultTargetMode"
+            )
+        }
     }
     buildFeatures {
         dataBinding = true
@@ -95,7 +101,4 @@ dependencies {
     // Glide
     implementation(libs.glide)
     kapt(libs.glide.compiler)
-    // Paging 3
-implementation(libs.androidx.paging.runtime)
-
 }

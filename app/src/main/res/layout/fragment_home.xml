@@ -252,16 +252,16 @@
                 </LinearLayout>
             </com.facebook.shimmer.ShimmerFrameLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
+            <com.mit.learning_english.presentation.view.MaxItemRecyclerView
                 android:id="@+id/rvRecentlyRead"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:maxHeight="240dp"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvRecentlyRead" />
+                app:layout_constraintTop_toBottomOf="@+id/tvRecentlyRead"
+                app:maxVisibleItems="3" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

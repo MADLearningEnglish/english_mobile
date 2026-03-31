@@ -1,7 +1,7 @@
 package com.mit.learning_english.presentation.feature.bookdetail
 
 import androidx.lifecycle.viewModelScope
-import com.mit.learning_english.domain.usecase.GetBookDetailByIdUseCase
+import com.mit.learning_english.domain.usecase.book.GetBookDetailByIdUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
 import com.mit.learning_english.presentation.feature.readbook.ReadBookArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,9 +31,7 @@ class BookDetailViewModel @Inject constructor(
             emitEvent(
                 BookDetailEvent.NavigateToReadBook(
                     ReadBookArgs(
-                        bookId = state.book.id,
-                        chapterId = chapterId,
-                        readModeValue = readMode
+                        bookId = state.book.id, chapterId = chapterId, readModeValue = readMode
                     )
                 )
             )

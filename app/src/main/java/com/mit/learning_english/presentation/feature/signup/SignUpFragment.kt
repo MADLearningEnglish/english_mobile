@@ -49,9 +49,9 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
         collectState(viewModel.isLoading) { loading ->
             binding.overlayLoading.isVisible = loading
         }
-        collectState(viewModel.uiState) { state ->
-            if (state.serverError != null) {
-                binding.tvServerError.text = state.serverError
+        collectStateProperty(viewModel.uiState, { it.serverError }) { serverError ->
+            if (serverError != null) {
+                binding.tvServerError.text = serverError
                 binding.tvServerError.isVisible = true
             } else {
                 binding.tvServerError.isVisible = false

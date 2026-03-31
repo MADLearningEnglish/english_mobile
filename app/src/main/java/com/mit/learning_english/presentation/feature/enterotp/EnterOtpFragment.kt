@@ -48,9 +48,8 @@ class EnterOtpFragment : BaseFragment<FragmentEnterOtpBinding, EnterOtpViewModel
             }
         }
 
-        // Collect UI state using helper from BaseFragment
-        collectState(viewModel.uiState) { state ->
-            binding.tvOtpError.text = state.serverError ?: ""
+        collectStateProperty(viewModel.uiState, { it.serverError }) { serverError ->
+            binding.tvOtpError.text = serverError ?: ""
         }
     }
 }
