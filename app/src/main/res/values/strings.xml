@@ -28,7 +28,7 @@
     <string name="chapter">Chapter</string>
     <string name="read">Read</string>
     <string name="listen">Listen</string>
-    <string name="speed_format">Speed: %1$s</string>
+    <string name="speed_format">Speed: %1$.1fx</string>
     <string name="enter_otp">Enter OTP</string>
     <string name="submit">Submit</string>
     <string name="forgot_password">Forgot Password</string>
@@ -45,4 +45,12 @@
     <string name="failed_to_load_book_detail">Failed to load book detail</string>
     <string name="page_format">Page %1$d</string>
     <string name="audio_playback_channel">Audio Playback</string>
+    <string name="lookup_dialog_title">Translation</string>
+    <string name="lookup_play_audio">Pronunciation</string>
+    <string name="retry">Retry</string>
+    <string name="lookup_phonetic_format">Transcription: %1$s</string>
+    <string name="lookup_meaning_format">Meaning: %1$s</string>
+    <string name="lookup_examples_format">Ex:\n%1$s</string>
+    <string name="lookup_error_default">Cannot look up the meaning. Please try again.</string>
+
 </resources>

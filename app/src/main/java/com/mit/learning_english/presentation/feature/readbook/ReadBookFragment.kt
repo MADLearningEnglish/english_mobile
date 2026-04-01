@@ -1,12 +1,15 @@
 package com.mit.learning_english.presentation.feature.readbook
 
 import android.content.ComponentName
+import android.media.MediaPlayer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -27,6 +30,7 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentReadBookBinding
+import com.mit.learning_english.databinding.DialogReadBookLookupBinding
 import com.mit.learning_english.presentation.base.BaseFragment
 import com.mit.learning_english.presentation.service.AudioPlaybackService
 import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
@@ -50,6 +54,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     private var progressJob: Job? = null
     private var isSeeking = false
+    private var lookupDialog: AlertDialog? = null
+    private var lookupDialogBinding: DialogReadBookLookupBinding? = null
+    private var lookupMediaPlayer: MediaPlayer? = null
 
     private val speeds = floatArrayOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f)
     private var currentSpeedIndex = 2
@@ -61,7 +68,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
     }
 
     override fun setupView() {
-        pageAdapter = ReadBookPageAdapter()
+        pageAdapter = ReadBookPageAdapter { selectedText ->
+            viewModel.onTextSelected(selectedText)
+        }
         binding.viewPager.adapter = pageAdapter
         binding.viewPager.offscreenPageLimit = 2
         chapterAdapter = ChapterAdapter { chapter ->
@@ -77,6 +86,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 viewModel.onPageChanged(position)
+                // peek
                 val page = pageAdapter.peek(position)
                 viewModel.onPageAudioAvailable(page?.audio)
             }
@@ -140,7 +150,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
             currentSpeedIndex = (currentSpeedIndex + 1) % speeds.size
             val speed = speeds[currentSpeedIndex]
             mediaController?.playbackParameters = PlaybackParameters(speed)
-            binding.bottomSheet.tvSpeed.text = "${speed}x"
+            binding.bottomSheet.tvSpeed.text = getString(R.string.speed_format,speed)
             viewModel.updatePlaybackSpeed(speed)
         }
 
@@ -238,6 +248,13 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
             binding.bottomSheet.tvNumberPageBS.text = getString(R.string.page_format,pageNumber)
         }
 
+        collectStateProperty(
+            viewModel.uiState,
+            { LookupDialogState(it.lookupStatus, it.lookupQuery, it.lookupResult, it.lookupError) }
+        ) { state ->
+            renderLookupDialogState(state)
+        }
+
         collectEvent(viewModel.event) { event ->
             when (event) {
                 is ReadBookEvent.GoToChapter -> {
@@ -263,6 +280,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         progressJob?.cancel()
         controllerFuture?.let { MediaController.releaseFuture(it) }
         mediaController = null
+        stopLookupAudio()
     }
 
     private fun initializeMediaController() {
@@ -382,4 +400,105 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         val seconds = totalSeconds % 60
         return "%02d:%02d".format(minutes, seconds)
     }
+
+    private fun renderLookupDialogState(state: LookupDialogState) {
+        if (state.status == LookupStatus.Idle) {
+            lookupDialog?.dismiss()
+            lookupDialog = null
+            lookupDialogBinding = null
+            stopLookupAudio()
+            return
+        }
+
+        ensureLookupDialog()
+        val dialogBinding = lookupDialogBinding ?: return
+        if (lookupDialog?.isShowing != true) {
+            lookupDialog?.show()
+        }
+        dialogBinding.tvSelectedText.text = state.query
+        dialogBinding.progressLookup.isVisible = state.status == LookupStatus.Loading
+        dialogBinding.layoutLookupContent.isVisible = state.status == LookupStatus.Success
+        dialogBinding.layoutLookupError.isVisible = state.status == LookupStatus.Error
+
+        val result = state.result
+        if (state.status == LookupStatus.Success && result != null) {
+            dialogBinding.tvPhonetic.text = getString(
+                R.string.lookup_phonetic_format,
+                result.phonetic ?: "-"
+            )
+            dialogBinding.tvMeaning.text = getString(R.string.lookup_meaning_format, result.meaning)
+            val examplesText = result.examples.joinToString("\n") { "- $it" }
+            dialogBinding.tvExamples.text = getString(
+                R.string.lookup_examples_format,
+                examplesText.ifBlank { "-" }
+            )
+            dialogBinding.btnPlayAudio.isEnabled = !result.audioUrl.isNullOrBlank()
+            dialogBinding.btnPlayAudio.setOnClickListener {
+                result.audioUrl?.let { url -> playLookupAudio(url) }
+            }
+        }
+
+        if (state.status == LookupStatus.Error) {
+            dialogBinding.tvLookupError.text = state.error ?: getString(R.string.lookup_error_default)
+        }
+    }
+
+    private fun ensureLookupDialog() {
+        if (lookupDialog != null && lookupDialogBinding != null) return
+        val dialogBinding = DialogReadBookLookupBinding.inflate(layoutInflater)
+        lookupDialogBinding = dialogBinding
+        dialogBinding.btnRetryLookup.setOnClickListener {
+            viewModel.retryLookup()
+        }
+        lookupDialog = AlertDialog.Builder(requireContext())
+            .setView(dialogBinding.root)
+            .setOnDismissListener {
+                viewModel.dismissLookupDialog()
+            }
+            .create()
+    }
+
+    private fun playLookupAudio(url: String) {
+        stopLookupAudio()
+        lookupMediaPlayer = MediaPlayer().apply {
+            try {
+                setDataSource(url)
+                setOnPreparedListener { it.start() }
+                setOnCompletionListener { stopLookupAudio() }
+                setOnErrorListener { _, _, _ ->
+                    stopLookupAudio()
+                    true
+                }
+                prepareAsync()
+            } catch (_: Exception) {
+                stopLookupAudio()
+            }
+        }
+    }
+
+    private fun stopLookupAudio() {
+        lookupMediaPlayer?.let { player ->
+            try {
+                if (player.isPlaying) player.stop()
+            } catch (_: Exception) {
+            }
+            player.release()
+        }
+        lookupMediaPlayer = null
+    }
+
+    override fun onDestroyView() {
+        lookupDialog?.dismiss()
+        lookupDialog = null
+        lookupDialogBinding = null
+        stopLookupAudio()
+        super.onDestroyView()
+    }
+
+    private data class LookupDialogState(
+        val status: LookupStatus,
+        val query: String,
+        val result: com.mit.learning_english.domain.model.TextLookupResult?,
+        val error: String?
+    )
 }

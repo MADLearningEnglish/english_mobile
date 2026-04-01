@@ -131,4 +131,12 @@
         <item name="android:letterSpacing">-0.02</item>
     </style>
 
+    <style name="BodyPage">
+        <item name="fontFamily">@font/noto_serif_regular</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:lineHeight">20sp</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+
 </resources>

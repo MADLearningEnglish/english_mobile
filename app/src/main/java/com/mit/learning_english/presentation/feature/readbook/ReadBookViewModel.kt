@@ -8,6 +8,7 @@ import com.mit.learning_english.domain.model.Chapter
 import com.mit.learning_english.domain.model.Page
 import com.mit.learning_english.domain.usecase.book.GetBookDetailByIdUseCase
 import com.mit.learning_english.domain.usecase.page.GetPagesByBookUseCase
+import com.mit.learning_english.domain.usecase.page.LookupTextUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
 import com.mit.learning_english.shared.Constant
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ReadBookViewModel @Inject constructor(
     private val getBookDetailByIdUseCase: GetBookDetailByIdUseCase,
-    private val getPagesByBookUseCase: GetPagesByBookUseCase
+    private val getPagesByBookUseCase: GetPagesByBookUseCase,
+    private val lookupTextUseCase: LookupTextUseCase
 ) : BaseViewModel<ReadBookState, ReadBookEvent>(ReadBookState()) {
 
     private data class PagingParams(val bookId: Int, val totalPages: Int, val initialKey: Int)
@@ -152,5 +154,66 @@ class ReadBookViewModel @Inject constructor(
                 emitEvent(ReadBookEvent.PlayAudio(url))
             }
         }
+    }
+
+    fun onTextSelected(selectedText: String) {
+        val normalizedText = normalizeSelectedText(selectedText)
+        if (normalizedText.isBlank()) return
+        lookupText(normalizedText)
+    }
+
+    fun retryLookup() {
+        val query = uiState.value.lookupQuery
+        if (query.isNotBlank()) {
+            lookupText(query)
+        }
+    }
+
+    fun dismissLookupDialog() {
+        setState {
+            copy(
+                lookupStatus = LookupStatus.Idle,
+                lookupResult = null,
+                lookupError = null
+            )
+        }
+    }
+
+    private fun lookupText(text: String) {
+        viewModelScope.launch(exceptionHandler) {
+            setState {
+                copy(
+                    lookupStatus = LookupStatus.Loading,
+                    lookupQuery = text,
+                    lookupResult = null,
+                    lookupError = null
+                )
+            }
+
+            val result = lookupTextUseCase(text)
+            result.onSuccess { data ->
+                setState {
+                    copy(
+                        lookupStatus = LookupStatus.Success,
+                        lookupResult = data,
+                        lookupError = null
+                    )
+                }
+            }.onError { error ->
+                setState {
+                    copy(
+                        lookupStatus = LookupStatus.Error,
+                        lookupResult = null,
+                        lookupError = error.message
+                    )
+                }
+            }
+        }
+    }
+
+    private fun normalizeSelectedText(rawText: String): String {
+        return rawText.trim()
+            .replace("\\s+".toRegex(), " ")
+            .trim('\"', '\'', ',', '.', ';', ':', '!', '?', '(', ')', '[', ']', '{', '}')
     }
 }
