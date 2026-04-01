@@ -95,6 +95,10 @@ dependencies {
     // Paging 3
     implementation(libs.androidx.paging.runtime)
 
+    // Media3 (ExoPlayer + MediaSession)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.session)
+
     // Lottie
     implementation(libs.lottie)
 

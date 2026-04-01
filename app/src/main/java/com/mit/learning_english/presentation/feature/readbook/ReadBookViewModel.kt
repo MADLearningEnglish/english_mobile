@@ -3,11 +3,14 @@ package com.mit.learning_english.presentation.feature.readbook
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.mit.learning_english.domain.model.Audio
 import com.mit.learning_english.domain.model.Chapter
 import com.mit.learning_english.domain.model.Page
 import com.mit.learning_english.domain.usecase.book.GetBookDetailByIdUseCase
 import com.mit.learning_english.domain.usecase.page.GetPagesByBookUseCase
+import com.mit.learning_english.domain.usecase.page.LookupTextUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.Constant
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -21,17 +24,18 @@ import javax.inject.Inject
 @HiltViewModel
 class ReadBookViewModel @Inject constructor(
     private val getBookDetailByIdUseCase: GetBookDetailByIdUseCase,
-    private val getPagesByBookUseCase: GetPagesByBookUseCase
+    private val getPagesByBookUseCase: GetPagesByBookUseCase,
+    private val lookupTextUseCase: LookupTextUseCase
 ) : BaseViewModel<ReadBookState, ReadBookEvent>(ReadBookState()) {
 
-    private data class PagingParams(val bookId: Int, val totalPages: Int)
+    private data class PagingParams(val bookId: Int, val totalPages: Int, val initialKey: Int)
 
     private val pagingParams = MutableStateFlow<PagingParams?>(null)
 
     val pagesFlow: Flow<PagingData<Page>> = pagingParams
         .filterNotNull()
         .flatMapLatest { params ->
-            getPagesByBookUseCase(params.bookId, params.totalPages)
+            getPagesByBookUseCase(params.bookId, params.totalPages, params.initialKey)
         }
         .cachedIn(viewModelScope)
 
@@ -44,21 +48,28 @@ class ReadBookViewModel @Inject constructor(
             val result = getBookDetailByIdUseCase(bookId)
             result.onSuccess { bookDetail ->
                 val totalPages = bookDetail.chapters.sumOf { it.totalPages }
+                val sortedChapters = bookDetail.chapters.sortedBy { it.number }
+                val resolvedChapterId = chapterId ?: sortedChapters.firstOrNull()?.id
                 setState {
                     copy(
                         book = bookDetail,
-                        chapters = bookDetail.chapters,
+                        chapters = sortedChapters,
                         readMode = ReadMode.fromValue(readModeValue),
                         totalPages = totalPages
                     )
                 }
-                pagingParams.value = PagingParams(bookId, totalPages)
 
-                if (chapterId != null) {
-                    goToChapter(chapterId)
+                val firstPage = if (chapterId != null) {
+                    calculateFirstPage(chapterId, sortedChapters)
+                } else {
+                    0
                 }
+                val initialKey = (firstPage / Constant.PAGE_SIZE_PAGE) * Constant.PAGE_SIZE_PAGE
+                setState { copy(currentPageNumber = firstPage, activeChapterId = resolvedChapterId) }
+                emitEvent(ReadBookEvent.GoToChapter(firstPage))
+                pagingParams.value = PagingParams(bookId, totalPages, initialKey)
             }.onError { e ->
-                emitError(e.message ?: "Failed to load book detail")
+                emitError(e.message)
             }
             setLoading(false)
         }
@@ -70,7 +81,7 @@ class ReadBookViewModel @Inject constructor(
         var accumulatedPages = 0
         var foundChapter: Chapter? = null
 
-        for (chapter in chapters.sortedBy { it.number }) {
+        for (chapter in chapters) {
             accumulatedPages += chapter.totalPages
             if (pageNumber < accumulatedPages) {
                 foundChapter = chapter
@@ -87,18 +98,44 @@ class ReadBookViewModel @Inject constructor(
         updateActiveChapter(position)
     }
 
-    fun goToChapter(chapterId: Int) {
-        val chapters = uiState.value.chapters
-        if (chapters.isEmpty()) return
-
-        var firstPageOfChapter = 0
-        for (chapter in chapters.sortedBy { it.number }) {
-            if (chapterId == chapter.id) break
-            firstPageOfChapter += chapter.totalPages
+    fun onPageAudioAvailable(audio: Audio?) {
+        val url = audio?.fileUrl
+        setState { copy(currentAudioUrl = url, currentTime = 0L, audioDuration = 0L) }
+        if (uiState.value.readMode == ReadMode.ListenMode && url != null) {
+            emitEvent(ReadBookEvent.PlayAudio(url))
         }
+    }
+
+    fun updatePlaybackState(isPlaying: Boolean, currentTime: Long, duration: Long) {
+        setState { copy(isPlaying = isPlaying, currentTime = currentTime, audioDuration = duration) }
+    }
+
+    fun updatePlaybackSpeed(speed: Float) {
+        setState { copy(playbackSpeed = speed) }
+    }
+
+    fun goToChapter(chapterId: Int) {
+        val state = uiState.value
+        val chapters = state.chapters
+        if (chapters.isEmpty()) return
+        val bookId = state.book?.id ?: return
+        val totalPages = state.totalPages
+
+        val firstPageOfChapter = calculateFirstPage(chapterId, chapters)
+        val initialKey = (firstPageOfChapter / Constant.PAGE_SIZE_PAGE) * Constant.PAGE_SIZE_PAGE
 
         setState { copy(currentPageNumber = firstPageOfChapter, activeChapterId = chapterId) }
         emitEvent(ReadBookEvent.GoToChapter(firstPageOfChapter))
+        pagingParams.value = PagingParams(bookId, totalPages, initialKey)
+    }
+
+    private fun calculateFirstPage(chapterId: Int, sortedChapters: List<Chapter>): Int {
+        var firstPage = 0
+        for (chapter in sortedChapters) {
+            if (chapter.id == chapterId) break
+            firstPage += chapter.totalPages
+        }
+        return firstPage
     }
 
     fun setReadMode(readMode: Int) {
@@ -107,6 +144,76 @@ class ReadBookViewModel @Inject constructor(
 
     fun readModeClicked() {
         val currentReadValue = uiState.value.readMode.value
-        setState { copy(readMode = ReadMode.fromValue(1 - currentReadValue)) }
+        val newMode = ReadMode.fromValue(1 - currentReadValue)
+        setState { copy(readMode = newMode) }
+
+        if (newMode == ReadMode.ReadMode) {
+            emitEvent(ReadBookEvent.StopAudio)
+        } else {
+            uiState.value.currentAudioUrl?.let { url ->
+                emitEvent(ReadBookEvent.PlayAudio(url))
+            }
+        }
+    }
+
+    fun onTextSelected(selectedText: String) {
+        val normalizedText = normalizeSelectedText(selectedText)
+        if (normalizedText.isBlank()) return
+        lookupText(normalizedText)
+    }
+
+    fun retryLookup() {
+        val query = uiState.value.lookupQuery
+        if (query.isNotBlank()) {
+            lookupText(query)
+        }
+    }
+
+    fun dismissLookupDialog() {
+        setState {
+            copy(
+                lookupStatus = LookupStatus.Idle,
+                lookupResult = null,
+                lookupError = null
+            )
+        }
+    }
+
+    private fun lookupText(text: String) {
+        viewModelScope.launch(exceptionHandler) {
+            setState {
+                copy(
+                    lookupStatus = LookupStatus.Loading,
+                    lookupQuery = text,
+                    lookupResult = null,
+                    lookupError = null
+                )
+            }
+
+            val result = lookupTextUseCase(text)
+            result.onSuccess { data ->
+                setState {
+                    copy(
+                        lookupStatus = LookupStatus.Success,
+                        lookupResult = data,
+                        lookupError = null
+                    )
+                }
+            }.onError { error ->
+                setState {
+                    copy(
+                        lookupStatus = LookupStatus.Error,
+                        lookupResult = null,
+                        lookupError = error.message
+                    )
+                }
+            }
+        }
+    }
+
+    private fun normalizeSelectedText(rawText: String): String {
+        return rawText.trim()
+            .replace("\\s+".toRegex(), " ")
+            .trim('\"', '\'', ',', '.', ';', ':', '!', '?', '(', ')', '[', ']', '{', '}')
     }
 }

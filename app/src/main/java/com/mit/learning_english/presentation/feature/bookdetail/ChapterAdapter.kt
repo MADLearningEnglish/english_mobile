@@ -5,8 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.mit.learning_english.R
 import com.mit.learning_english.databinding.ItemChapterBinding
 import com.mit.learning_english.domain.model.Chapter
+import java.util.Locale
 
 class ChapterAdapter(
     private val onClick: (Chapter) -> Unit
@@ -37,10 +39,10 @@ class ChapterAdapter(
 
         fun bind(chapter: Chapter) {
             binding.apply {
-                tvNumber.text = String.format("%02d", chapter.number)
+                tvNumber.text = String.format(Locale.getDefault(),"%02d", chapter.number)
                 tvChapterTitle.text = chapter.title
-                tvTotalPages.text = "${chapter.totalPages} pages"
-                tvDurations.text = "${chapter.totalDuration} mins"
+                tvTotalPages.text = root.context.getString(R.string.total_page_format, chapter.totalPages)
+                tvDurations.text = root.context.getString(R.string.hh_mm_format,chapter.totalDuration/3600,(chapter.totalDuration%3600)/60)
             }
         }
     }
