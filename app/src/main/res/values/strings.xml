@@ -43,4 +43,6 @@
     <string name="hh_mm_format">%1$02d:%2$02d</string>
     <string name="about_this_book">About this book</string>
     <string name="failed_to_load_book_detail">Failed to load book detail</string>
+    <string name="page_format">Page %1$d</string>
+    <string name="audio_playback_channel">Audio Playback</string>
 </resources>

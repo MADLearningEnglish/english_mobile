@@ -3,6 +3,7 @@ package com.mit.learning_english.presentation.feature.readbook
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.mit.learning_english.domain.model.Audio
 import com.mit.learning_english.domain.model.Chapter
 import com.mit.learning_english.domain.model.Page
 import com.mit.learning_english.domain.usecase.book.GetBookDetailByIdUseCase
@@ -95,6 +96,22 @@ class ReadBookViewModel @Inject constructor(
         updateActiveChapter(position)
     }
 
+    fun onPageAudioAvailable(audio: Audio?) {
+        val url = audio?.fileUrl
+        setState { copy(currentAudioUrl = url, currentTime = 0L, audioDuration = 0L) }
+        if (uiState.value.readMode == ReadMode.ListenMode && url != null) {
+            emitEvent(ReadBookEvent.PlayAudio(url))
+        }
+    }
+
+    fun updatePlaybackState(isPlaying: Boolean, currentTime: Long, duration: Long) {
+        setState { copy(isPlaying = isPlaying, currentTime = currentTime, audioDuration = duration) }
+    }
+
+    fun updatePlaybackSpeed(speed: Float) {
+        setState { copy(playbackSpeed = speed) }
+    }
+
     fun goToChapter(chapterId: Int) {
         val state = uiState.value
         val chapters = state.chapters
@@ -125,6 +142,15 @@ class ReadBookViewModel @Inject constructor(
 
     fun readModeClicked() {
         val currentReadValue = uiState.value.readMode.value
-        setState { copy(readMode = ReadMode.fromValue(1 - currentReadValue)) }
+        val newMode = ReadMode.fromValue(1 - currentReadValue)
+        setState { copy(readMode = newMode) }
+
+        if (newMode == ReadMode.ReadMode) {
+            emitEvent(ReadBookEvent.StopAudio)
+        } else {
+            uiState.value.currentAudioUrl?.let { url ->
+                emitEvent(ReadBookEvent.PlayAudio(url))
+            }
+        }
     }
 }

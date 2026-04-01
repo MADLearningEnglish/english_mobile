@@ -72,26 +72,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <include
-                    layout="@layout/bottom_sheet_read_book_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="400dp"
-                    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
-
             </LinearLayout>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/btnReadMode"
-                android:layout_width="wrap_content"
+            <include
+                android:id="@+id/bottomSheet"
+                layout="@layout/bottom_sheet_read_book_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_marginBottom="240dp"
-                android:background="@color/gray"
-                android:backgroundTint="@color/background"
-                android:elevation="16dp"
-                android:importantForAccessibility="no"
-                android:src="@drawable/ic_reading_book"
-                android:tint="@color/primary" />
+                app:behavior_hideable="true"
+                app:behavior_peekHeight="80dp"
+                app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <com.google.android.material.navigation.NavigationView
@@ -109,5 +99,16 @@
         </com.google.android.material.navigation.NavigationView>
     </androidx.drawerlayout.widget.DrawerLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnReadMode"
+        app:rippleColor="@color/surface_variant"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/background"
+        android:elevation="16dp"
+        android:src="@drawable/ic_reading_book"
+        android:tint="@color/primary" />
 
 </FrameLayout>
