@@ -14,7 +14,7 @@
     <string name="by_joining_i_declare_that_i_have_read_and_accent_the_n_terms_and_privacy_policy">By joining, I declare that I have read and accent the\n Terms and Privacy Policy</string>
     <string name="don_t_have_an_account_yet">Don\'t have an account yet?</string>
     <string name="signup">SignUp</string>
-    <string name="course">Course</string>
+    <string name="book">Book</string>
     <string name="vocabulary">Vocabulary</string>
     <string name="chat">Chat</string>
     <string name="profile">Profile</string>
@@ -52,5 +52,11 @@
     <string name="lookup_meaning_format">Meaning: %1$s</string>
     <string name="lookup_examples_format">Ex:\n%1$s</string>
     <string name="lookup_error_default">Cannot look up the meaning. Please try again.</string>
+    <string name="explore">Explore</string>
+    <string name="books_by_genre_default_title">Books</string>
+    <string name="failed_to_load_books">Failed to load books</string>
+    <string name="recommend_by_topic">Suggested by topic</string>
+    <string name="recommend_by_author">Suggested by author</string>
+    <string name="books_reading_in_progress">Books you haven\'t finished</string>
 
 </resources>

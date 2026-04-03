@@ -112,7 +112,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tvViewAllBooks"
+                android:id="@+id/tvViewAllRecommendBooks"
                 style="@style/BodySmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -168,6 +168,15 @@
                 android:text="@string/genres"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rvRecommendBook" />
+            <TextView
+                android:id="@+id/tvExplores"
+                style="@style/BodySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/explore"
+                android:textColor="@color/primary"
+                app:layout_constraintBottom_toBottomOf="@id/tvGenres"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <com.facebook.shimmer.ShimmerFrameLayout
                 android:id="@+id/shimmerGenres"
@@ -199,7 +208,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvGenres"
                 android:layout_width="0dp"
-                android:layout_height="92dp"
+                android:layout_height="wrap_content"
+                android:minHeight="92dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

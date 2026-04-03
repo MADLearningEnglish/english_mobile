@@ -29,6 +29,7 @@ fun BookResponse.toBook(): Book {
         title = title,
         language = language,
         coverUrl = coverUrl,
+        blurb = blurb?:"",
         genresName = genresName,
         authorsName = authorsName
     )

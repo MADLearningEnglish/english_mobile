@@ -23,6 +23,15 @@ interface BookApiService {
     @GET("book/v1/recommend")
     suspend fun getBooksRecommend(): Response<BaseResponse<List<BookResponse>>>
 
+    @GET("book/v1/recommend/by-topic")
+    suspend fun getRecommendByTopic(): Response<BaseResponse<List<BookResponse>>>
+
+    @GET("book/v1/recommend/by-author")
+    suspend fun getRecommendByAuthor(): Response<BaseResponse<List<BookResponse>>>
+
+    @GET("book/v1/reading/in-progress")
+    suspend fun getReadingInProgress(): Response<BaseResponse<List<BookResponse>>>
+
     @GET("book/v1/{id}")
     suspend fun getBookDetailById(@Path("id") bookId: Int): Response<BaseResponse<BookResponse>>
 

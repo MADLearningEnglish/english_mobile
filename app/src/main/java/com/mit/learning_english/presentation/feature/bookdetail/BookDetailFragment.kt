@@ -51,25 +51,42 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
             btnBack.setOnClickListener {
                 findNavController().navigateUp()
             }
+            layoutMenu.btnFavorite.setOnClickListener {
+                viewModel.clickedFavorite()
+            }
         }
     }
 
     override fun observeViewModel() {
         super.observeViewModel()
-        collectStateProperty(viewModel.uiState, { it.book }) { book ->
-            book?.let {
-                binding.apply {
-                    tvBookTitle.text = it.title
-                    tvBookAuthor.text = it.authorsName
-                    pbProgress.progress = it.progressPercent.toInt()
-                    tvBlurb.text = it.title
-                    ivBookCover.loadImage(it.coverUrl)
-                    chapterAdapter.submitList(it.chapters)
-                    tvReadTime.text = getString(R.string.minutes_format, it.chapters.sumOf { chapter -> chapter.totalDuration })
-                    tvTotalPages.text = getString(R.string.total_page_format, it.chapters.sumOf { chapter -> chapter.totalPages })
-                }
+        collectStateProperty(viewModel.uiState, { it.title }) { title ->
+            binding.tvBookTitle.text = title
+            binding.tvBlurb.text = title
+        }
+        collectStateProperty(viewModel.uiState, { it.authorsName }) { authorsName ->
+            binding.tvBookAuthor.text = authorsName
+        }
+        collectStateProperty(viewModel.uiState, { it.progressPercent }) { progressPercent ->
+            binding.pbProgress.progress = progressPercent.toInt()
+        }
+        collectStateProperty(viewModel.uiState, { it.coverUrl }) { coverUrl ->
+            if (coverUrl.isNotEmpty()) binding.ivBookCover.loadImage(coverUrl)
+        }
+        collectStateProperty(viewModel.uiState, { it.chapters }) { chapters ->
+            if (chapters.isNotEmpty()) {
+                chapterAdapter.submitList(chapters)
+                binding.tvReadTime.text = getString(R.string.minutes_format, chapters.sumOf { chapter -> chapter.totalDuration })
+                binding.tvTotalPages.text = getString(R.string.total_page_format, chapters.sumOf { chapter -> chapter.totalPages })
             }
         }
+        collectStateProperty(viewModel.uiState, { it.isFavorite }) { isFavorite ->
+            if (!isFavorite) {
+                binding.layoutMenu.icFavorite.backgroundTintList = android.content.res.ColorStateList.valueOf(requireContext().getColor(R.color.gray))
+            } else {
+                binding.layoutMenu.icFavorite.backgroundTintList = android.content.res.ColorStateList.valueOf(requireContext().getColor(R.color.primary))
+            }
+        }
+        
         collectEvent(viewModel.event){event->
             when(event){
                 is BookDetailEvent.NavigateToReadBook ->{

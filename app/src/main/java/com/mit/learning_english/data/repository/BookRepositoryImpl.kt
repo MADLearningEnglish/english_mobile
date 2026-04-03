@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import com.mit.learning_english.data.mapper.ResultMapper
 import com.mit.learning_english.data.mapper.toBook
 import com.mit.learning_english.data.mapper.toBookDetail
+import com.mit.learning_english.data.mapper.toBookHistory
 import com.mit.learning_english.data.paging.BookByGenresPagingSource
 import com.mit.learning_english.data.paging.BookHistoryPagingSource
 import com.mit.learning_english.data.paging.SearchBookPagingSource
@@ -43,6 +44,45 @@ class BookRepositoryImpl @Inject constructor(
                 }
                 Log.d("BookRepositoryImpl", result.toString())
                 result
+            } catch (e: Exception) {
+                resultMapper.fromException(e)
+            }
+        }
+    }
+
+    override suspend fun getRecommendByTopic(): Result<List<Book>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = bookApi.getRecommendByTopic()
+                resultMapper.fromBaseResponse(response).map { list ->
+                    list.map { it.toBook() }
+                }
+            } catch (e: Exception) {
+                resultMapper.fromException(e)
+            }
+        }
+    }
+
+    override suspend fun getRecommendByAuthor(): Result<List<Book>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = bookApi.getRecommendByAuthor()
+                resultMapper.fromBaseResponse(response).map { list ->
+                    list.map { it.toBook() }
+                }
+            } catch (e: Exception) {
+                resultMapper.fromException(e)
+            }
+        }
+    }
+
+    override suspend fun getReadingInProgress(): Result<List<BookReponse>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = bookApi.getReadingInProgress()
+                resultMapper.fromBaseResponse(response).map { list ->
+                    list.map { it.toBookHistory() }
+                }
             } catch (e: Exception) {
                 resultMapper.fromException(e)
             }

@@ -12,6 +12,12 @@ interface BookRepository {
 
     suspend fun getBooksRecommend(): Result<List<Book>>
 
+    suspend fun getRecommendByTopic(): Result<List<Book>>
+
+    suspend fun getRecommendByAuthor(): Result<List<Book>>
+
+    suspend fun getReadingInProgress(): Result<List<BookReponse>>
+
     fun getBooksHistory(): Flow<PagingData<BookReponse>>
 
     suspend fun getBookDetailById(bookId: Int): Result<BookDetail>
