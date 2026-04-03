@@ -3,14 +3,6 @@ package com.mit.learning_english.presentation.feature.readbook
 import com.mit.learning_english.domain.model.BookDetail
 import com.mit.learning_english.domain.model.Chapter
 import com.mit.learning_english.domain.model.TextLookupResult
-
-enum class LookupStatus {
-    Idle,
-    Loading,
-    Success,
-    Error
-}
-
 data class ReadBookState(
     val isPlaying: Boolean = false,
     val currentTime: Long = 0L,

@@ -62,7 +62,7 @@ class ReadBookViewModel @Inject constructor(
                 val firstPage = if (chapterId != null) {
                     calculateFirstPage(chapterId, sortedChapters)
                 } else {
-                    0
+                    bookDetail.lastReadNumberPage
                 }
                 val initialKey = (firstPage / Constant.PAGE_SIZE_PAGE) * Constant.PAGE_SIZE_PAGE
                 setState { copy(currentPageNumber = firstPage, activeChapterId = resolvedChapterId) }

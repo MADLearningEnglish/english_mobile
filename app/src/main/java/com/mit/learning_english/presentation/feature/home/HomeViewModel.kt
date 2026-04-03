@@ -17,7 +17,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getBookRecommendUseCase: GetBookRecommendUseCase,
     private val getGenresUseCase: GetGenresUseCase,
-    private val getRecentlyReadBookUseCase: GetRecentlyReadBookUseCase
+    getRecentlyReadBookUseCase: GetRecentlyReadBookUseCase
 ) : BaseViewModel<HomeState, HomeEvent>(HomeState()) {
     val recentBooks: Flow<PagingData<BookReponse>> =
         getRecentlyReadBookUseCase().cachedIn(viewModelScope)
@@ -36,7 +36,7 @@ class HomeViewModel @Inject constructor(
             }.onLoading {
                 setState { copy(isRecommendBooksLoading = true) }
             }.onError { error ->
-                emitError(error.message ?: "Unknown error")
+                emitError(error.message)
             }
             setState { copy(isRecommendBooksLoading = false) }
         }
@@ -63,6 +63,14 @@ class HomeViewModel @Inject constructor(
 
     fun navigateToBookDetail(bookId: Int) {
         emitEvent(HomeEvent.NavigateToBookDetailFragment(bookId))
+    }
+
+    fun navigateToBookByGenre(genreId: Int, genreName: String) {
+        emitEvent(HomeEvent.NavigateToBookByGenre(genreId, genreName))
+    }
+
+    fun navigateToRecommendBooks() {
+        emitEvent(HomeEvent.NavigateToRecommentBookFragment)
     }
 
     fun setErrorMessage(message: String) {
