@@ -275,12 +275,18 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         initializeMediaController()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.markReadingSessionStarted()
+    }
+
     override fun onStop() {
-        super.onStop()
+        viewModel.reportReadingProgressOnLeave()
         progressJob?.cancel()
         controllerFuture?.let { MediaController.releaseFuture(it) }
         mediaController = null
         stopLookupAudio()
+        super.onStop()
     }
 
     private fun initializeMediaController() {

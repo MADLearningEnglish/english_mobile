@@ -7,6 +7,8 @@ import com.mit.learning_english.domain.model.Audio
 import com.mit.learning_english.domain.model.Chapter
 import com.mit.learning_english.domain.model.Page
 import com.mit.learning_english.domain.usecase.book.GetBookDetailByIdUseCase
+import android.os.SystemClock
+import com.mit.learning_english.domain.usecase.book.UpdateBookReadingProgressUseCase
 import com.mit.learning_english.domain.usecase.page.GetPagesByBookUseCase
 import com.mit.learning_english.domain.usecase.page.LookupTextUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
@@ -25,12 +27,16 @@ import javax.inject.Inject
 class ReadBookViewModel @Inject constructor(
     private val getBookDetailByIdUseCase: GetBookDetailByIdUseCase,
     private val getPagesByBookUseCase: GetPagesByBookUseCase,
-    private val lookupTextUseCase: LookupTextUseCase
+    private val lookupTextUseCase: LookupTextUseCase,
+    private val updateBookReadingProgressUseCase: UpdateBookReadingProgressUseCase
 ) : BaseViewModel<ReadBookState, ReadBookEvent>(ReadBookState()) {
 
     private data class PagingParams(val bookId: Int, val totalPages: Int, val initialKey: Int)
 
     private val pagingParams = MutableStateFlow<PagingParams?>(null)
+
+    /** Thời điểm bắt đầu phiên đọc (foreground), để gửi durationSeconds lên server. */
+    private var readingSessionStartElapsed: Long? = null
 
     val pagesFlow: Flow<PagingData<Page>> = pagingParams
         .filterNotNull()
@@ -68,6 +74,7 @@ class ReadBookViewModel @Inject constructor(
                 setState { copy(currentPageNumber = firstPage, activeChapterId = resolvedChapterId) }
                 emitEvent(ReadBookEvent.GoToChapter(firstPage))
                 pagingParams.value = PagingParams(bookId, totalPages, initialKey)
+                markReadingSessionStarted()
             }.onError { e ->
                 emitError(e.message)
             }
@@ -215,5 +222,34 @@ class ReadBookViewModel @Inject constructor(
         return rawText.trim()
             .replace("\\s+".toRegex(), " ")
             .trim('\"', '\'', ',', '.', ';', ':', '!', '?', '(', ')', '[', ']', '{', '}')
+    }
+
+    fun markReadingSessionStarted() {
+        val s = uiState.value
+        if (s.book == null || s.totalPages <= 0) return
+        readingSessionStartElapsed = SystemClock.elapsedRealtime()
+    }
+
+    /**
+     * Gọi khi rời màn đọc: cập nhật tiến độ + (nếu ≥ ~15s) gửi thời lượng để server ghi LESSON.
+     */
+    fun reportReadingProgressOnLeave() {
+        val start = readingSessionStartElapsed ?: return
+        readingSessionStartElapsed = null
+        val s = uiState.value
+        val book = s.book ?: return
+        val total = s.totalPages
+        if (total <= 0) return
+        val currentPage = s.currentPageNumber
+        val durationSec = ((SystemClock.elapsedRealtime() - start) / 1000).toInt()
+        if (durationSec < 15) return
+        viewModelScope.launch(exceptionHandler) {
+            updateBookReadingProgressUseCase(
+                bookId = book.id,
+                lastReadPageNumber = currentPage,
+                totalPages = total,
+                durationSeconds = durationSec
+            )
+        }
     }
 }

@@ -11,6 +11,7 @@ import com.mit.learning_english.data.mapper.toBookHistory
 import com.mit.learning_english.data.paging.BookByGenresPagingSource
 import com.mit.learning_english.data.paging.BookHistoryPagingSource
 import com.mit.learning_english.data.paging.SearchBookPagingSource
+import com.mit.learning_english.data.remote.dto.BookReadingProgressRequestDto
 import com.mit.learning_english.data.remote.api.BookApiService
 import com.mit.learning_english.domain.model.Book
 import com.mit.learning_english.domain.model.BookDetail
@@ -130,5 +131,30 @@ class BookRepositoryImpl @Inject constructor(
                 enablePlaceholders = false,
                 initialLoadSize = SearchBookPagingSource.PAGE_SIZE
             ), pagingSourceFactory = { SearchBookPagingSource(bookApi, keyword) }).flow
+    }
+
+    override suspend fun updateReadingProgress(
+        bookId: Int,
+        lastReadPageNumber: Int,
+        totalPages: Int,
+        durationSeconds: Int?
+    ): Result<Unit> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val body = BookReadingProgressRequestDto(
+                    lastReadPageNumber = lastReadPageNumber,
+                    totalPages = totalPages,
+                    durationSeconds = durationSeconds
+                )
+                val response = bookApi.updateReadingProgress(bookId, body)
+                if (response.isSuccessful) {
+                    Result.Success(Unit)
+                } else {
+                    Result.Error(response.message() ?: "update progress failed")
+                }
+            } catch (e: Exception) {
+                resultMapper.fromException(e)
+            }
+        }
     }
 }

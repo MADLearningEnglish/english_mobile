@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="primary">#007AFF</color>
-    <color name="success">#38AD49</color>
-    <color name="error_color">#D53F36</color>
+    <color name="primary">#0084FF</color>
+    <color name="success">#3BAD4B</color>
+    <color name="error_color">#D53F3F</color>
 
     <!-- Background -->
     <color name="background">#131313</color>
@@ -23,5 +23,34 @@
     <!-- Quiz feedback colors -->
     <color name="quiz_correct">#22C55E</color>
     <color name="quiz_wrong">#EF4444</color>
+
+    <!-- Giống values: màn Choose Topic cố định sáng như mockup -->
+    <color name="ai_screen_bg">#FFFFFF</color>
+    <color name="ai_text_on_light">#131313</color>
+    <color name="ai_title_navy">#1A2332</color>
+    <color name="ai_hint_on_light">#9E9E9E</color>
+    <color name="ai_toolbar_divider">#E8E8ED</color>
+    <color name="ai_search_outline">#E0E0E5</color>
+    <color name="ai_chip_text_muted">#6B7280</color>
+    <color name="ai_chip_outline">#D1D5DB</color>
+    <color name="ai_level_intermediate_bg">#E3F2FD</color>
+    <color name="ai_level_intermediate_text">#1565C0</color>
+    <color name="ai_card_stroke">#ECECF0</color>
+
+    <color name="ai_chat_screen_bg">#F2F4F7</color>
+    <color name="ai_chat_scenario_card_bg">#EEF1F6</color>
+    <color name="ai_chat_input_bg">#EDEDF0</color>
+    <color name="ai_chat_correction_bg">#F7F8FA</color>
+    <color name="ai_info_circle_bg">#E3F2FD</color>
+
+    <!-- Profile: nền đen + thẻ/tab strip trắng như mockup -->
+    <color name="profile_screen_bg">#000000</color>
+    <color name="profile_content_bg">#000000</color>
+    <color name="profile_tab_strip_bg">#FFFFFF</color>
+    <color name="profile_stat_tile_bg">#FFFFFF</color>
+    <color name="profile_donut_track">#48484A</color>
+    <color name="profile_week_inactive">#3A3A3C</color>
+    <color name="profile_tab_text_selected">#121212</color>
+    <color name="profile_tab_text_unselected">#9E9E9E</color>
 
 </resources>

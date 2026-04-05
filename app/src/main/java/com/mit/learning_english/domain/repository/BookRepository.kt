@@ -26,4 +26,11 @@ interface BookRepository {
 
     fun searchBooks(keyword: String): Flow<PagingData<Book>>
 
+    suspend fun updateReadingProgress(
+        bookId: Int,
+        lastReadPageNumber: Int,
+        totalPages: Int,
+        durationSeconds: Int?
+    ): Result<Unit>
+
 }
