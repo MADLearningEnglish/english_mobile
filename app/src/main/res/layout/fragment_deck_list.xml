@@ -34,8 +34,8 @@
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Quay lại"
-                android:src="@drawable/ic_back"
-                app:tint="@color/body_primary" />
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/primary" />
 
             <TextView
                 android:layout_width="0dp"

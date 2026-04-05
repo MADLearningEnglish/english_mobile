@@ -6,6 +6,7 @@ import com.mit.learning_english.domain.model.FlashcardUpdateInput
 data class EditDeckState(
     val deckId: Int = -1,
     val title: String = "",
+    val description: String = "",
     val coverImageUrl: String? = null,
     val coverImageUri: Uri? = null,
     val status: Int = 1,

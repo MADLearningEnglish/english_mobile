@@ -118,4 +118,21 @@ object NetworkModule {
     ): NetworkRepository {
         return NetworkRepositoryImpl(networkMonitor = networkMonitor)
     }
+
+    @Provides
+    @Singleton
+    fun provideGenreRepository(
+        genreApiService: com.mit.learning_english.data.remote.api.GenreApiService,
+        resultMapper: ResultMapper
+    ): com.mit.learning_english.domain.repository.GenreRepository {
+        return com.mit.learning_english.data.repository.GenreRepositoryImpl(
+            genreApiService, resultMapper
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideDictionaryApiService(retrofit: Retrofit): com.mit.learning_english.data.remote.api.DictionaryApiService {
+        return retrofit.create(com.mit.learning_english.data.remote.api.DictionaryApiService::class.java)
+    }
 }
