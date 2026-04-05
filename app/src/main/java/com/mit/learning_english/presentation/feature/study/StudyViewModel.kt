@@ -6,6 +6,7 @@ import com.mit.learning_english.domain.model.Flashcard
 import com.mit.learning_english.domain.model.QuizQuestion
 import com.mit.learning_english.domain.model.QuizType
 import com.mit.learning_english.domain.usecase.deck.GetStudyFlashCardsUseCase
+import com.mit.learning_english.domain.usecase.deck.LogDeckStudyCompleteUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,10 +19,12 @@ private const val QUIZ_INTERVAL = 4
 @HiltViewModel
 class StudyViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getStudyFlashcardsUseCase: GetStudyFlashCardsUseCase
+    private val getStudyFlashcardsUseCase: GetStudyFlashCardsUseCase,
+    private val logDeckStudyCompleteUseCase: LogDeckStudyCompleteUseCase
 ) : BaseViewModel<StudyState, StudyEvent>(StudyState()) {
 
     private val deckId: Int = savedStateHandle.get<Int>("deckId") ?: 0
+    private var sessionStartMs: Long? = null
     private val deckTitleArg: String = savedStateHandle.get<String>("deckTitle") ?: ""
 
     init {
@@ -37,6 +40,7 @@ class StudyViewModel @Inject constructor(
             when (val result = getStudyFlashcardsUseCase(deckId)) {
                 is Result.Success -> {
                     setLoading(false)
+                    sessionStartMs = System.currentTimeMillis()
                     setState {
                         copy(
                             flashcards = result.data,
@@ -102,7 +106,7 @@ class StudyViewModel @Inject constructor(
 
         if (nextIndex >= state.totalCount) {
             setState { copy(isComplete = true) }
-            emitEvent(StudyEvent.SessionComplete)
+            notifySessionComplete(state)
         } else {
             setState { copy(currentIndex = nextIndex, isFlipped = false) }
         }
@@ -163,7 +167,7 @@ class StudyViewModel @Inject constructor(
             // Hết batch → kiểm tra xem còn thẻ tiếp theo không
             if (state.currentIndex >= state.totalCount) {
                 setState { copy(isComplete = true) }
-                emitEvent(StudyEvent.SessionComplete)
+                notifySessionComplete(state)
             } else {
                 setState {
                     copy(
@@ -183,6 +187,23 @@ class StudyViewModel @Inject constructor(
 
     fun onNavigateBack() {
         emitEvent(StudyEvent.NavigateBack)
+    }
+
+    private fun notifySessionComplete(state: StudyState) {
+        emitEvent(StudyEvent.SessionComplete)
+        val start = sessionStartMs
+        if (start == null || deckId <= 0 || state.totalCount <= 0) return
+        val durationSec =
+            ((System.currentTimeMillis() - start) / 1000).toInt().coerceAtLeast(1)
+        viewModelScope.launch(exceptionHandler) {
+            logDeckStudyCompleteUseCase(
+                deckId = deckId,
+                durationSeconds = durationSec,
+                cardsReviewed = state.totalCount,
+                quizCorrect = state.quizScore.takeIf { state.quizTotal > 0 },
+                quizTotal = state.quizTotal.takeIf { it > 0 }
+            )
+        }
     }
 
     // =================== Quiz generation ===================

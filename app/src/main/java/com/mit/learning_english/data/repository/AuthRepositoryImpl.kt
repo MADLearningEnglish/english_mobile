@@ -139,7 +139,18 @@ class AuthRepositoryImpl @Inject constructor(
                     fullName = fullName
                 )
                 val response = authApiService.createUser(request)
-                resultMapper.fromBaseResponse(response)
+                when (val result = resultMapper.fromResponse(response)) {
+                    is Result.Success -> {
+                        val base = result.data
+                        if (base.data != null) {
+                            Result.Success(true)
+                        } else {
+                            Result.Error(base.message ?: "Đăng ký thất bại")
+                        }
+                    }
+                    is Result.Error -> result
+                    else -> Result.Error("Unknown error")
+                }
             } catch (e: Exception) {
                 resultMapper.fromException(e)
             }

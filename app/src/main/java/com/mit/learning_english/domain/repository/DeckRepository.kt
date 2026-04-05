@@ -18,4 +18,13 @@ interface DeckRepository {
     suspend fun getDeckById(deckId: Int): Result<Deck>
     suspend fun updateDeck(deckId: Int, request: com.mit.learning_english.domain.model.UpdateDeckRequest): Result<Deck>
     suspend fun deleteDeck(deckId: Int): Result<Unit>
+
+    /** Báo cáo hoàn thành phiên học flashcard (heatmap / profile). */
+    suspend fun postStudyComplete(
+        deckId: Int,
+        durationSeconds: Int,
+        cardsReviewed: Int?,
+        quizCorrect: Int?,
+        quizTotal: Int?
+    ): Result<Unit>
 }

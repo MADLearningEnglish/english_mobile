@@ -2,6 +2,7 @@ package com.mit.learning_english.data.repository
 
 import com.mit.learning_english.data.mapper.toDomain
 import com.mit.learning_english.data.mapper.toDto
+import com.mit.learning_english.data.remote.dto.DeckStudyCompleteRequestDto
 import com.mit.learning_english.data.remote.api.DeckApiService
 import com.mit.learning_english.domain.model.*
 import com.mit.learning_english.domain.repository.DeckRepository
@@ -129,6 +130,31 @@ class DeckRepositoryImpl @Inject constructor(
                 Result.Success(Unit)
             } else {
                 Result.Error("Delete failed")
+            }
+        } catch (e: Exception) {
+            Result.Error(e.message ?: "Unknown error")
+        }
+    }
+
+    override suspend fun postStudyComplete(
+        deckId: Int,
+        durationSeconds: Int,
+        cardsReviewed: Int?,
+        quizCorrect: Int?,
+        quizTotal: Int?
+    ): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val body = DeckStudyCompleteRequestDto(
+                durationSeconds = durationSeconds,
+                cardsReviewed = cardsReviewed,
+                quizCorrect = quizCorrect,
+                quizTotal = quizTotal
+            )
+            val response = apiService.postStudyComplete(deckId, body)
+            if (response.isSuccessful) {
+                Result.Success(Unit)
+            } else {
+                Result.Error(response.message() ?: "study-complete failed")
             }
         } catch (e: Exception) {
             Result.Error(e.message ?: "Unknown error")

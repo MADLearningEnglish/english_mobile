@@ -6,6 +6,7 @@ import com.mit.learning_english.data.remote.dto.LoginRequest
 import com.mit.learning_english.data.remote.dto.LoginResponse
 import com.mit.learning_english.data.remote.dto.RefreshTokenRequest
 import com.mit.learning_english.data.remote.dto.RefreshTokenResponse
+import com.mit.learning_english.data.remote.dto.RegisteredUserDto
 import com.mit.learning_english.data.remote.dto.UserInfo
 import retrofit2.Response
 import retrofit2.http.Body
@@ -71,7 +72,7 @@ interface AuthApiService {
     suspend fun checkLoggedIn(): Response<BaseResponse<UserInfo>>
 
     @POST("user/v1")
-    suspend fun createUser(@Body request: CreateUserRequest): Response<BaseResponse<Boolean>>
+    suspend fun createUser(@Body request: CreateUserRequest): Response<BaseResponse<RegisteredUserDto>>
 }
 
 

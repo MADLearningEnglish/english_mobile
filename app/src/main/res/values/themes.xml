@@ -4,6 +4,8 @@
     <!-- Base application theme (Light Mode) -->
     <style name="Base.Theme.Learning_english" parent="Theme.Material3.DayNight.NoActionBar">
 
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/body_on_primary</item>
 
         <!-- Background -->
         <item name="android:colorBackground">@color/background</item>
@@ -26,8 +28,19 @@
     <!-- Main theme used in Manifest -->
     <style name="Theme.Learning_english" parent="Base.Theme.Learning_english" />
 
+    <!-- M3 bottom nav: pill nền xanh nhạt khi chọn tab -->
+    <style name="ThemeOverlay.App.BottomNavigation" parent="">
+        <item name="colorSecondaryContainer">@color/profile_tab_selected_bg</item>
+        <item name="colorOnSecondaryContainer">@color/primary</item>
+    </style>
+
     <!-- Circle shape appearance for ShapeableImageView -->
     <style name="CircleImageStyle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Profile.Avatar" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>

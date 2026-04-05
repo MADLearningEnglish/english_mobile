@@ -4,6 +4,7 @@ import com.mit.learning_english.data.remote.dto.BaseResponse
 import com.mit.learning_english.data.remote.dto.CreateDeckRequestDto
 import com.mit.learning_english.data.remote.dto.DeckDto
 import com.mit.learning_english.data.remote.dto.FlashcardDto
+import com.mit.learning_english.data.remote.dto.DeckStudyCompleteRequestDto
 import com.mit.learning_english.data.remote.dto.StudyResultDto
 import retrofit2.Response
 import retrofit2.http.Body
@@ -48,4 +49,10 @@ interface DeckApiService {
 
     @DELETE("/api/deck/v1/{id}")
     suspend fun deleteDeck(@Path("id") deckId: Int): Response<BaseResponse<String>>
+
+    @POST("/api/deck/v1/{id}/study-complete")
+    suspend fun postStudyComplete(
+        @Path("id") deckId: Int,
+        @Body body: DeckStudyCompleteRequestDto
+    ): Response<BaseResponse<String>>
 }
