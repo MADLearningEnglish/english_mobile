@@ -4,17 +4,26 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import com.mit.learning_english.R
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.doOnPreDraw
 
 /**
  * Base Fragment với ViewBinding và ViewModel integration.
@@ -27,6 +36,8 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
 
     private var _binding: VB? = null
     protected val binding get() = _binding!!
+
+    private var loadingDialog: Dialog? = null
 
     protected abstract val viewModel: VM
 
@@ -56,6 +67,9 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
         setupView()
         bindView()
         observeViewModel()
@@ -89,6 +103,22 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
         }
     }
 
+    /**
+     * Collect một thuộc tính cụ thể của StateFlow, chỉ trigger khi giá trị thực sự thay đổi.
+     * Tránh unnecessary UI update khi các thuộc tính khác trong state thay đổi.
+     */
+    protected fun <T, R> collectStateProperty(
+        flow: StateFlow<T>,
+        selector: (T) -> R,
+        action: suspend (R) -> Unit
+    ) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                flow.map(selector).distinctUntilChanged().collectLatest(action)
+            }
+        }
+    }
+
     protected fun <T> collectEvent(
         flow: SharedFlow<T>,
         action: suspend (T) -> Unit
@@ -101,11 +131,21 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
     }
 
     protected open fun showLoading() {
-
+        val ctx = context ?: return
+        if (loadingDialog == null) {
+            loadingDialog = Dialog(ctx).apply {
+                setContentView(R.layout.dialog_loading)
+                window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+                setCancelable(false)
+            }
+        }
+        if (loadingDialog?.isShowing == false) {
+            loadingDialog?.show()
+        }
     }
 
     protected open fun hideLoading() {
-        // Override để ẩn loading
+        loadingDialog?.dismiss()
     }
 
     protected open fun showError(message: String) {
@@ -115,6 +155,8 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
 
     override fun onDestroyView() {
         super.onDestroyView()
+        loadingDialog?.dismiss()
+        loadingDialog = null
         _binding = null
     }
 }

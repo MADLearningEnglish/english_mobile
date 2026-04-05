@@ -1,7 +1,7 @@
 package com.mit.learning_english.presentation.feature.resetpassword
 
 import androidx.lifecycle.viewModelScope
-import com.mit.learning_english.domain.usecase.ResetForgotPasswordUseCase
+import com.mit.learning_english.domain.usecase.auth.ResetForgotPasswordUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

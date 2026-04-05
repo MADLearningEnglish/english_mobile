@@ -5,18 +5,24 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getString
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.ItemChapterReadBookBinding
 import com.mit.learning_english.domain.model.Chapter
+import java.util.Locale
 
 class ChapterAdapter(
     private val onChapterClick: (Chapter) -> Unit
 ) : ListAdapter<Chapter, ChapterAdapter.ChapterViewHolder>(ChapterDiffCallback()) {
 
-    private var activeChapterId: Int = -1
+ private var activeChapterId: Int = -1
+
+    fun getActiveChapterId():Int{
+        return activeChapterId
+    }
 
     fun setActiveChapterId(chapterId: Int) {
         if (activeChapterId != chapterId) {
@@ -31,6 +37,7 @@ class ChapterAdapter(
             if (newActiveIndex != -1) notifyItemChanged(newActiveIndex)
         }
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChapterViewHolder {
         val binding = ItemChapterReadBookBinding.inflate(
@@ -59,36 +66,37 @@ class ChapterAdapter(
         }
 
         fun bind(chapter: Chapter, isActive: Boolean) {
-            binding.tvNumber.text = String.format("%02d", chapter.number)
-            binding.tvChapterTitle.text = chapter.title
-            binding.tvTotalPages.text = "${chapter.totalPages} pages"
-            binding.tvDurations.text = String.format("%02d:%02d minus", chapter.totalDuration / 60, chapter.totalDuration % 60)
+            binding.apply{
+            tvNumber.text = String.format(Locale.getDefault(), "%02d", chapter.number)
+            tvChapterTitle.text = chapter.title
+            tvTotalPages.text = root.context.getString(R.string.total_page_format, chapter.totalPages)
+            tvDurations.text = root.context.getString(R.string.hh_mm_format,chapter.totalDuration/3600,(chapter.totalDuration%3600)/60)
 
-            val context = binding.root.context
+            val context = root.context
             if (isActive) {
                 // Set background to @color/primary
                 val primaryColor = ContextCompat.getColor(context, R.color.primary)
-                binding.root.backgroundTintList = ColorStateList.valueOf(primaryColor)
-                
-                binding.tvNumber.setTextColor(Color.WHITE)
-                binding.tvChapterTitle.setTextColor(Color.WHITE)
-                binding.tvTotalPages.setTextColor(Color.WHITE)
-                binding.tvDurations.setTextColor(Color.WHITE)
-                binding.icDot.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
+                root.backgroundTintList = ColorStateList.valueOf(primaryColor)
+
+                tvNumber.setTextColor(Color.WHITE)
+                tvChapterTitle.setTextColor(Color.WHITE)
+                tvTotalPages.setTextColor(Color.WHITE)
+                tvDurations.setTextColor(Color.WHITE)
+                icDot.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
             } else {
                 // Revert to original colors based on item_chapter_read_book.xml
                 val surfaceGrayColor = ContextCompat.getColor(context, R.color.surface_gray)
                 val primaryColor = ContextCompat.getColor(context, R.color.primary)
                 val bodyPrimaryColor = ContextCompat.getColor(context, R.color.body_primary)
                 val bodyGrayColor = ContextCompat.getColor(context, R.color.body_gray)
-                
-                binding.root.backgroundTintList = ColorStateList.valueOf(surfaceGrayColor)
-                binding.tvNumber.setTextColor(primaryColor)
-                binding.tvChapterTitle.setTextColor(bodyPrimaryColor)
-                binding.tvTotalPages.setTextColor(bodyGrayColor)
-                binding.tvDurations.setTextColor(bodyGrayColor)
-                binding.icDot.backgroundTintList = ColorStateList.valueOf(bodyGrayColor)
-            }
+
+                root.backgroundTintList = ColorStateList.valueOf(surfaceGrayColor)
+                tvNumber.setTextColor(primaryColor)
+                tvChapterTitle.setTextColor(bodyPrimaryColor)
+                tvTotalPages.setTextColor(bodyGrayColor)
+                tvDurations.setTextColor(bodyGrayColor)
+                icDot.backgroundTintList = ColorStateList.valueOf(bodyGrayColor)
+            }}
         }
     }
 

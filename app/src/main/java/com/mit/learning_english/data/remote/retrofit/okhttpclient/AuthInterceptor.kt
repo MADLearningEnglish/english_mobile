@@ -48,6 +48,6 @@ class AuthInterceptor @Inject constructor(
             originalRequest
         }
 
-        return chain.proceed(newRequest)
+      return chain.proceed(newRequest)
     }
 }

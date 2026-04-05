@@ -39,7 +39,7 @@ class SearchBookFragment : BaseFragment<FragmentSearchBookBinding, SearchBookVie
         binding.rvSearchResult.apply {
             adapter = searchBookAdapter
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            addItemDecoration(VerticalSpacingItemDecoration(8))
+            addItemDecoration(VerticalSpacingItemDecoration(12))
         }
     }
 

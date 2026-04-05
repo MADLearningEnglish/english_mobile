@@ -22,6 +22,7 @@ import com.mit.learning_english.presentation.utils.HorizontalSpacingItemDecorati
 import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -48,7 +49,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             addItemDecoration(HorizontalSpacingItemDecoration(16))
         }
-        genreAdapter = GenreAdapter()
+        genreAdapter = GenreAdapter { genre ->
+            viewModel.navigateToBookByGenre(genre.id, genre.name)
+        }
         binding.rvGenres.apply {
             adapter = genreAdapter
             layoutManager =
@@ -60,7 +63,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             adapter = recentBooksAdapter
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            addItemDecoration(VerticalSpacingItemDecoration(8))
+            addItemDecoration(VerticalSpacingItemDecoration(12))
         }
     }
 
@@ -88,13 +91,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 viewModel.navigateToSearchBook()
             }
             btnSearchBook.setOnClickListener { viewModel.navigateToSearchBook() }
+            tvViewAllRecommendBooks.setOnClickListener {
+                viewModel.navigateToRecommendBooks()
+            }
         }
     }
 
     override fun observeViewModel() {
         super.observeViewModel()
-        collectState(viewModel.uiState) { state ->
-            if (state.isRecommendBooksLoading) {
+        collectStateProperty(
+            viewModel.uiState,
+            { Pair(it.isRecommendBooksLoading, it.recommendBooks) }
+        ) { (isLoading, books) ->
+            if (isLoading) {
                 binding.shimmerRecommendBook.startShimmer()
                 binding.shimmerRecommendBook.visibility = View.VISIBLE
                 binding.rvRecommendBook.visibility = View.INVISIBLE
@@ -102,9 +111,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 binding.shimmerRecommendBook.stopShimmer()
                 binding.shimmerRecommendBook.visibility = View.INVISIBLE
                 binding.rvRecommendBook.visibility = View.VISIBLE
-                recommendAdapter.submitList(state.recommendBooks)
+                recommendAdapter.submitList(books)
             }
-            if (state.isGenresLoading) {
+        }
+
+        collectStateProperty(
+            viewModel.uiState,
+            { Pair(it.isGenresLoading, it.genres) }
+        ) { (isLoading, genres) ->
+            if (isLoading) {
                 binding.shimmerGenres.startShimmer()
                 binding.shimmerGenres.visibility = View.VISIBLE
                 binding.rvGenres.visibility = View.INVISIBLE
@@ -112,7 +127,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 binding.shimmerGenres.stopShimmer()
                 binding.shimmerGenres.visibility = View.INVISIBLE
                 binding.rvGenres.visibility = View.VISIBLE
-                genreAdapter.submitList(state.genres)
+                genreAdapter.submitList(genres)
             }
         }
 
@@ -131,11 +146,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
 
                 is HomeEvent.NavigateToRecommentBookFragment -> {
-
+                    val action =
+                        MainFragmentDirections.actionMainFragmentToRecommendBookFragment()
+                    findNavController(requireActivity(), R.id.nav_host_fragment).navigate(action)
                 }
 
                 is HomeEvent.NavigateToSearchFragment -> {
                     val action = MainFragmentDirections.actionMainFragmentToSearchBookFragment()
+                    findNavController(requireActivity(), R.id.nav_host_fragment).navigate(action)
+                }
+
+                is HomeEvent.NavigateToBookByGenre -> {
+                    val action = MainFragmentDirections.actionMainFragmentToBookByGenreFragment(
+                        event.genreId,
+                        event.genreName
+                    )
                     findNavController(requireActivity(), R.id.nav_host_fragment).navigate(action)
                 }
             }
@@ -144,7 +169,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.recentBooks.collectLatest { pagingData ->
-                    recentBooksAdapter.submitData(pagingData)
+                     recentBooksAdapter.submitData(pagingData)
                 }
             }
         }
@@ -176,7 +201,5 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
             }
         }
-
-
     }
 }

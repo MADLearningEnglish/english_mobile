@@ -26,6 +26,12 @@
         <action
             android:id="@+id/action_mainFragment_to_createDeckFragment"
             app:destination="@id/createDeckFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_bookByGenreFragment"
+            app:destination="@id/bookByGenreFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_recommendBookFragment"
+            app:destination="@id/recommendBookFragment" />
     </fragment>
     <fragment
         android:id="@+id/bookDetailFragment"
@@ -43,6 +49,8 @@
         android:id="@+id/readBookFragment"
         android:name="com.mit.learning_english.presentation.feature.readbook.ReadBookFragment"
         android:label="fragment_read_book"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
         tools:layout="@layout/fragment_read_book">
         <argument
             android:name="readBookArgs"
@@ -91,5 +99,35 @@
             android:name="deckTitle"
             android:defaultValue=""
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/bookByGenreFragment"
+        android:name="com.mit.learning_english.presentation.feature.bookbygenre.BookByGenreFragment"
+        android:label="fragment_book_by_genre"
+        tools:layout="@layout/fragment_book_by_genre">
+
+        <argument
+            android:name="genreId"
+            android:defaultValue="0"
+            app:argType="integer" />
+
+        <argument
+            android:name="genreName"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_bookByGenreFragment_to_bookDetailFragment"
+            app:destination="@id/bookDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recommendBookFragment"
+        android:name="com.mit.learning_english.presentation.feature.recommendbook.RecommendBookFragment"
+        android:label="fragment_recommend_book"
+        tools:layout="@layout/fragment_recommend_book">
+
+        <action
+            android:id="@+id/action_recommendBookFragment_to_bookDetailFragment"
+            app:destination="@id/bookDetailFragment" />
     </fragment>
 </navigation>

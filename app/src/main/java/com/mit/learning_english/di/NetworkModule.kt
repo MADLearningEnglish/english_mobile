@@ -3,10 +3,13 @@ package com.mit.learning_english.di
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.mit.learning_english.data.mapper.ResultMapper
-import com.mit.learning_english.data.remote.api.AuthApiService
+import com.mit.learning_english.data.local.network.NetworkMonitor
 import com.mit.learning_english.data.remote.retrofit.okhttpclient.AuthInterceptor
 import com.mit.learning_english.data.remote.retrofit.okhttpclient.TokenAuthenticator
+import com.mit.learning_english.data.repository.NetworkRepositoryImpl
+import com.mit.learning_english.di.qualifier.AuthOkHttpClient
+import com.mit.learning_english.di.qualifier.AuthRetrofit
+import com.mit.learning_english.domain.repository.NetworkRepository
 import com.mit.learning_english.shared.Constant.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -50,7 +53,7 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    @com.mit.learning_english.di.qualifier.AuthOkHttpClient
+    @AuthOkHttpClient
     fun provideAuthOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor, authInterceptor: AuthInterceptor
     ): OkHttpClient {
@@ -71,7 +74,7 @@ object NetworkModule {
     ): OkHttpClient {
         return OkHttpClient.Builder().addInterceptor(loggingInterceptor)
             .addInterceptor(authInterceptor)
-            .authenticator(tokenAuthenticator) // Thêm Authenticator để tự động refresh token
+            .authenticator(tokenAuthenticator)
             .connectTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS).build()
     }
@@ -81,9 +84,9 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    @com.mit.learning_english.di.qualifier.AuthRetrofit
+    @AuthRetrofit
     fun provideAuthRetrofit(
-        @com.mit.learning_english.di.qualifier.AuthOkHttpClient authOkHttpClient: OkHttpClient,
+        @AuthOkHttpClient authOkHttpClient: OkHttpClient,
         gson: Gson
     ): Retrofit {
         return Retrofit.Builder().baseUrl(BASE_URL).client(authOkHttpClient)
@@ -100,85 +103,20 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create(gson)).build()
     }
 
-    /**
-     * Provide AuthApiService
-     *
-     * Sử dụng Retrofit riêng không có Authenticator để tránh circular dependency
-     */
-    @Provides
-    @Singleton
-    fun provideAuthApiService(
-        @com.mit.learning_english.di.qualifier.AuthRetrofit retrofit: Retrofit
-    ): AuthApiService {
-        return retrofit.create(AuthApiService::class.java)
-    }
-
-    /**
-     * Provide AuthRepository implementation
-     */
-    @Provides
-    @Singleton
-    fun provideAuthRepository(
-        authApiService: AuthApiService,
-        authManager: com.mit.learning_english.data.remote.retrofit.AuthManager,
-        resultMapper: ResultMapper
-    ): com.mit.learning_english.domain.repository.AuthRepository {
-        return com.mit.learning_english.data.repository.AuthRepositoryImpl(
-            authApiService = authApiService, authManager = authManager, resultMapper = resultMapper
-        )
-    }
-
-    /**
-     * Provide NetworkMonitor (chỉ dùng bởi NetworkRepositoryImpl)
-     */
     @Provides
     @Singleton
     fun provideNetworkMonitor(
         @ApplicationContext context: Context
-    ): com.mit.learning_english.data.local.network.NetworkMonitor {
-        return com.mit.learning_english.data.local.network.NetworkMonitor(context)
+    ): NetworkMonitor {
+        return NetworkMonitor(context)
     }
 
-    /**
-     * Provide NetworkRepository implementation
-     */
     @Provides
     @Singleton
     fun provideNetworkRepository(
-        networkMonitor: com.mit.learning_english.data.local.network.NetworkMonitor
-    ): com.mit.learning_english.domain.repository.NetworkRepository {
-        return com.mit.learning_english.data.repository.NetworkRepositoryImpl(
-            networkMonitor = networkMonitor
-        )
-    }
-
-    /**
-     * Provide BookApiService
-     */
-    @Provides
-    @Singleton
-    fun provideBookApiService(retrofit: Retrofit): com.mit.learning_english.data.remote.api.BookApiService {
-        return retrofit.create(com.mit.learning_english.data.remote.api.BookApiService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideGenreApiService(retrofit: Retrofit): com.mit.learning_english.data.remote.api.GenreApiService {
-        return retrofit.create(com.mit.learning_english.data.remote.api.GenreApiService::class.java)
-    }
-
-    /**
-     * Provide BookRepository implementation
-     */
-    @Provides
-    @Singleton
-    fun provideBookRepository(
-        bookApiService: com.mit.learning_english.data.remote.api.BookApiService,
-        resultMapper: ResultMapper
-    ): com.mit.learning_english.domain.repository.BookRepository {
-        return com.mit.learning_english.data.repository.BookRepositoryImpl(
-            bookApiService, resultMapper
-        )
+        networkMonitor: NetworkMonitor
+    ): NetworkRepository {
+        return NetworkRepositoryImpl(networkMonitor = networkMonitor)
     }
 
     @Provides

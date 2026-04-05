@@ -42,9 +42,8 @@ class ForgotPasswordFragment : BaseFragment<FragmentForgotPasswordBinding, Forgo
             }
         }
 
-        collectState(viewModel.uiState) { state ->
-            // Display server error under email field
-            binding.tvEmailError.text = state.serverError ?: ""
+        collectStateProperty(viewModel.uiState, { it.serverError }) { serverError ->
+            binding.tvEmailError.text = serverError ?: ""
         }
     }
 }

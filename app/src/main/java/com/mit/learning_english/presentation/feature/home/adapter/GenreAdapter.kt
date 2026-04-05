@@ -9,12 +9,14 @@ import com.mit.learning_english.databinding.ItemGenreBinding
 import com.mit.learning_english.domain.model.Genre
 import com.mit.learning_english.presentation.extensions.loadImage
 
-class GenreAdapter : ListAdapter<Genre, GenreAdapter.GenresViewHolder>(GenreDiffCallback()) {
+class GenreAdapter(
+    private val onGenreClick: (Genre) -> Unit = { _ -> }
+) : ListAdapter<Genre, GenreAdapter.GenresViewHolder>(GenreDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenresViewHolder {
         val binding = ItemGenreBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return GenresViewHolder(binding)
+        return GenresViewHolder(binding, onGenreClick)
     }
 
     override fun onBindViewHolder(holder: GenresViewHolder, position: Int) {
@@ -23,11 +25,13 @@ class GenreAdapter : ListAdapter<Genre, GenreAdapter.GenresViewHolder>(GenreDiff
     }
 
     class GenresViewHolder(
-        private val binding: ItemGenreBinding
+        private val binding: ItemGenreBinding,
+        private val onGenreClick: (Genre) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(genre: Genre) {
             binding.tvGenreName.text = genre.name
             binding.imgGenre.loadImage(genre.thumbnail)
+            binding.root.setOnClickListener { onGenreClick(genre) }
         }
     }
 

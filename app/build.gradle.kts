@@ -36,8 +36,14 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+
+            freeCompilerArgs.add(
+                "-XXLanguage:+PropertyParamAnnotationDefaultTargetMode"
+            )
+        }
     }
     buildFeatures {
         dataBinding = true
@@ -51,8 +57,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.navigation.fragment.ktx)
-    implementation(libs.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -90,6 +94,10 @@ dependencies {
 
     // Paging 3
     implementation(libs.androidx.paging.runtime)
+
+    // Media3 (ExoPlayer + MediaSession)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.session)
 
     // Lottie
     implementation(libs.lottie)
