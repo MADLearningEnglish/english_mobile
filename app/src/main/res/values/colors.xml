@@ -33,7 +33,7 @@
     <color name="body_primary">#131313</color>
     <color name="body_secondary">#D7D7D7</color>
     <color name="body_on_primary">#FFFFFF</color>
-    <color name="body_gray">#FFD7D7D7</color>
+    <color name="body_gray">#9E9E9E</color>
 
     <!-- Border & Divider -->
     <color name="divider">#F2F2F2</color>

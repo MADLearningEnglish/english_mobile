@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentLoginBinding
+import com.mit.learning_english.domain.util.Result.Loading.isSuccess
 import com.mit.learning_english.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -61,11 +62,16 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
         val navController = findNavController()
         when (event) {
             is LoginEvent.NavigateToHome -> {
-                navController.navigate(R.id.main_graph)
+                val action = LoginFragmentDirections.actionLoginFragmentToMainGraph()
+                navController.navigate(action)
             }
-
             is LoginEvent.NavigateToSignUp -> {
-                navController.navigate(R.id.signUpFragment)
+                val action = LoginFragmentDirections.actionLoginFragmentToSignUpFragment()
+                navController.navigate(action)
+            }
+            is LoginEvent.NavigateToOnboarding ->{
+                val action = LoginFragmentDirections.actionLoginFragmentToOnboardingSecondFragment()
+                navController.navigate(action)
             }
         }
     }
