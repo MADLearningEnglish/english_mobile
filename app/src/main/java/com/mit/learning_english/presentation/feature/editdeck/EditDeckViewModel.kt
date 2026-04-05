@@ -9,6 +9,7 @@ import com.mit.learning_english.domain.model.UpdateDeckRequest
 import com.mit.learning_english.domain.usecase.deck.GetDeckByIdUseCase
 import com.mit.learning_english.domain.usecase.deck.UpdateDeckUseCase
 import com.mit.learning_english.domain.usecase.file.UploadFileUseCase
+import com.mit.learning_english.domain.usecase.dictionary.FetchPhoneticUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,7 @@ class EditDeckViewModel @Inject constructor(
     private val getDeckByIdUseCase: GetDeckByIdUseCase,
     private val updateDeckUseCase: UpdateDeckUseCase,
     private val uploadFileUseCase: UploadFileUseCase,
+    private val fetchPhoneticUseCase: FetchPhoneticUseCase,
     savedStateHandle: SavedStateHandle,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<EditDeckState, EditDeckEvent>(EditDeckState()) {
@@ -45,6 +47,7 @@ class EditDeckViewModel @Inject constructor(
                     setState {
                         copy(
                             title = deck.title,
+                            description = deck.description ?: "",
                             coverImageUrl = deck.coverImageUrl,
                             status = deck.status
                         )
@@ -78,6 +81,10 @@ class EditDeckViewModel @Inject constructor(
 
     fun onTitleChanged(title: String) {
         setState { copy(title = title) }
+    }
+
+    fun onDescriptionChanged(description: String) {
+        setState { copy(description = description) }
     }
 
     fun onCoverImageSelected(uri: Uri) {
@@ -117,10 +124,33 @@ class EditDeckViewModel @Inject constructor(
         setState { copy(flashcards = updated, expandedIndex = newExpanded) }
     }
 
+    fun autoFetchPhonetic(index: Int) {
+        val state = uiState.value
+        if (index !in state.flashcards.indices) return
+        val word = state.flashcards[index].word
+        if (word.isBlank()) {
+            emitEvent(EditDeckEvent.ShowSnackbar("Vui lòng nhập từ vựng trước"))
+            return
+        }
+
+        viewModelScope.launch(exceptionHandler) {
+            when (val result = fetchPhoneticUseCase(word)) {
+                is Result.Success -> {
+                    updatePhonetic(index, result.data)
+                }
+                is Result.Error -> {
+                    emitEvent(EditDeckEvent.ShowSnackbar(result.message ?: "Không tìm thấy phiên âm"))
+                }
+                else -> Unit
+            }
+        }
+    }
+
     fun updateWord(index: Int, value: String) = updateField(index) { copy(word = value) }
     fun updatePhonetic(index: Int, value: String) = updateField(index) { copy(phonetic = value) }
     fun updateMeaning(index: Int, value: String) = updateField(index) { copy(meaning = value) }
     fun updateExample(index: Int, value: String) = updateField(index) { copy(exampleSentence = value) }
+    fun updateNote(index: Int, value: String) = updateField(index) { copy(note = value) }
     fun updateVisualCueUri(index: Int, uri: Uri) = updateField(index) { copy(visualCueUri = uri) }
 
     private fun updateField(index: Int, updater: FlashcardUpdateInput.() -> FlashcardUpdateInput) {
@@ -181,6 +211,7 @@ class EditDeckViewModel @Inject constructor(
 
             val request = UpdateDeckRequest(
                 title = state.title.trim(),
+                description = state.description.trim().ifBlank { null },
                 coverImageUrl = finalCoverUrl,
                 status = state.status,
                 flashcards = uploadedCards

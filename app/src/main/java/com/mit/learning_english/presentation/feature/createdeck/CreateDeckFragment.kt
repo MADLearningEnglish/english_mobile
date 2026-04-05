@@ -7,7 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -46,16 +49,24 @@ class CreateDeckFragment : BaseFragment<FragmentCreateDeckBinding, CreateDeckVie
 
     private val adapter by lazy {
         FlashcardInputAdapter(
-            onToggleExpand = { viewModel.toggleExpanded(it) },
+            onToggleExpand = { index ->
+                viewModel.toggleExpanded(index)
+                // Scroll to the expanded card after a short delay so it's visible above the keyboard
+                binding.rvFlashcards.postDelayed({
+                    binding.rvFlashcards.smoothScrollToPosition(index)
+                }, 150)
+            },
             onDelete = { viewModel.removeFlashcard(it) },
             onWordChanged = { i, v -> viewModel.updateWord(i, v) },
             onPhoneticChanged = { i, v -> viewModel.updatePhonetic(i, v) },
             onMeaningChanged = { i, v -> viewModel.updateMeaning(i, v) },
             onExampleChanged = { i, v -> viewModel.updateExample(i, v) },
+            onNoteChanged = { i, v -> viewModel.updateNote(i, v) },
             onVisualCueClick = { index ->
                 pendingImageIndex = index
                 selectVisualCueLauncher.launch("image/*")
-            }
+            },
+            onFetchPhoneticClick = { index -> viewModel.autoFetchPhonetic(index) }
         )
     }
 
@@ -67,6 +78,18 @@ class CreateDeckFragment : BaseFragment<FragmentCreateDeckBinding, CreateDeckVie
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@CreateDeckFragment.adapter
             itemAnimator = null // prevents flicker when toggling expanded/collapsed
+        }
+
+        // Dynamically adjust RecyclerView bottom padding to match keyboard height.
+        // This ensures the last items are always scrollable above the keyboard.
+        val rvDefaultBottomPadding = binding.rvFlashcards.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(binding.rvFlashcards) { view, insets ->
+            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val navBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            // When keyboard is visible use its height; otherwise keep default padding
+            val extraPadding = if (imeHeight > 0) imeHeight else navBarHeight
+            view.updatePadding(bottom = maxOf(rvDefaultBottomPadding, extraPadding + 16))
+            insets
         }
     }
 
@@ -165,8 +188,14 @@ class CreateDeckFragment : BaseFragment<FragmentCreateDeckBinding, CreateDeckVie
 
         sheetBinding.btnStartStudy.setOnClickListener {
             dialog.dismiss()
-            // TODO: Navigate to study screen with deckId in the future
-            findNavController().navigateUp()
+            val bundle = android.os.Bundle().apply {
+                putInt("deckId", deckId)
+                putString("deckTitle", "Luyện tập")
+            }
+            val navOptions = androidx.navigation.NavOptions.Builder()
+                .setPopUpTo(R.id.mainFragment, false)
+                .build()
+            findNavController().navigate(R.id.studyFragment, bundle, navOptions)
         }
         sheetBinding.btnGoToList.setOnClickListener {
             dialog.dismiss()

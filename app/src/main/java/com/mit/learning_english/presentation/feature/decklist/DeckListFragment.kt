@@ -98,17 +98,17 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
                         is DeckListEvent.NavigateToStudy -> {
                             val action = MainFragmentDirections.actionMainFragmentToStudyFragment(deckId = event.deckId, deckTitle = event.deckTitle)
 
-                            findNavController().navigate(action)
+                            requireParentFragment().requireParentFragment().findNavController().navigate(action)
                         }
                         is DeckListEvent.NavigateToEditDeck -> {
                             val action = MainFragmentDirections.actionMainFragmentToEditDeckFragment(deckId = event.deckId)
 
-                            findNavController().navigate(action)
+                            requireParentFragment().requireParentFragment().findNavController().navigate(action)
                         }
                         is DeckListEvent.NavigateToCreateDeck -> {
                             val action = MainFragmentDirections.actionMainFragmentToCreateDeckFragment()
 
-                            findNavController().navigate(action)
+                            requireParentFragment().requireParentFragment().findNavController().navigate(action)
                         }
                         is DeckListEvent.ShowDeleteConfirmDialog -> {
                             showDeleteDialog(event.deckId, event.deckTitle)

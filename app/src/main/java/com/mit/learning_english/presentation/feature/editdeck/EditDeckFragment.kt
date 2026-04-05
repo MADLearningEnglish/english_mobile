@@ -29,10 +29,7 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
 
     override val viewModel: EditDeckViewModel by viewModels()
 
-    // Using FlashcardEditAdapter (or reusing FlashcardInputAdapter)
-    // For now I'll create FlashcardEditAdapter later if needed, 
-    // but FlashcardInputAdapter can be reused if its parameters match. Since FlashcardInput != FlashcardUpdateInput,
-    // I need a separate adapter: FlashcardEditAdapter
+    private var isInitialDataLoaded = false
     private var pendingImageIndex: Int? = null
 
     private val selectCoverImageLauncher = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri ->
@@ -50,16 +47,23 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
 
     private val adapter by lazy {
         FlashcardEditAdapter(
-            onToggleExpand = { viewModel.toggleExpanded(it) },
+            onToggleExpand = { index ->
+                viewModel.toggleExpanded(index)
+                binding.rvFlashcards.postDelayed({
+                    binding.rvFlashcards.smoothScrollToPosition(index)
+                }, 150)
+            },
             onDelete = { viewModel.removeFlashcard(it) },
             onWordChanged = { i, v -> viewModel.updateWord(i, v) },
             onPhoneticChanged = { i, v -> viewModel.updatePhonetic(i, v) },
             onMeaningChanged = { i, v -> viewModel.updateMeaning(i, v) },
             onExampleChanged = { i, v -> viewModel.updateExample(i, v) },
+            onNoteChanged = { i, v -> viewModel.updateNote(i, v) },
             onVisualCueClick = { index ->
                 pendingImageIndex = index
                 selectVisualCueLauncher.launch("image/*")
-            }
+            },
+            onFetchPhoneticClick = { index -> viewModel.autoFetchPhonetic(index) }
         )
     }
 
@@ -90,6 +94,14 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
                 viewModel.onTitleChanged(s?.toString() ?: "")
             }
         })
+
+        binding.etDeckDescription.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.onDescriptionChanged(s?.toString() ?: "")
+            }
+        })
     }
 
     override fun observeViewModel() {
@@ -99,9 +111,11 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collectLatest { state ->
-                    // Set title if it's the first load
-                    if (binding.etDeckTitle.text.toString().isEmpty() && state.title.isNotEmpty()) {
+                    // Set fields only on initial data load (when deck data first arrives from API)
+                    if (!isInitialDataLoaded && state.title.isNotEmpty()) {
+                        isInitialDataLoaded = true
                         binding.etDeckTitle.setText(state.title)
+                        binding.etDeckDescription.setText(state.description)
                     }
 
                     // Word counter
@@ -175,7 +189,14 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
 
         sheetBinding.btnStartStudy.setOnClickListener {
             dialog.dismiss()
-            findNavController().navigateUp()
+            val bundle = android.os.Bundle().apply {
+                putInt("deckId", deckId)
+                putString("deckTitle", "Luyện tập")
+            }
+            val navOptions = androidx.navigation.NavOptions.Builder()
+                .setPopUpTo(R.id.mainFragment, false)
+                .build()
+            findNavController().navigate(R.id.studyFragment, bundle, navOptions)
         }
         sheetBinding.btnGoToList.setOnClickListener {
             dialog.dismiss()

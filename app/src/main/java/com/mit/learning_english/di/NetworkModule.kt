@@ -192,4 +192,9 @@ object NetworkModule {
         )
     }
 
+    @Provides
+    @Singleton
+    fun provideDictionaryApiService(retrofit: Retrofit): com.mit.learning_english.data.remote.api.DictionaryApiService {
+        return retrofit.create(com.mit.learning_english.data.remote.api.DictionaryApiService::class.java)
+    }
 }

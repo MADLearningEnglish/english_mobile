@@ -33,6 +33,14 @@ class DeckListAdapter(
             val wordCountLabel = if (deck.totalWords == 1) "1 từ" else "${deck.totalWords} từ"
             binding.tvWordCount.text = wordCountLabel
 
+            // Description
+            if (!deck.description.isNullOrBlank()) {
+                binding.tvDescription.text = deck.description
+                binding.tvDescription.visibility = android.view.View.VISIBLE
+            } else {
+                binding.tvDescription.visibility = android.view.View.GONE
+            }
+
             // Cover image
             if (!deck.coverImageUrl.isNullOrBlank()) {
                 Glide.with(binding.imgCover)

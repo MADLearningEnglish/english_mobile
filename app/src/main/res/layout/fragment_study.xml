@@ -34,8 +34,8 @@
                 android:layout_gravity="start|center_vertical"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Quay lại"
-                android:src="@drawable/ic_back"
-                app:tint="@color/body_primary" />
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/primary" />
 
             <TextView
                 android:id="@+id/tvDeckTitle"
@@ -75,7 +75,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/btnNextCard"
-        app:layout_constraintDimensionRatio="1:1.35">
+        app:layout_constraintDimensionRatio="1:1.45">
 
         <!-- ======= FRONT: ONLY WORD + PHONETIC ======= -->
         <androidx.cardview.widget.CardView
@@ -197,7 +197,7 @@
                     <!-- Visual Cue Image -->
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="160dp">
+                        android:layout_height="200dp">
 
                         <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/imgVisualCue"
@@ -208,27 +208,6 @@
                             android:src="@drawable/ic_hero_placeholder"
                             app:shapeAppearance="@style/VisualCueTopRoundedStyle" />
 
-                        <!-- Gradient overlay -->
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/bg_image_gradient_overlay" />
-
-                        <!-- "Visual Cue" badge -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom|start"
-                            android:layout_margin="16dp"
-                            android:background="@drawable/bg_visual_cue_badge"
-                            android:paddingStart="10dp"
-                            android:paddingEnd="10dp"
-                            android:paddingTop="4dp"
-                            android:paddingBottom="4dp"
-                            android:text="Visual Cue"
-                            android:textColor="@color/white"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
                     </FrameLayout>
 
                     <!-- Content container -->
@@ -321,7 +300,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="EXAMPLE"
-                                android:textColor="#0288D1"
+                                android:textColor="#2E7D32"
                                 android:textSize="10sp"
                                 android:textStyle="bold"
                                 android:letterSpacing="0.15" />
