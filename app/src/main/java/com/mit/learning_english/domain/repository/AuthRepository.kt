@@ -33,5 +33,4 @@ interface AuthRepository {
         otp: String,
         newPassword: String
     ): Result<Boolean>
-
 }

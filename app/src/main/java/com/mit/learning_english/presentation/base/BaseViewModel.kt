@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.update
  * @param STATE Kiểu UI state chứa dữ liệu feature-specific
  * @param EVENT Kiểu one-time events (navigation, snackbar, dialog...)
  */
-abstract class BaseViewModel<STATE : Any, EVENT>(
+abstract class BaseViewModel<STATE : Any?, EVENT>(
     initialState: STATE
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(initialState)

@@ -48,20 +48,20 @@ class SplashFragment : BaseFragment<FragmentSplashBinding, SplashViewModel>() {
         val navController = findNavController()
         when (event) {
             SplashEvent.NavigateToLogin -> {
-                navController.navigate(
-                    R.id.action_splashFragment_to_loginFragment,
-                    null,
-                    androidx.navigation.NavOptions.Builder()
-                        .setPopUpTo(R.id.splashFragment, true)
-                        .build()
-                )
+               val action = SplashFragmentDirections.actionSplashFragmentToLoginFragment()
+                navController.navigate(action)
+            }
+            SplashEvent.NavigateToOnboardingBeforeLogin ->{
+                val action = SplashFragmentDirections.actionSplashFragmentToOnboardingFragment()
+                navController.navigate(action)
             }
             SplashEvent.NavigateToHome -> {
-                navController.navigate(
-                    R.id.action_splashFragment_to_main,
-                    null,
-                    null // popUpTo đã được định nghĩa trong action XML
-                )
+                val action = SplashFragmentDirections.actionSplashFragmentToMain()
+                navController.navigate(action)
+            }
+            SplashEvent.NavigateToOnboardingAfterLogin -> {
+                val action = SplashFragmentDirections.actionSplashFragmentToOnboardingSecondFragment()
+                navController.navigate(action)
             }
         }
     }

@@ -3,6 +3,7 @@ package com.mit.learning_english.presentation.feature.bookdetail
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +13,8 @@ import com.mit.learning_english.presentation.base.BaseFragment
 import com.mit.learning_english.presentation.extensions.loadImage
 import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailViewModel>() {
@@ -28,6 +31,7 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
     }
 
     override fun setupView() {
+        viewModel.getBookDetail(args.bookId)
         chapterAdapter = ChapterAdapter { chapter ->
             viewModel.navigateToReadBook(readMode = 0, chapterId = chapter.id)
         }
@@ -39,8 +43,6 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
     }
 
     override fun bindView() {
-        viewModel.getBookDetail(args.bookId)
-
         binding.apply {
             btnReadBook.setOnClickListener {
                 viewModel.navigateToReadBook(0)
