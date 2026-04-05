@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
+    android:elevation="16dp"
+    android:outlineAmbientShadowColor="@color/gray"
+    android:outlineSpotShadowColor="@color/gray"
+    android:paddingHorizontal="24dp"
+    android:paddingVertical="12dp">
+
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="120dp"
+        android:layout_height="4dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/border_12"
+        android:backgroundTint="@color/surface_variant"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvNumberPageBS"
+        style="@style/LabelMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider1" />
+
+    <TextView
+        android:id="@+id/tvCurrentTime"
+        style="@style/BodySmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/body_primary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvNumberPageBS" />
+
+    <SeekBar
+        android:id="@+id/progress_audio"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:max="1000"
+        android:maxHeight="4dp"
+        android:minHeight="4dp"
+        android:progress="0"
+        android:progressDrawable="@drawable/progress_bg"
+        android:splitTrack="false"
+        android:thumb="@drawable/bg_thumb_seekbar"
+        app:layout_constraintBottom_toBottomOf="@id/tvCurrentTime"
+        app:layout_constraintEnd_toStartOf="@id/tvEndTime"
+        app:layout_constraintStart_toEndOf="@+id/tvCurrentTime"
+        app:layout_constraintTop_toTopOf="@+id/tvCurrentTime" />
+
+    <TextView
+        android:id="@+id/tvEndTime"
+        style="@style/BodySmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/body_primary"
+        app:layout_constraintBottom_toBottomOf="@id/tvCurrentTime"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvCurrentTime" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutControlAudio"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCurrentTime">
+
+        <!-- Previous -->
+        <ImageView
+            android:id="@+id/btnPrev"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:rotation="180"
+            android:src="@drawable/ic_next_track"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnRewindBack5s"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Back 5s -->
+        <ImageView
+            android:id="@+id/btnRewindBack5s"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_rewind_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnPlay"
+            app:layout_constraintStart_toEndOf="@id/btnPrev"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/body_primary" />
+
+        <!-- Play -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/btnPlay"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:backgroundTint="@color/primary"
+            android:elevation="12dp"
+            android:outlineAmbientShadowColor="@color/primary"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnRewindNext5s"
+            app:layout_constraintStart_toEndOf="@id/btnRewindBack5s"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/icPlay"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_play" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Next 5s -->
+        <ImageView
+            android:id="@+id/btnRewindNext5s"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_rewind_next"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnNext"
+            app:layout_constraintStart_toEndOf="@id/btnPlay"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/body_primary" />
+
+        <!-- Next -->
+        <ImageView
+            android:id="@+id/btnNext"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_next_track"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btnRewindNext5s"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <TextView
+        android:id="@+id/tvSpeed"
+        style="@style/BodyMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:text="1.0x"
+        android:textColor="@color/body_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layoutControlAudio" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

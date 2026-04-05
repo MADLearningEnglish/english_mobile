@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ================= HEADLINE ================= -->
+
+    <style name="HeadlineLarge">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:textFontWeight">700</item>
+        <item name="android:lineHeight">48sp</item>
+        <item name="android:letterSpacing">-0.0075</item>
+    </style>
+
+    <style name="HeadlineMedium">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:textFontWeight">600</item>
+        <item name="android:lineHeight">40sp</item>
+        <item name="android:letterSpacing">-0.009</item>
+    </style>
+
+    <style name="HeadlineSmall">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:lineHeight">32sp</item>
+        <item name="android:textFontWeight">700</item>
+        <item name="android:letterSpacing">-0.012</item>
+    </style>
+
+    <style name="HeadlineExtraSmall">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:lineHeight">24sp</item>
+        <item name="android:textFontWeight">600</item>
+        <item name="android:letterSpacing">-0.016</item>
+    </style>
+
+    <!-- ================= TITLE ================= -->
+
+    <style name="TitleLarge">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:lineHeight">32sp</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:letterSpacing">-0.012</item>
+    </style>
+
+    <style name="TitleMedium">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:lineHeight">24sp</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:letterSpacing">-0.015</item>
+    </style>
+
+    <style name="TitleSmall">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:lineHeight">24sp</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:letterSpacing">-0.016</item>
+    </style>
+
+    <style name="TitleExtraSmall">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineHeight">20sp</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:letterSpacing">-0.016</item>
+    </style>
+
+    <!-- ================= LABEL ================= -->
+    <!-- Label dùng Semibold (600) → inter_semibold.ttf -->
+
+    <style name="LabelLarge">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textFontWeight">600</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:lineHeight">24sp</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+
+    <style name="LabelMedium">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textFontWeight">600</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineHeight">20sp</item>
+        <item name="android:letterSpacing">-0.025</item>
+    </style>
+
+    <style name="LabelSmall">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textFontWeight">600</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineHeight">20sp</item>
+        <item name="android:letterSpacing">-0.028</item>
+    </style>
+
+
+    <!-- ================= BODY ================= -->
+
+    <style name="BodyLarge">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:lineHeight">24sp</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:letterSpacing">-0.015</item>
+    </style>
+
+    <style name="BodyMedium">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:lineHeight">20sp</item>
+        <item name="android:letterSpacing">-0.018</item>
+    </style>
+
+    <style name="BodySmall">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:lineHeight">20sp</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+
+    <style name="BodyExtraSmall">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:lineHeight">20sp</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+
+    <style name="BodyPage">
+        <item name="fontFamily">@font/noto_serif_regular</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:lineHeight">20sp</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+
+</resources>

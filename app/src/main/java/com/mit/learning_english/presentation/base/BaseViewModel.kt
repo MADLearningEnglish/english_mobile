@@ -1,46 +1,64 @@
 package com.mit.learning_english.presentation.base
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
-abstract class BaseViewModel : ViewModel() {
+/**
+ * Base ViewModel theo pattern MVI (Model-View-Intent).
+ * - Loading: StateFlow riêng (isLoading).
+ * - Error: SharedFlow one-time event (errorEvent).
+ * - Feature state: StateFlow generic (uiState).
+ *
+ * @param STATE Kiểu UI state chứa dữ liệu feature-specific
+ * @param EVENT Kiểu one-time events (navigation, snackbar, dialog...)
+ */
+abstract class BaseViewModel<STATE : Any, EVENT>(
+    initialState: STATE
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(initialState)
+    val uiState: StateFlow<STATE> = _uiState.asStateFlow()
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> get() = _isLoading
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> get() = _errorMessage
+    private val _event = MutableSharedFlow<EVENT>(extraBufferCapacity = 1)
+    val event: SharedFlow<EVENT> = _event.asSharedFlow()
+
+    private val _errorEvent = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val errorEvent: SharedFlow<String> = _errorEvent.asSharedFlow()
 
     protected val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         onError(throwable)
     }
 
-    protected fun showLoading() {
-        _isLoading.value = true
+    protected fun setState(reducer: STATE.() -> STATE) {
+        _uiState.update { it.reducer() }
     }
 
-    protected fun hideLoading() {
-        _isLoading.value = false
+    protected fun emitEvent(event: EVENT) {
+        _event.tryEmit(event)
     }
 
+    protected fun emitError(message: String) {
+        _errorEvent.tryEmit(message)
+    }
+
+    protected fun setLoading(loading: Boolean) {
+        _isLoading.value = loading
+    }
+
+    /**
+     * Xử lý khi có exception. Override để custom (log, analytics...).
+     */
     protected open fun onError(throwable: Throwable) {
-        hideLoading()
-        _errorMessage.value = throwable.message ?: "Unknown Error"
-        throwable.printStackTrace()
-    }
-
-    protected fun launchDataLoad(block: suspend () -> Unit) {
-        viewModelScope.launch(exceptionHandler) {
-            showLoading()
-            try {
-                block()
-            } finally {
-                hideLoading()
-            }
-        }
+        _isLoading.value = false
+        emitError(throwable.message ?: "Unknown error")
     }
 }

@@ -1,5 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-  <resources>
-      <color name="black">#FF000000</color>
-      <color name="white">#FFFFFFFF</color>
-  </resources>
+<resources>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#FFFFFFFF</color>
+
+    <!-- Primary (design system light) -->
+    <color name="primary">#0084FF</color>
+    <color name="primary_40">#660084FF</color>
+    <color name="success">#3BAD4B</color>
+    <color name="error_color">#D53F3F</color>
+
+    <!-- Backwards-compatible alias used by layouts -->
+    <color name="error">#D53F3F</color>
+
+    <!-- Background -->
+
+    
+    <!-- Accent / Modern UI -->
+    <color name="accent_blue">#3B82F6</color>
+    <color name="accent_blue_light">#E8F2FF</color>
+    <color name="accent_orange">#F97316</color>
+    <color name="accent_purple">#8B5CF6</color>
+    <color name="deck_progress_bg">#F1F5F9</color>
+    <color name="background">#FFFFFF</color>
+    <color name="surface">#F8F8F8</color>
+    <color name="surface_variant">#E8F2FF</color>
+    <color name="surface_gray">#FFF8F8F8</color>
+    <color name="gray">#F5F5F5</color>
+
+    <!-- Text -->
+    <color name="body_primary">#121212</color>
+    <color name="body_secondary">#D7D7D7</color>
+    <color name="body_on_primary">#FFFFFF</color>
+    <color name="body_gray">#FFD7D7D7</color>
+
+    <!-- Border & Divider -->
+    <color name="divider">#F2F2F2</color>
+    <color name="border">#F2F2F2</color>
+
+    <!-- Mastery Levels -->
+    <color name="mastery_orange">#FFA500</color>
+    <color name="mastery_yellow">#FFD700</color>
+    <color name="mastery_green">#38AD49</color>
+    <color name="mastery_blue">#0084FF</color>
+
+    <!-- Soft Green -->
+    <color name="soft_green_bg">#E8F5E9</color>
+    <color name="soft_green_text">#2E7D32</color>
+
+    <!-- Gray shades -->
+    <color name="gray_400">#9E9E9E</color>
+    <color name="gray_200">#EEEEEE</color>
+
+    <!-- Study screen / Difficulty colors -->
+    <color name="purple_primary">#8C2BEE</color>
+    <color name="purple_bg">#F5F0FF</color>
+    <color name="difficulty_hard">#EF4444</color>
+    <color name="difficulty_hard_bg">#FEECEC</color>
+    <color name="difficulty_medium">#F97316</color>
+    <color name="difficulty_medium_bg">#FFF1E6</color>
+    <color name="difficulty_easy">#22C55E</color>
+    <color name="difficulty_easy_bg">#EDFBF2</color>
+    <color name="difficulty_known">#3B82F6</color>
+    <color name="difficulty_known_bg">#EDF3FF</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="amber_bg">#FFFBEB</color>
+    <color name="amber_text">#92400E</color>
+    <color name="amber_border">#F59E0B</color>
+
+    <!-- Quiz feedback colors -->
+    <color name="quiz_correct">#22C55E</color>
+    <color name="quiz_wrong">#EF4444</color>
+
+    <!-- AI Choose Topic: luôn dùng trên nền sáng (card, chip) — không phụ thuộc body_primary (night) -->
+    <color name="ai_screen_bg">#FFFFFF</color>
+    <color name="ai_text_on_light">#121212</color>
+    <color name="ai_title_navy">#1A2332</color>
+    <color name="ai_hint_on_light">#9E9E9E</color>
+    <color name="ai_toolbar_divider">#E8E8ED</color>
+    <color name="ai_search_outline">#E0E0E5</color>
+    <color name="ai_chip_text_muted">#6B7280</color>
+    <color name="ai_chip_outline">#D1D5DB</color>
+    <color name="ai_level_intermediate_bg">#E8F2FF</color>
+    <color name="ai_level_intermediate_text">#1565C0</color>
+    <color name="ai_card_stroke">#ECECF0</color>
+
+    <!-- Màn AI Chat (luôn sáng như mockup) -->
+    <color name="ai_chat_screen_bg">#F2F4F7</color>
+    <color name="ai_chat_scenario_card_bg">#EEF1F6</color>
+    <color name="ai_chat_input_bg">#EDEDF0</color>
+    <color name="ai_chat_correction_bg">#F7F8FA</color>
+    <color name="ai_info_circle_bg">#E8F2FF</color>
+
+    <!-- Profile mockup + tab strip trên nền trắng -->
+    <color name="profile_icon_red">#E53935</color>
+    <color name="profile_tab_selected_bg">#E8F2FF</color>
+    <color name="profile_week_active">#E8F2FF</color>
+    <color name="profile_tab_text_selected">#121212</color>
+    <color name="profile_tab_text_unselected">#9E9E9E</color>
+    <color name="profile_screen_bg">#FFFFFF</color>
+    <color name="profile_content_bg">#FFFFFF</color>
+    <color name="profile_tab_strip_bg">#FFFFFF</color>
+    <color name="profile_stat_tile_bg">#F8F8F8</color>
+    <color name="profile_donut_track">#E8F2FF</color>
+    <color name="profile_week_inactive">#EEEEEE</color>
+    <color name="profile_menu_icon_bg">#FFEBEE</color>
+
+</resources>

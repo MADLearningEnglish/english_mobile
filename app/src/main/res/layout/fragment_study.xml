@@ -1,0 +1,773 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_study_screen"
+    tools:context=".presentation.feature.study.StudyFragment">
+
+    <!-- ===================== HEADER ===================== -->
+    <LinearLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="52dp"
+        android:paddingBottom="12dp"
+        android:background="@color/background"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Back + Title + Progress count -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="start|center_vertical"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Quay lại"
+                android:src="@drawable/ic_back"
+                app:tint="@color/body_primary" />
+
+            <TextView
+                android:id="@+id/tvDeckTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/body_primary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="Unit 5: Business Ethics" />
+
+            <TextView
+                android:id="@+id/tvProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:textColor="@color/gray_400"
+                android:textSize="13sp"
+                tools:text="1 / 20" />
+        </FrameLayout>
+    </LinearLayout>
+
+
+
+    <!-- ===================== CARD CONTAINER ===================== -->
+    <FrameLayout
+        android:id="@+id/cardContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnNextCard"
+        app:layout_constraintDimensionRatio="1:1.35">
+
+        <!-- ======= FRONT: ONLY WORD + PHONETIC ======= -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardFront"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="8dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- Speaker button (top center) -->
+                <ImageButton
+                    android:id="@+id/btnSpeakerFront"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_speaker_wave"
+                    android:contentDescription="Nghe phát âm"
+                    android:src="@drawable/ic_volume_up"
+                    android:padding="12dp"
+                    android:scaleType="centerInside"
+                    app:tint="@color/white"
+                    android:elevation="4dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="28dp" />
+
+                <!-- Word -->
+                <TextView
+                    android:id="@+id/tvWordFront"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:gravity="center"
+                    android:textColor="@color/body_primary"
+                    android:textSize="34sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="-0.02"
+                    app:layout_constraintTop_toBottomOf="@id/btnSpeakerFront"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/tvPhoneticFront"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    android:layout_marginTop="12dp"
+                    tools:text="Resilience" />
+
+                <!-- Phonetic -->
+                <TextView
+                    android:id="@+id/tvPhoneticFront"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:textColor="@color/gray_400"
+                    android:textSize="18sp"
+                    app:layout_constraintTop_toBottomOf="@id/tvWordFront"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="/rəˈzilyəns/" />
+
+                <!-- Tap to reveal hint -->
+                <TextView
+                    android:id="@+id/tvTapToReveal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="28dp"
+                    android:text="Nhấn để xem nghĩa"
+                    android:textColor="@color/gray_400"
+                    android:textSize="13sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ======= BACK: VISUAL CUE + MEANING + EXAMPLE + NOTE ======= -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardBack"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            app:cardBackgroundColor="#00000000"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="8dp">
+
+            <!-- Gradient background for card back -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_card_back_gradient" />
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/scrollCardBack"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:overScrollMode="never">
+
+                <LinearLayout
+                    android:id="@+id/layoutCardBackContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Visual Cue Image -->
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/imgVisualCue"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:contentDescription="Visual Cue"
+                            android:src="@drawable/ic_hero_placeholder"
+                            app:shapeAppearance="@style/VisualCueTopRoundedStyle" />
+
+                        <!-- Gradient overlay -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_image_gradient_overlay" />
+
+                        <!-- "Visual Cue" badge -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|start"
+                            android:layout_margin="16dp"
+                            android:background="@drawable/bg_visual_cue_badge"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="4dp"
+                            android:text="Visual Cue"
+                            android:textColor="@color/white"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </FrameLayout>
+
+                    <!-- Content container -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <!-- Meaning section -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_meaning_section"
+                            android:padding="16dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="MEANING"
+                                android:textColor="#E91E63"
+                                android:textSize="10sp"
+                                android:textStyle="bold"
+                                android:letterSpacing="0.15" />
+
+                            <TextView
+                                android:id="@+id/tvWordBack"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:textColor="@color/body_primary"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                tools:text="Resilience" />
+
+                            <!-- Part of speech + meaning -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:id="@+id/tvPartOfSpeech"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/bg_pos_badge"
+                                    android:backgroundTint="#F8BBD0"
+                                    android:paddingStart="8dp"
+                                    android:paddingEnd="8dp"
+                                    android:paddingTop="2dp"
+                                    android:paddingBottom="2dp"
+                                    android:textColor="#C2185B"
+                                    android:textSize="13sp"
+                                    android:textStyle="italic"
+                                    tools:text="(n)" />
+
+                                <TextView
+                                    android:id="@+id/tvMeaning"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:layout_marginStart="10dp"
+                                    android:textColor="@color/body_primary"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    tools:text="Sự phục hồi / kiên cường" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <!-- Divider -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/divider" />
+
+                        <!-- Example section -->
+                        <LinearLayout
+                            android:id="@+id/layoutExample"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:background="@drawable/bg_example_section"
+                            android:padding="16dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="EXAMPLE"
+                                android:textColor="#0288D1"
+                                android:textSize="10sp"
+                                android:textStyle="bold"
+                                android:letterSpacing="0.15" />
+
+                            <TextView
+                                android:id="@+id/tvExampleSentence"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:textColor="@color/body_primary"
+                                android:textSize="16sp"
+                                android:lineSpacingMultiplier="1.5"
+                                tools:text='The city showed &lt;b&gt;resilience&lt;/b&gt; after the storm.' />
+                        </LinearLayout>
+
+                        <!-- Notes section -->
+                        <LinearLayout
+                            android:id="@+id/layoutNote"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:background="@drawable/bg_note_card"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_marginTop="1dp"
+                                android:src="@drawable/ic_lightbulb"
+                                app:tint="@color/amber_border"
+                                android:importantForAccessibility="no" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="10dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="NOTES"
+                                    android:textColor="@color/amber_text"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.1" />
+
+                                <TextView
+                                    android:id="@+id/tvNote"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:textColor="@color/amber_text"
+                                    android:textSize="13sp"
+                                    android:lineSpacingMultiplier="1.4"
+                                    tools:text="Used in contexts of psychological recovery." />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
+
+    <!-- ===================== NEXT CARD BUTTON ===================== -->
+    <Button
+        android:id="@+id/btnNextCard"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="28dp"
+        android:backgroundTint="@color/primary"
+        android:text="Từ tiếp theo →"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:cornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- ===================== QUIZ OVERLAY ===================== -->
+    <ScrollView
+        android:id="@+id/layoutQuiz"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_study_screen"
+        android:visibility="gone"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Badge kiểu câu hỏi -->
+            <TextView
+                android:id="@+id/tvQuizTypeBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_pos_badge"
+                android:backgroundTint="#E8F5E9"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:textColor="#2E7D32"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1"
+                tools:text="MEANING → WORD" />
+
+            <!-- Câu hỏi -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="6dp">
+
+                <TextView
+                    android:id="@+id/tvQuizPrompt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="24dp"
+                    android:gravity="center"
+                    android:textColor="@color/body_primary"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:lineSpacingMultiplier="1.4"
+                    tools:text="Chọn từ tiếng Anh có nghĩa là 'Sự phục hồi'" />
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- === MCQ: 4 đáp án === -->
+            <LinearLayout
+                android:id="@+id/layoutMcqChoices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <Button
+                    android:id="@+id/btnChoice1"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:minHeight="52dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/body_primary"
+                    android:backgroundTint="@color/white"
+                    app:strokeColor="@color/divider"
+                    app:cornerRadius="14dp"
+                    tools:text="Resilience" />
+
+                <Button
+                    android:id="@+id/btnChoice2"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:minHeight="52dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/body_primary"
+                    android:backgroundTint="@color/white"
+                    app:strokeColor="@color/divider"
+                    app:cornerRadius="14dp"
+                    tools:text="Ambiguity" />
+
+                <Button
+                    android:id="@+id/btnChoice3"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:minHeight="52dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/body_primary"
+                    android:backgroundTint="@color/white"
+                    app:strokeColor="@color/divider"
+                    app:cornerRadius="14dp"
+                    tools:text="Compliance" />
+
+                <Button
+                    android:id="@+id/btnChoice4"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:minHeight="52dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/body_primary"
+                    android:backgroundTint="@color/white"
+                    app:strokeColor="@color/divider"
+                    app:cornerRadius="14dp"
+                    tools:text="Leverage" />
+
+            </LinearLayout>
+
+            <!-- === FILL_BLANK: EditText + Submit === -->
+            <LinearLayout
+                android:id="@+id/layoutFillBlank"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nhập từ còn thiếu..."
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxCornerRadiusTopStart="14dp"
+                    app:boxCornerRadiusTopEnd="14dp"
+                    app:boxCornerRadiusBottomStart="14dp"
+                    app:boxCornerRadiusBottomEnd="14dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etFillBlank"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:imeOptions="actionDone"
+                        android:textSize="16sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/btnFillBlankSubmit"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="@color/primary"
+                    android:text="Xác nhận"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="14dp" />
+
+            </LinearLayout>
+
+            <!-- Kết quả / feedback sau khi trả lời -->
+            <LinearLayout
+                android:id="@+id/layoutQuizFeedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:padding="16dp"
+                android:background="@drawable/bg_meaning_section"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/imgFeedbackIcon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_lightbulb"
+                    android:importantForAccessibility="no" />
+
+                <TextView
+                    android:id="@+id/tvFeedbackText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:textSize="15sp"
+                    android:lineSpacingMultiplier="1.3"
+                    tools:text="Chính xác! Đáp án: Resilience" />
+
+            </LinearLayout>
+
+            <!-- Nút tiếp theo sau khi đã trả lời -->
+            <Button
+                android:id="@+id/btnQuizNext"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/primary"
+                android:text="Tiếp tục →"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:cornerRadius="16dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- ===================== COMPLETE OVERLAY ===================== -->
+    <LinearLayout
+        android:id="@+id/layoutComplete"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#FFF9C4"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Celebration Image -->
+        <ImageView
+            android:id="@+id/imgCelebration"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:src="@drawable/img_celebration_penguin"
+            android:contentDescription="Chúc mừng"
+            android:layout_marginBottom="24dp"
+            android:scaleType="centerInside" />
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tuyệt vời!"
+            android:textColor="@color/body_primary"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Subtitle -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvCompleteSubtitle"
+            android:gravity="center"
+            android:textColor="@color/gray_400"
+            android:textSize="15sp"
+            android:lineSpacingMultiplier="1.4"
+            android:layout_marginBottom="12dp"
+            tools:text="Bạn đã học hết 20 từ trong bộ thẻ này." />
+
+        <!-- Quiz score -->
+        <TextView
+            android:id="@+id/tvQuizScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/primary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="32dp"
+            tools:text="Kiểm tra: 4 / 5 câu đúng 🎯" />
+
+        <!-- Back button -->
+        <Button
+            android:id="@+id/btnCompleteBack"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:backgroundTint="@color/primary"
+            android:text="Quay lại"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="16dp" />
+
+    </LinearLayout>
+
+    <!-- ===================== LOADING OVERLAY ===================== -->
+    <ProgressBar
+        android:id="@+id/progressLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/purple_primary"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <!-- ===================== EMPTY STATE OVERLAY ===================== -->
+    <LinearLayout
+        android:id="@+id/layoutEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone"
+        android:elevation="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:src="@drawable/img_empty_deck"
+            android:contentDescription="Empty"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chưa có từ vựng nào"
+            android:textColor="@color/body_primary"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Bộ thẻ này chưa có từ vựng nào. Hãy thêm từ mới để bắt đầu học."
+            android:textColor="@color/gray_400"
+            android:textSize="14sp"
+            android:lineSpacingMultiplier="1.3"
+            android:layout_marginBottom="32dp" />
+
+        <Button
+            android:id="@+id/btnEmptyBack"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:backgroundTint="@color/primary"
+            android:text="Quay lại"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:cornerRadius="16dp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MaxItemRecyclerView">
+        <attr name="maxVisibleItems" format="integer" />
+    </declare-styleable>
+    <declare-styleable name="DonutProgressView">
+        <attr name="donutStrokeWidth" format="dimension" />
+    </declare-styleable>
+</resources>

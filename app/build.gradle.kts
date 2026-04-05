@@ -1,8 +1,12 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.androidx.navigation.safeargs.kotlin)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -32,8 +36,14 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+
+            freeCompilerArgs.add(
+                "-XXLanguage:+PropertyParamAnnotationDefaultTargetMode"
+            )
+        }
     }
     buildFeatures {
         dataBinding = true
@@ -60,14 +70,15 @@ dependencies {
     implementation(libs.shimmer)
     implementation(libs.androidx.swiperefreshlayout)
 
-    // Dagger Hilt
+    // Dagger Hilt (dùng KAPT thay vì KSP - tránh lỗi KSTypeArgument với Kotlin 2.2.x)
     implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
+    kapt(libs.hilt.compiler)
 
     // Lifecycle & Fragment
     implementation(libs.fragment.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.runtime.ktx)
 
     // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
@@ -80,4 +91,18 @@ dependencies {
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)
+
+    // Paging 3
+    implementation(libs.androidx.paging.runtime)
+
+    // Media3 (ExoPlayer + MediaSession)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.session)
+
+    // Lottie
+    implementation(libs.lottie)
+
+    // Glide
+    implementation(libs.glide)
+    kapt(libs.glide.compiler)
 }

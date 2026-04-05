@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- Trophy bowl body -->
+    <path
+        android:pathData="M28,20 L92,20 L82,65 C80,78 70,86 60,86 C50,86 40,78 38,65 Z"
+        android:fillColor="#FFD700" />
+
+    <!-- Trophy rim highlights -->
+    <path
+        android:pathData="M28,20 L92,20 L88,30 L32,30 Z"
+        android:fillColor="#FFC200" />
+
+    <!-- Left handle -->
+    <path
+        android:pathData="M28,20 C12,20 8,40 20,48 C24,50 30,48 30,48 L38,48 C32,42 20,36 28,20 Z"
+        android:fillColor="#FFD700" />
+
+    <!-- Right handle -->
+    <path
+        android:pathData="M92,20 C108,20 112,40 100,48 C96,50 90,48 90,48 L82,48 C88,42 100,36 92,20 Z"
+        android:fillColor="#FFD700" />
+
+    <!-- Stem -->
+    <path
+        android:pathData="M50,86 L70,86 L70,96 L50,96 Z"
+        android:fillColor="#FFB800" />
+
+    <!-- Base -->
+    <path
+        android:pathData="M36,96 L84,96 L84,104 L36,104 Z"
+        android:fillColor="#FFB800" />
+
+    <!-- Star / shine on bowl -->
+    <path
+        android:pathData="M55,40 L58,48 L66,48 L60,53 L62,61 L55,56 L48,61 L50,53 L44,48 L52,48 Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.6" />
+
+</vector>
