@@ -21,6 +21,11 @@ object PreferencesKeys {
     val USER_ID = intPreferencesKey("user_id")
     val THEME_MODE = intPreferencesKey("theme_mode") // 0 = Light, 1 = Dark, 2 = System
 
+    val HAS_SEEN_BEFORE_LOGIN_ONBOARDING = booleanPreferencesKey("has_seen_onboarding_before_login")
+
+    val HAS_COMPLETED_AFTER_LOGIN_ONBOARDING =
+        booleanPreferencesKey("has_completed_after_login_onboarding")
+
     // Boolean keys
     val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
 }

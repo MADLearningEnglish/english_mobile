@@ -5,7 +5,7 @@ data class Audio(
     val duration: Int,
     val format: String,
     val sampleRate: Int,
-    val fileSize: Int,
+    val fileSize: Double,
     val fileUrl: String,
     val pagesId: Int
 )

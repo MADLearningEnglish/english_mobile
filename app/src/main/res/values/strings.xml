@@ -58,6 +58,31 @@
     <string name="recommend_by_topic">Suggested by topic</string>
     <string name="recommend_by_author">Suggested by author</string>
     <string name="books_reading_in_progress">Books you haven\'t finished</string>
+    <string name="get_started">Get Started</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+    <string name="new_word">NEW WORD</string>
+    <string name="master_vocabulary_with_flashcards">Master Vocabulary with Flashcards</string>
+    <string name="personalized_flashcards_help_you_memorize_new_words_and_phrases_efficiently_through_repetition">Personalized flashcards help you memorize new words and phrases efficiently through repetition.</string>
+    <string name="audiobook_and_n_translate">Audiobook and\n translate</string>
+    <string name="enjoy_english_audiobooks_with_instant_word_translation_and_pronunciation_for_every_sentence">Enjoy English audiobooks with instant word translation and pronunciation for every sentence.</string>
+    <string name="practice_conversation_n_with_ai">Practice Conversation\n with AI</string>
+    <string name="chat_naturally_with_our_ai_to_improve_your_nenglish_speaking_and_listening_skills_nanytime_anywhere">Chat naturally with our AI to improve your\nEnglish speaking and listening skills\nanytime, anywhere.</string>
+    <string name="what_is_your_english_level">What is your English level?</string>
+    <string name="choose_the_level_that_best_fits_your_current_skills_to_personalize_your_learning_path">Choose the level that best fits your current skills to personalize your learning path.</string>
+    <string name="intermediate">Intermediate</string>
+    <string name="beginner">Beginner</string>
+    <string name="daily_conversation_fluency_b1_b2">Daily conversation fluency (B1/B2)</string>
+    <string name="elementary_knowledge_a1_a2">Elementary knowledge (A1/A2)</string>
+    <string name="advanced">Advanced</string>
+    <string name="beginner_line2_elementary">Beginner\nElementary knowledge (A1/A2)</string>
+    <string name="intermediate_line2_daily">Intermediate\nDaily conversation fluency (B1/B2)</string>
+    <string name="advanced_line2_professional">Advanced\nProfessional proficiency (C1/C2)</string>
+    <string name="what_topics_do_you_like">What topics do you like?</string>
+    <string name="select_at_least_3_topics_to_help_us_recommend_books_you_ll_love">Select at least 3 topics to help us\nrecommend books you\'ll love.</string>
+    <string name="onboarding_error_select_level">Please select your English level.</string>
+    <string name="onboarding_error_select_three_genres">Please select at least 3 topics.</string>
+    <string name="onboarding_error_load_levels">Could not load levels. Please try again.</string>
 
     <!-- AI chat / speaking practice -->
     <string name="ai_choose_topic_title">Choose Topic</string>

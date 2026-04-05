@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface_variant"
+    android:padding="24dp">
+
+    <ImageView
+        android:id="@+id/illustrationContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/imv_chat"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tvTitle"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/practice_conversation_n_with_ai"
+        android:textColor="@color/primary"
+        android:gravity="center"
+        style="@style/HeadlineSmall"
+        app:layout_constraintTop_toBottomOf="@id/illustrationContainer"
+        app:layout_constraintBottom_toTopOf="@+id/tvDescription"/>
+
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/chat_naturally_with_our_ai_to_improve_your_nenglish_speaking_and_listening_skills_nanytime_anywhere"
+        style="@style/LabelMedium"
+        android:textColor="@color/body_primary"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

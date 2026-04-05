@@ -189,5 +189,22 @@ class PreferencesDatasource @Inject constructor(
         }
     }
 
+    suspend fun hasSeenBeforeLoginOnboarding():Boolean{
+       return dataStore.data.map{ preferences ->
+           preferences[PreferencesKeys.HAS_SEEN_BEFORE_LOGIN_ONBOARDING]?:false
+       }.first()
+    }
+
+    suspend fun updateOnboardingStatus(hasSeen:Boolean){
+         dataStore.edit { preferences ->
+            preferences[PreferencesKeys.HAS_SEEN_BEFORE_LOGIN_ONBOARDING] = hasSeen
+        }
+    }
+
+    suspend fun hasCompletedAfterLoginOnboarding(): Boolean {
+        return dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.HAS_COMPLETED_AFTER_LOGIN_ONBOARDING] ?: false
+        }.first()
+    }
 
 }
