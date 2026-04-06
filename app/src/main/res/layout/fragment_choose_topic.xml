@@ -15,7 +15,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/ic_arrow_back"
         app:navigationIconTint="@color/ai_title_navy"
         app:title="@string/ai_choose_topic_title"
         app:titleCentered="true"
@@ -49,7 +48,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbarDivider"
-        app:startIconDrawable="@drawable/ic_search"
         app:startIconMinSize="22dp"
         app:startIconTint="@color/ai_hint_on_light">
 
@@ -60,10 +58,11 @@
             android:hint="@string/ai_search_scenarios"
             android:inputType="text"
             android:maxLines="1"
-            android:paddingVertical="15dp"
+            android:paddingVertical="16dp"
+            android:paddingHorizontal="8dp"
             android:textColor="@color/ai_text_on_light"
             android:textColorHint="@color/ai_hint_on_light"
-            android:textSize="15sp" />
+            style="@style/BodyMedium" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <HorizontalScrollView
