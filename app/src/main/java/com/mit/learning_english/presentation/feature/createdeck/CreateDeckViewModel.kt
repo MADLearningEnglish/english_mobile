@@ -13,11 +13,13 @@ import javax.inject.Inject
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import com.mit.learning_english.domain.usecase.file.UploadFileUseCase
+import com.mit.learning_english.domain.usecase.dictionary.FetchPhoneticUseCase
 
 @HiltViewModel
 class CreateDeckViewModel @Inject constructor(
     private val createDeckUseCase: CreateDeckUseCase,
     private val uploadFileUseCase: UploadFileUseCase,
+    private val fetchPhoneticUseCase: FetchPhoneticUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<CreateDeckState, CreateDeckEvent>(CreateDeckState()) {
 
@@ -59,10 +61,33 @@ class CreateDeckViewModel @Inject constructor(
         }
     }
 
+    fun autoFetchPhonetic(index: Int) {
+        val state = uiState.value
+        if (index !in state.flashcards.indices) return
+        val word = state.flashcards[index].word
+        if (word.isBlank()) {
+            emitEvent(CreateDeckEvent.ShowSnackbar("Vui lòng nhập từ vựng trước"))
+            return
+        }
+
+        viewModelScope.launch(exceptionHandler) {
+            when (val result = fetchPhoneticUseCase(word)) {
+                is Result.Success -> {
+                    updatePhonetic(index, result.data)
+                }
+                is Result.Error -> {
+                    emitEvent(CreateDeckEvent.ShowSnackbar(result.message ?: "Không tìm thấy phiên âm"))
+                }
+                else -> Unit
+            }
+        }
+    }
+
     fun updateWord(index: Int, value: String) = updateField(index) { copy(word = value) }
     fun updatePhonetic(index: Int, value: String) = updateField(index) { copy(phonetic = value) }
     fun updateMeaning(index: Int, value: String) = updateField(index) { copy(meaning = value) }
     fun updateExample(index: Int, value: String) = updateField(index) { copy(exampleSentence = value) }
+    fun updateNote(index: Int, value: String) = updateField(index) { copy(note = value) }
     fun updateVisualCueUri(index: Int, uri: android.net.Uri) = updateField(index) { copy(visualCueUri = uri) }
 
     private fun updateField(index: Int, updater: FlashcardInput.() -> FlashcardInput) {
@@ -122,6 +147,7 @@ class CreateDeckViewModel @Inject constructor(
 
             val request = CreateDeckRequest(
                 title = state.title.trim(),
+                description = state.description.trim().ifBlank { null },
                 coverImageUrl = finalCoverUrl,
                 flashcards = uploadedCards
             )

@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class DeckDto(
     @SerializedName("id") val id: Int,
     @SerializedName("title") val title: String,
+    @SerializedName("description") val description: String?,
     @SerializedName("coverImageUrl") val coverImageUrl: String?,
     @SerializedName("totalWords") val totalWords: Int,
     @SerializedName("status") val status: Int,

@@ -3,6 +3,7 @@ package com.mit.learning_english.presentation.feature.main
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.mit.learning_english.R
@@ -24,7 +25,26 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>() {
     override fun setupView() {
         val navHostFragment =
             childFragmentManager.findFragmentById(R.id.nav_host_fragment_main) as NavHostFragment
-        binding.bottomNavView.setupWithNavController(navHostFragment.navController)
+
+        val navController = navHostFragment.navController
+
+        binding.bottomNavView.setOnItemSelectedListener { item ->
+            val options = NavOptions.Builder()
+                .setLaunchSingleTop(true)
+                .setRestoreState(true)
+                .setPopUpTo(navController.graph.startDestinationId,
+                    inclusive = false,
+                    saveState = true
+                )
+                .build()
+
+            try {
+                navController.navigate(item.itemId, null, options)
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
     }
 
     override fun bindView() {}

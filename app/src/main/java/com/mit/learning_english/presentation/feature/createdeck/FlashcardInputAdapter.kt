@@ -27,7 +27,9 @@ class FlashcardInputAdapter(
     private val onPhoneticChanged: (Int, String) -> Unit,
     private val onMeaningChanged: (Int, String) -> Unit,
     private val onExampleChanged: (Int, String) -> Unit,
-    private val onVisualCueClick: (Int) -> Unit
+    private val onNoteChanged: (Int, String) -> Unit,
+    private val onVisualCueClick: (Int) -> Unit,
+    private val onFetchPhoneticClick: (Int) -> Unit
 ) : ListAdapter<FlashcardUiItem, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     override fun getItemViewType(position: Int): Int =
@@ -73,10 +75,12 @@ class FlashcardInputAdapter(
         private val phoneticWatcher = simpleWatcher { onPhoneticChanged(currentIndex, it) }
         private val meaningWatcher = simpleWatcher { onMeaningChanged(currentIndex, it) }
         private val exampleWatcher = simpleWatcher { onExampleChanged(currentIndex, it) }
+        private val noteWatcher = simpleWatcher { onNoteChanged(currentIndex, it) }
 
         init {
             binding.btnDeleteCard.setOnClickListener { if (currentIndex >= 0) onDelete(currentIndex) }
             binding.btnUploadVisualCue.setOnClickListener { if (currentIndex >= 0) onVisualCueClick(currentIndex) }
+            binding.btnAutoFetchPhonetic.setOnClickListener { if (currentIndex >= 0) onFetchPhoneticClick(currentIndex) }
         }
 
         fun bind(item: FlashcardUiItem) {
@@ -88,11 +92,29 @@ class FlashcardInputAdapter(
             binding.etPhonetic.removeTextChangedListener(phoneticWatcher)
             binding.etMeaning.removeTextChangedListener(meaningWatcher)
             binding.etExample.removeTextChangedListener(exampleWatcher)
+            binding.etNote.removeTextChangedListener(noteWatcher)
 
-            binding.etWord.setText(item.input.word)
-            binding.etPhonetic.setText(item.input.phonetic)
-            binding.etMeaning.setText(item.input.meaning)
-            binding.etExample.setText(item.input.exampleSentence)
+            // Only set text if it differs to preserve cursor position
+            if (binding.etWord.text.toString() != item.input.word) {
+                binding.etWord.setText(item.input.word)
+                binding.etWord.setSelection(binding.etWord.text?.length ?: 0)
+            }
+            if (binding.etPhonetic.text.toString() != item.input.phonetic) {
+                binding.etPhonetic.setText(item.input.phonetic)
+                binding.etPhonetic.setSelection(binding.etPhonetic.text?.length ?: 0)
+            }
+            if (binding.etMeaning.text.toString() != item.input.meaning) {
+                binding.etMeaning.setText(item.input.meaning)
+                binding.etMeaning.setSelection(binding.etMeaning.text?.length ?: 0)
+            }
+            if (binding.etExample.text.toString() != item.input.exampleSentence) {
+                binding.etExample.setText(item.input.exampleSentence)
+                binding.etExample.setSelection(binding.etExample.text?.length ?: 0)
+            }
+            if (binding.etNote.text.toString() != item.input.note) {
+                binding.etNote.setText(item.input.note)
+                binding.etNote.setSelection(binding.etNote.text?.length ?: 0)
+            }
 
             // Show visual cue
             val visualUri = item.input.visualCueUri
@@ -114,15 +136,12 @@ class FlashcardInputAdapter(
                 binding.layoutUploadPrompt.visibility = android.view.View.VISIBLE
             }
 
-            // Move cursors to end
-            binding.etWord.setSelection(binding.etWord.text?.length ?: 0)
-            binding.etMeaning.setSelection(binding.etMeaning.text?.length ?: 0)
-
             // Re-attach watchers
             binding.etWord.addTextChangedListener(wordWatcher)
             binding.etPhonetic.addTextChangedListener(phoneticWatcher)
             binding.etMeaning.addTextChangedListener(meaningWatcher)
             binding.etExample.addTextChangedListener(exampleWatcher)
+            binding.etNote.addTextChangedListener(noteWatcher)
         }
     }
 

@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class UpdateDeckRequestDto(
     @SerializedName("title") val title: String,
+    @SerializedName("description") val description: String? = null,
     @SerializedName("coverImageUrl") val coverImageUrl: String? = null,
     @SerializedName("status") val status: Int,
     @SerializedName("flashcards") val flashcards: List<FlashcardUpdateDto>

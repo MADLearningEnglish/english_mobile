@@ -39,8 +39,8 @@
                     android:background="@drawable/bg_input_field"
                     android:contentDescription="Quay lại"
                     android:elevation="2dp"
-                    android:src="@drawable/ic_back"
-                    app:tint="@color/body_primary" />
+                    android:src="@drawable/ic_arrow_back"
+                    app:tint="@color/primary" />
 
                 <TextView
                     android:id="@+id/tvTitle"

@@ -7,6 +7,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.core.os.bundleOf
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -14,7 +16,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentDeckListBinding
 import com.mit.learning_english.presentation.base.BaseFragment
-import com.mit.learning_english.presentation.feature.main.MainFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -54,10 +55,6 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
         binding.fabCreate.setOnClickListener {
             viewModel.onCreateDeck()
         }
-
-        binding.btnBack.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
-        }
     }
 
     override fun observeViewModel() {
@@ -94,21 +91,26 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.event.collectLatest { event ->
+                    val parentNavController =
+                        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
                     when (event) {
                         is DeckListEvent.NavigateToStudy -> {
-                            val action = MainFragmentDirections.actionMainFragmentToStudyFragment(deckId = event.deckId, deckTitle = event.deckTitle)
-
-                            findNavController().navigate(action)
+                            parentNavController.navigate(
+                                R.id.action_mainFragment_to_studyFragment,
+                                bundleOf(
+                                    "deckId" to event.deckId,
+                                    "deckTitle" to event.deckTitle
+                                )
+                            )
                         }
                         is DeckListEvent.NavigateToEditDeck -> {
-                            val action = MainFragmentDirections.actionMainFragmentToEditDeckFragment(deckId = event.deckId)
-
-                            findNavController().navigate(action)
+                            parentNavController.navigate(
+                                R.id.action_mainFragment_to_editDeckFragment,
+                                bundleOf("deckId" to event.deckId)
+                            )
                         }
                         is DeckListEvent.NavigateToCreateDeck -> {
-                            val action = MainFragmentDirections.actionMainFragmentToCreateDeckFragment()
-
-                            findNavController().navigate(action)
+                            parentNavController.navigate(R.id.action_mainFragment_to_createDeckFragment)
                         }
                         is DeckListEvent.ShowDeleteConfirmDialog -> {
                             showDeleteDialog(event.deckId, event.deckTitle)

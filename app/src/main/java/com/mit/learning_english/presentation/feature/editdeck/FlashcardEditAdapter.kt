@@ -27,7 +27,9 @@ class FlashcardEditAdapter(
     private val onPhoneticChanged: (Int, String) -> Unit,
     private val onMeaningChanged: (Int, String) -> Unit,
     private val onExampleChanged: (Int, String) -> Unit,
-    private val onVisualCueClick: (Int) -> Unit
+    private val onNoteChanged: (Int, String) -> Unit,
+    private val onVisualCueClick: (Int) -> Unit,
+    private val onFetchPhoneticClick: (Int) -> Unit
 ) : ListAdapter<FlashcardEditUiItem, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     override fun getItemViewType(position: Int): Int =
@@ -77,26 +79,46 @@ class FlashcardEditAdapter(
         private val phoneticWatcher = simpleWatcher { onPhoneticChanged(currentIndex, it) }
         private val meaningWatcher = simpleWatcher { onMeaningChanged(currentIndex, it) }
         private val exampleWatcher = simpleWatcher { onExampleChanged(currentIndex, it) }
+        private val noteWatcher = simpleWatcher { onNoteChanged(currentIndex, it) }
 
         init {
             binding.btnDeleteCard.setOnClickListener { if (currentIndex >= 0) onDelete(currentIndex) }
             binding.btnUploadVisualCue.setOnClickListener { if (currentIndex >= 0) onVisualCueClick(currentIndex) }
+            binding.btnAutoFetchPhonetic.setOnClickListener { if (currentIndex >= 0) onFetchPhoneticClick(currentIndex) }
         }
 
         fun bind(item: FlashcardEditUiItem) {
             currentIndex = item.originalIndex
             binding.tvCardIndex.text = "THẺ #${item.originalIndex + 1}"
 
-            // Remove watchers before setting text to avoid firing callbacks
+            // Remove watchers before setting text
             binding.etWord.removeTextChangedListener(wordWatcher)
             binding.etPhonetic.removeTextChangedListener(phoneticWatcher)
             binding.etMeaning.removeTextChangedListener(meaningWatcher)
             binding.etExample.removeTextChangedListener(exampleWatcher)
+            binding.etNote.removeTextChangedListener(noteWatcher)
 
-            binding.etWord.setText(item.card.word)
-            binding.etPhonetic.setText(item.card.phonetic)
-            binding.etMeaning.setText(item.card.meaning)
-            binding.etExample.setText(item.card.exampleSentence)
+            // Only set text if it differs to preserve cursor position
+            if (binding.etWord.text.toString() != item.card.word) {
+                binding.etWord.setText(item.card.word)
+                binding.etWord.setSelection(binding.etWord.text?.length ?: 0)
+            }
+            if (binding.etPhonetic.text.toString() != item.card.phonetic) {
+                binding.etPhonetic.setText(item.card.phonetic)
+                binding.etPhonetic.setSelection(binding.etPhonetic.text?.length ?: 0)
+            }
+            if (binding.etMeaning.text.toString() != item.card.meaning) {
+                binding.etMeaning.setText(item.card.meaning)
+                binding.etMeaning.setSelection(binding.etMeaning.text?.length ?: 0)
+            }
+            if (binding.etExample.text.toString() != item.card.exampleSentence) {
+                binding.etExample.setText(item.card.exampleSentence)
+                binding.etExample.setSelection(binding.etExample.text?.length ?: 0)
+            }
+            if (binding.etNote.text.toString() != item.card.note) {
+                binding.etNote.setText(item.card.note)
+                binding.etNote.setSelection(binding.etNote.text?.length ?: 0)
+            }
 
             // Show visual cue
             val visualUri = item.card.visualCueUri
@@ -118,15 +140,12 @@ class FlashcardEditAdapter(
                 binding.layoutUploadPrompt.visibility = android.view.View.VISIBLE
             }
 
-            // Move cursors to end
-            binding.etWord.setSelection(binding.etWord.text?.length ?: 0)
-            binding.etMeaning.setSelection(binding.etMeaning.text?.length ?: 0)
-
             // Re-attach watchers
             binding.etWord.addTextChangedListener(wordWatcher)
             binding.etPhonetic.addTextChangedListener(phoneticWatcher)
             binding.etMeaning.addTextChangedListener(meaningWatcher)
             binding.etExample.addTextChangedListener(exampleWatcher)
+            binding.etNote.addTextChangedListener(noteWatcher)
         }
     }
 

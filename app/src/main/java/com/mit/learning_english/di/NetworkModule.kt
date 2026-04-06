@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.mit.learning_english.data.local.network.NetworkMonitor
+import com.mit.learning_english.data.mapper.ResultMapper
 import com.mit.learning_english.data.remote.retrofit.okhttpclient.AuthInterceptor
 import com.mit.learning_english.data.remote.retrofit.okhttpclient.TokenAuthenticator
 import com.mit.learning_english.data.repository.NetworkRepositoryImpl
@@ -117,5 +118,11 @@ object NetworkModule {
         networkMonitor: NetworkMonitor
     ): NetworkRepository {
         return NetworkRepositoryImpl(networkMonitor = networkMonitor)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDictionaryApiService(retrofit: Retrofit): com.mit.learning_english.data.remote.api.DictionaryApiService {
+        return retrofit.create(com.mit.learning_english.data.remote.api.DictionaryApiService::class.java)
     }
 }
