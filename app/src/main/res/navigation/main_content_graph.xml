@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content_graph"
+    app:startDestination="@+id/home">
+
+    <fragment
+        android:id="@+id/home"
+        android:name="com.mit.learning_english.presentation.feature.home.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/chat"
+        android:name="com.mit.learning_english.presentation.feature.chat.ChooseTopicFragment"
+        android:label="Chat"
+        tools:layout="@layout/fragment_choose_topic" />
+
+    <fragment
+        android:id="@+id/profile"
+        android:name="com.mit.learning_english.presentation.feature.profile.ProfileFragment"
+        android:label="Profile" />
+
+    <fragment
+        android:id="@+id/vocabulary"
+        android:name="com.mit.learning_english.presentation.feature.decklist.DeckListFragment"
+        android:label="Vocabulary"
+        tools:layout="@layout/fragment_deck_list" />
+
+</navigation>

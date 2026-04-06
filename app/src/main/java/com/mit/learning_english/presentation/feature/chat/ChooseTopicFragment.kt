@@ -4,11 +4,13 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.mit.learning_english.R
 import com.mit.learning_english.data.remote.dto.AiScenarioDto
@@ -73,14 +75,16 @@ class ChooseTopicFragment : BaseFragment<FragmentChooseTopicBinding, ChooseTopic
         collectEvent(viewModel.event) { ev ->
             when (ev) {
                 is ChooseTopicEvent.OpenChat -> {
-                    val nav = ChooseTopicFragmentDirections.actionChooseTopicToAiChat(
-                        sessionId = ev.sessionId,
-                        title = ev.title,
-                        aiRole = ev.aiRole,
-                        levelName = ev.levelName,
-                        instruction = ev.instruction,
+                    Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(
+                        R.id.action_mainFragment_to_aiChatFragment,
+                        bundleOf(
+                            "sessionId" to ev.sessionId,
+                            "title" to ev.title,
+                            "aiRole" to ev.aiRole,
+                            "levelName" to ev.levelName,
+                            "instruction" to ev.instruction
+                        )
                     )
-                    findNavController().navigate(nav)
                 }
             }
         }

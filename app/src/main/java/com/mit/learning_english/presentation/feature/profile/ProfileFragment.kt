@@ -7,6 +7,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.core.os.bundleOf
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayoutMediator
@@ -77,17 +78,17 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
                 }
                 launch {
                     viewModel.event.collect { ev ->
-                        val nav = findNavController()
+                        val nav = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
                         when (ev) {
                             is ProfileEvent.OpenEditProfile ->
-                                nav.navigate(R.id.action_profile_to_editProfileFragment)
+                                nav.navigate(R.id.action_mainFragment_to_editProfileFragment)
                             is ProfileEvent.OpenVocabularyList ->
-                                nav.navigate(R.id.action_profile_to_profileVocabularyFragment)
+                                nav.navigate(R.id.action_mainFragment_to_profileVocabularyFragment)
                             is ProfileEvent.OpenDailyActivity ->
-                                nav.navigate(R.id.action_profile_to_profileDailyActivityFragment)
+                                nav.navigate(R.id.action_mainFragment_to_profileDailyActivityFragment)
                             is ProfileEvent.OpenActivityDay ->
                                 nav.navigate(
-                                    R.id.profileActivityDayFragment,
+                                    R.id.action_mainFragment_to_profileActivityDayFragment,
                                     bundleOf("isoDate" to ev.date.toString())
                                 )
                         }

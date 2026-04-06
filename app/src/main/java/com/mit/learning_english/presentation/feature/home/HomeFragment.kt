@@ -7,7 +7,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.Navigation.findNavController
+import androidx.core.os.bundleOf
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.appbar.AppBarLayout
@@ -17,7 +19,6 @@ import com.mit.learning_english.presentation.base.BaseFragment
 import com.mit.learning_english.presentation.feature.home.adapter.BookHistoryAdapter
 import com.mit.learning_english.presentation.feature.home.adapter.BookRecommendAdapter
 import com.mit.learning_english.presentation.feature.home.adapter.GenreAdapter
-import com.mit.learning_english.presentation.feature.main.MainFragmentDirections
 import com.mit.learning_english.presentation.utils.HorizontalSpacingItemDecoration
 import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
@@ -132,13 +133,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         collectEvent(viewModel.event) { event ->
+            val navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
             when (event) {
                 is HomeEvent.NavigateToBookDetailFragment -> {
-                    val action =
-                        MainFragmentDirections.actionMainFragmentToBookDetailFragment(event.bookId)
-                    findNavController(
-                        requireActivity(), R.id.nav_host_fragment
-                    ).navigate(action)
+                    navController.navigate(
+                        R.id.action_mainFragment_to_bookDetailFragment,
+                        bundleOf("bookId" to event.bookId)
+                    )
                 }
 
                 is HomeEvent.NavigateToRecentlyReadBook -> {
@@ -146,22 +147,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
 
                 is HomeEvent.NavigateToRecommentBookFragment -> {
-                    val action =
-                        MainFragmentDirections.actionMainFragmentToRecommendBookFragment()
-                    findNavController(requireActivity(), R.id.nav_host_fragment).navigate(action)
+                    navController.navigate(R.id.action_mainFragment_to_recommendBookFragment)
                 }
 
                 is HomeEvent.NavigateToSearchFragment -> {
-                    val action = MainFragmentDirections.actionMainFragmentToSearchBookFragment()
-                    findNavController(requireActivity(), R.id.nav_host_fragment).navigate(action)
+                    navController.navigate(R.id.action_mainFragment_to_searchBookFragment)
                 }
 
                 is HomeEvent.NavigateToBookByGenre -> {
-                    val action = MainFragmentDirections.actionMainFragmentToBookByGenreFragment(
-                        event.genreId,
-                        event.genreName
+                    navController.navigate(
+                        R.id.action_mainFragment_to_bookByGenreFragment,
+                        bundleOf(
+                            "genreId" to event.genreId,
+                            "genreName" to event.genreName
+                        )
                     )
-                    findNavController(requireActivity(), R.id.nav_host_fragment).navigate(action)
                 }
             }
         }

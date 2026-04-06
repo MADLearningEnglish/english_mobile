@@ -83,7 +83,6 @@
         android:name="com.mit.learning_english.presentation.feature.resetpassword.ResetPasswordFragment"
         android:label="fragment_reset_password"
         tools:layout="@layout/fragment_reset_password" />
-    <include app:graph="@navigation/main_graph" />
     <fragment
         android:id="@+id/onboardingFragment"
         android:name="com.mit.learning_english.presentation.feature.onboardingbeforelogin.OnboardingFragment"
