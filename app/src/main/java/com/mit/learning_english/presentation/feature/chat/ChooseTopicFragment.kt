@@ -1,17 +1,22 @@
-package com.mit.learning_english.presentation.feature.ai
+package com.mit.learning_english.presentation.feature.chat
 
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.mit.learning_english.R
 import com.mit.learning_english.data.remote.dto.AiScenarioDto
 import com.mit.learning_english.databinding.FragmentChooseTopicBinding
 import com.mit.learning_english.presentation.base.BaseFragment
+import com.mit.learning_english.presentation.feature.ai.ScenarioAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -70,14 +75,16 @@ class ChooseTopicFragment : BaseFragment<FragmentChooseTopicBinding, ChooseTopic
         collectEvent(viewModel.event) { ev ->
             when (ev) {
                 is ChooseTopicEvent.OpenChat -> {
-                    val nav = ChooseTopicFragmentDirections.actionChooseTopicToAiChat(
-                        sessionId = ev.sessionId,
-                        title = ev.title,
-                        aiRole = ev.aiRole,
-                        levelName = ev.levelName,
-                        instruction = ev.instruction,
+                    Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(
+                        R.id.action_mainFragment_to_aiChatFragment,
+                        bundleOf(
+                            "sessionId" to ev.sessionId,
+                            "title" to ev.title,
+                            "aiRole" to ev.aiRole,
+                            "levelName" to ev.levelName,
+                            "instruction" to ev.instruction
+                        )
                     )
-                    findNavController().navigate(nav)
                 }
             }
         }
@@ -94,7 +101,7 @@ class ChooseTopicFragment : BaseFragment<FragmentChooseTopicBinding, ChooseTopic
         styleChip(binding.filterAdvanced, selected == TopicLevelFilter.ADVANCED)
     }
 
-    private fun styleChip(view: android.widget.TextView, selected: Boolean) {
+    private fun styleChip(view: TextView, selected: Boolean) {
         view.setBackgroundResource(
             if (selected) R.drawable.bg_ai_filter_selected else R.drawable.bg_ai_filter_unselected,
         )
@@ -104,7 +111,7 @@ class ChooseTopicFragment : BaseFragment<FragmentChooseTopicBinding, ChooseTopic
                 if (selected) R.color.white else R.color.ai_chip_text_muted,
             ),
         )
-        view.setTypeface(null, if (selected) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
+        view.setTypeface(null, if (selected) Typeface.BOLD else Typeface.NORMAL)
     }
 }
 

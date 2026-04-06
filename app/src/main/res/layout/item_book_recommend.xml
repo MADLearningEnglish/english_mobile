@@ -27,8 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:ellipsize="end"
-        android:maxLines="2"
-        android:text="Xứ Cát (Dune)"
+        android:maxLines="1"
         android:textColor="@color/body_primary" />
 
     <!-- Author Name -->
@@ -40,7 +39,6 @@
         android:layout_marginTop="4dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="Frank Herbert"
         android:textColor="@color/body_primary" />
 
 </LinearLayout>

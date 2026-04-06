@@ -127,9 +127,11 @@ class AiChatViewModel @Inject constructor(
             setState { copy(isRecording = true, recordElapsedSec = 0) }
             tickJob?.cancel()
             tickJob = viewModelScope.launch {
+                val startTime = android.os.SystemClock.elapsedRealtime()
                 while (isActive) {
-                    delay(1000)
-                    setState { copy(recordElapsedSec = recordElapsedSec + 1) }
+                    delay(250)
+                    val currentSec = ((android.os.SystemClock.elapsedRealtime() - startTime) / 1000).toInt()
+                    setState { copy(recordElapsedSec = currentSec) }
                 }
             }
         } catch (e: Exception) {
@@ -208,5 +210,10 @@ class AiChatViewModel @Inject constructor(
                 .onFailure { onError(it) }
             setLoading(false)
         }
+    }
+
+    override fun onCleared() {
+        cancelRecording()
+        super.onCleared()
     }
 }

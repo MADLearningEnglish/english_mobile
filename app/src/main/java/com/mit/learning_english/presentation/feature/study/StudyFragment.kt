@@ -2,8 +2,8 @@ package com.mit.learning_english.presentation.feature.study
 
 import android.content.Context
 import android.media.AudioManager
-import android.media.MediaPlayer
 import android.net.Uri
+import android.speech.tts.TextToSpeech
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
@@ -29,13 +29,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @AndroidEntryPoint
 class StudyFragment : BaseFragment<FragmentStudyBinding, StudyViewModel>() {
 
     override val viewModel: StudyViewModel by viewModels()
 
-    private var mediaPlayer: MediaPlayer? = null
+    private var tts: TextToSpeech? = null
     private var outAnimator: android.animation.Animator? = null
     private var inAnimator: android.animation.Animator? = null
 
@@ -45,8 +46,11 @@ class StudyFragment : BaseFragment<FragmentStudyBinding, StudyViewModel>() {
     ): FragmentStudyBinding = FragmentStudyBinding.inflate(inflater, container, false)
 
     override fun setupView() {
-        mediaPlayer = MediaPlayer()
-        mediaPlayer?.setAudioStreamType(AudioManager.STREAM_MUSIC)
+        tts = TextToSpeech(requireContext()) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                tts?.language = Locale.US
+            }
+        }
     }
 
     override fun bindView() {
@@ -416,13 +420,7 @@ class StudyFragment : BaseFragment<FragmentStudyBinding, StudyViewModel>() {
             requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
         if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) <= 0) return
         try {
-            mediaPlayer?.reset()
-            val encodedWord = Uri.encode(flashcard.word)
-            val audioUrl = "https://dict.youdao.com/dictvoice?audio=$encodedWord&type=2"
-            mediaPlayer?.setDataSource(audioUrl)
-            mediaPlayer?.prepareAsync()
-            mediaPlayer?.setOnPreparedListener { mp -> mp.start() }
-            mediaPlayer?.setOnErrorListener { _, _, _ -> true }
+            tts?.speak(flashcard.word, TextToSpeech.QUEUE_FLUSH, null, null)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -447,14 +445,12 @@ class StudyFragment : BaseFragment<FragmentStudyBinding, StudyViewModel>() {
     override fun onDestroyView() {
         try {
             outAnimator?.cancel(); inAnimator?.cancel()
-            mediaPlayer?.let { player ->
-                if (player.isPlaying) player.stop()
-                player.release()
-            }
+            tts?.stop()
+            tts?.shutdown()
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        mediaPlayer = null; outAnimator = null; inAnimator = null
+        tts = null; outAnimator = null; inAnimator = null
         super.onDestroyView()
     }
 }

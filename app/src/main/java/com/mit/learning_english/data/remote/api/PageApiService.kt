@@ -19,7 +19,7 @@ interface PageApiService {
         @Query("limit") limit: Int,
     ): Response<BaseResponse<List<PageResponse>>>
 
-    @POST("book/v1/lookup")
+    @POST("v1/lookup")
     suspend fun lookupText(
         @Body request: TextLookupRequestDto
     ): Response<BaseResponse<TextLookupResponseDto>>

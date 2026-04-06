@@ -14,21 +14,16 @@ import com.mit.learning_english.databinding.ItemChatUserBinding
 import com.mit.learning_english.presentation.feature.ai.model.ChatListItem
 import com.mit.learning_english.presentation.feature.ai.model.buildColoredText
 
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.DiffUtil
+
 class AiChatMessageAdapter(
     private val onScenarioDetails: (String) -> Unit,
     private val onSpeakAssistant: (String) -> Unit,
     private val onWhyCorrection: (String?) -> Unit,
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : ListAdapter<ChatListItem, RecyclerView.ViewHolder>(DiffCallback) {
 
-    private val items = mutableListOf<ChatListItem>()
-
-    fun submit(list: List<ChatListItem>) {
-        items.clear()
-        items.addAll(list)
-        notifyDataSetChanged()
-    }
-
-    override fun getItemViewType(position: Int): Int = when (items[position]) {
+    override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is ChatListItem.ScenarioCard -> VT_SCENARIO
         is ChatListItem.Assistant -> VT_ASSISTANT
         is ChatListItem.User -> VT_USER
@@ -50,7 +45,7 @@ class AiChatMessageAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val ctx = holder.itemView.context
-        when (val item = items[position]) {
+        when (val item = getItem(position)) {
             is ChatListItem.ScenarioCard -> (holder as ScenarioVH).bind(item, onScenarioDetails)
             is ChatListItem.Assistant -> (holder as AssistantVH).bind(item, onSpeakAssistant)
             is ChatListItem.User -> (holder as UserVH).bind(item)
@@ -63,8 +58,6 @@ class AiChatMessageAdapter(
             is ChatListItem.Pronunciation -> (holder as PronVH).bind(item)
         }
     }
-
-    override fun getItemCount(): Int = items.size
 
     class ScenarioVH(private val binding: ItemChatScenarioInlineBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ChatListItem.ScenarioCard, onDetails: (String) -> Unit) {
@@ -116,5 +109,15 @@ class AiChatMessageAdapter(
         private const val VT_USER = 3
         private const val VT_CORRECTION = 4
         private const val VT_PRONUNCIATION = 5
+
+        private val DiffCallback = object : DiffUtil.ItemCallback<ChatListItem>() {
+            override fun areItemsTheSame(oldItem: ChatListItem, newItem: ChatListItem): Boolean {
+                return oldItem == newItem
+            }
+
+            override fun areContentsTheSame(oldItem: ChatListItem, newItem: ChatListItem): Boolean {
+                return oldItem == newItem
+            }
+        }
     }
 }

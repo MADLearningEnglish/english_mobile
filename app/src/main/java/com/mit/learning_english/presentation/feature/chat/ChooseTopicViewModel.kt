@@ -1,4 +1,4 @@
-package com.mit.learning_english.presentation.feature.ai
+package com.mit.learning_english.presentation.feature.chat
 
 import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.data.remote.dto.AiScenarioDto
@@ -40,12 +40,18 @@ class ChooseTopicViewModel @Inject constructor(
     private val repository: AiChatRepository,
 ) : BaseViewModel<ChooseTopicUiState, ChooseTopicEvent>(ChooseTopicUiState()) {
 
+    private var searchJob: kotlinx.coroutines.Job? = null
+
     init {
         loadScenarios(TopicLevelFilter.ALL)
     }
 
     fun onSearchQueryChange(query: String) {
-        setState { copy(searchQuery = query) }
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            kotlinx.coroutines.delay(300)
+            setState { copy(searchQuery = query) }
+        }
     }
 
     fun onFilterSelected(filter: TopicLevelFilter) {

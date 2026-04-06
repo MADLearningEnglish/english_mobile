@@ -6,6 +6,7 @@ import com.mit.learning_english.domain.usecase.book.UpdateFavoriteBookUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
 import com.mit.learning_english.presentation.feature.readbook.ReadBookArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,7 +17,9 @@ class BookDetailViewModel @Inject constructor(
 ) : BaseViewModel<BookDetailState, BookDetailEvent>(BookDetailState()) {
     fun getBookDetail(bookId: Int) {
         viewModelScope.launch(exceptionHandler) {
+
             setLoading(true)
+            val startTime = System.currentTimeMillis()
             getBookDetailByIdUseCase(bookId).onSuccess { book ->
                 setState { 
                     copy(
@@ -34,6 +37,10 @@ class BookDetailViewModel @Inject constructor(
                 }
             }.onError { error ->
                 emitError(error.message)
+            }
+            val elapsed = System.currentTimeMillis() - startTime
+            if (elapsed < 1000) {
+                delay(1000 - elapsed)
             }
             setLoading(false)
         }
@@ -65,4 +72,5 @@ class BookDetailViewModel @Inject constructor(
             }
         }
     }
+
 }

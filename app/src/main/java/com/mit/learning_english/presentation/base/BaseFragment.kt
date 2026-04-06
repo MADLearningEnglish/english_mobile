@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import com.mit.learning_english.R
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.doOnPreDraw
+import kotlinx.coroutines.flow.debounce
 
 /**
  * Base Fragment với ViewBinding và ViewModel integration.
@@ -37,7 +39,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
     private var _binding: VB? = null
     protected val binding get() = _binding!!
 
-    private var loadingDialog: Dialog? = null
+//    private var loadingDialog: Dialog? = null
 
     protected abstract val viewModel: VM
 
@@ -55,6 +57,9 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
      * Bind data: gọi ViewModel, set listeners, bind dữ liệu...
      */
     abstract fun bindView()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -131,21 +136,24 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
     }
 
     protected open fun showLoading() {
-        val ctx = context ?: return
-        if (loadingDialog == null) {
-            loadingDialog = Dialog(ctx).apply {
-                setContentView(R.layout.dialog_loading)
-                window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
-                setCancelable(false)
-            }
-        }
-        if (loadingDialog?.isShowing == false) {
-            loadingDialog?.show()
-        }
+//        val ctx = context ?: return
+//        if (loadingDialog == null) {
+//            loadingDialog = Dialog(ctx).apply {
+//                setContentView(R.layout.dialog_loading)
+//                window?.setBackgroundDrawable(ContextCompat.getColor(requireContext(), R.color.body_on_primary).toDrawable())
+//                window?.setLayout(
+//                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+//                )
+//                setCancelable(false)
+//            }
+//        }
+//        if (loadingDialog?.isShowing == false) {
+//            loadingDialog?.show()
+//        }
     }
 
     protected open fun hideLoading() {
-        loadingDialog?.dismiss()
+//        loadingDialog?.dismiss()
     }
 
     protected open fun showError(message: String) {
@@ -155,8 +163,8 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
 
     override fun onDestroyView() {
         super.onDestroyView()
-        loadingDialog?.dismiss()
-        loadingDialog = null
+//        loadingDialog?.dismiss()
+//        loadingDialog = null
         _binding = null
     }
 }

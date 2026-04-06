@@ -15,6 +15,7 @@ fun DeckDto.toDomain(): Deck {
     return Deck(
         id = id,
         title = title,
+        description = description,
         coverImageUrl = coverImageUrl,
         totalWords = totalWords,
         status = status,
@@ -53,6 +54,7 @@ fun FlashcardInput.toDto(): FlashcardCreateDto {
 fun CreateDeckRequest.toDto(): CreateDeckRequestDto {
     return CreateDeckRequestDto(
         title = title,
+        description = description,
         coverImageUrl = coverImageUrl,
         flashcards = flashcards.map { it.toDto() }
     )
@@ -74,6 +76,7 @@ fun com.mit.learning_english.domain.model.FlashcardUpdateInput.toDto(): com.mit.
 fun com.mit.learning_english.domain.model.UpdateDeckRequest.toDto(): com.mit.learning_english.data.remote.dto.UpdateDeckRequestDto {
     return com.mit.learning_english.data.remote.dto.UpdateDeckRequestDto(
         title = title,
+        description = description,
         coverImageUrl = coverImageUrl,
         status = status,
         flashcards = flashcards.map { it.toDto() }
