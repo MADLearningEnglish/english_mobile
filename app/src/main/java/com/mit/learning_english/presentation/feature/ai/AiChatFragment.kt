@@ -110,7 +110,11 @@ class AiChatFragment : BaseFragment<FragmentAiChatBinding, AiChatViewModel>() {
     override fun observeViewModel() {
         super.observeViewModel()
         collectState(viewModel.uiState) { state ->
-            messageAdapter.submit(state.items)
+            messageAdapter.submitList(state.items) {
+                if (state.items.isNotEmpty()) {
+                    binding.recyclerChat.smoothScrollToPosition(state.items.size - 1)
+                }
+            }
             val hasConversation = state.items.any { it is ChatListItem.Assistant || it is ChatListItem.User }
             binding.emptyChatHint.isVisible = state.transcriptLoaded && !hasConversation
             val tip = state.bottomHint?.takeIf { it.isNotBlank() }
@@ -125,9 +129,6 @@ class AiChatFragment : BaseFragment<FragmentAiChatBinding, AiChatViewModel>() {
             binding.rowRecording.visibility = if (state.isRecording) View.VISIBLE else View.GONE
             val sec = state.recordElapsedSec
             binding.textTimer.text = String.format(Locale.US, "%d:%02d", sec / 60, sec % 60)
-            if (state.items.isNotEmpty()) {
-                binding.recyclerChat.scrollToPosition(state.items.size - 1)
-            }
         }
         collectEvent(viewModel.event) { ev ->
             when (ev) {

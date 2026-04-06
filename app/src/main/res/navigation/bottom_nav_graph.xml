@@ -12,7 +12,7 @@
 
     <fragment
         android:id="@+id/chat"
-        android:name="com.mit.learning_english.presentation.feature.ai.ChooseTopicFragment"
+        android:name="com.mit.learning_english.presentation.feature.chat.ChooseTopicFragment"
         android:label="Chat"
         tools:layout="@layout/fragment_choose_topic">
 

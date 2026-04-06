@@ -17,7 +17,6 @@ object DeckModule {
     @Provides
     @Singleton
     fun provideDeckApiService(retrofit: Retrofit): DeckApiService {
-        // Lưu ý: Đảm bảo bạn truyền Retrofit instance có đính kèm Token/AuthInterceptor
         return retrofit.create(DeckApiService::class.java)
     }
 
