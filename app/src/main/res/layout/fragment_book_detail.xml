@@ -193,7 +193,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/divide1" />
 
             <TextView
-                android:id="@+id/tvReadTime"
+                android:id="@+id/tvReadTimeAndPage"
                 style="@style/BodySmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -211,7 +211,7 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/ic_page"
-                app:layout_constraintStart_toEndOf="@+id/tvReadTime"
+                app:layout_constraintStart_toEndOf="@+id/tvReadTimeAndPage"
                 app:layout_constraintTop_toBottomOf="@+id/divide1" />
 
             <TextView

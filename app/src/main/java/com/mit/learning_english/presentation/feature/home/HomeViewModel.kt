@@ -4,7 +4,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.mit.learning_english.domain.model.BookReponse
+import com.mit.learning_english.domain.model.Author
+import com.mit.learning_english.domain.usecase.book.GetAuthorsUseCase
 import com.mit.learning_english.domain.usecase.book.GetBookRecommendUseCase
+import com.mit.learning_english.domain.usecase.book.GetFavoriteBooksPagingUseCase
 import com.mit.learning_english.domain.usecase.book.GetRecentlyReadBookUseCase
 import com.mit.learning_english.domain.usecase.genre.GetGenresUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
@@ -16,11 +19,15 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getBookRecommendUseCase: GetBookRecommendUseCase,
+    private val getAuthorsUseCase: GetAuthorsUseCase,
+    getFavoriteBooksPagingUseCase: GetFavoriteBooksPagingUseCase,
     private val getGenresUseCase: GetGenresUseCase,
     getRecentlyReadBookUseCase: GetRecentlyReadBookUseCase
 ) : BaseViewModel<HomeState, HomeEvent>(HomeState()) {
     val recentBooks: Flow<PagingData<BookReponse>> =
         getRecentlyReadBookUseCase().cachedIn(viewModelScope)
+    val authors = getAuthorsUseCase().cachedIn(viewModelScope)
+    val favoriteBooks = getFavoriteBooksPagingUseCase().cachedIn(viewModelScope)
 
     init {
         fetchRecommendBooks()
@@ -73,8 +80,26 @@ class HomeViewModel @Inject constructor(
         emitEvent(HomeEvent.NavigateToRecommentBookFragment)
     }
 
+    fun navigateToDetailAuthor(author: Author) {
+        emitEvent(
+            HomeEvent.NavigateToDetailAuthorFragment(
+                authorId = author.id,
+                authorName = author.name,
+                authorAvatar = author.avatar,
+                authorNationality = author.nationality,
+                authorBiography = author.biography
+            )
+        )
+    }
+
     fun setErrorMessage(message: String) {
         emitError(message)
+    }
+
+    fun navigateToHistoryReadBooks(){
+        emitEvent(
+            HomeEvent.NavigateToHistoryReadBooks
+        )
     }
 
 }

@@ -6,33 +6,34 @@ import com.mit.learning_english.data.mapper.toBook
 import com.mit.learning_english.data.remote.api.BookApiService
 import com.mit.learning_english.domain.model.Book
 
-class BookByGenresPagingSource(
-    private val api: BookApiService,
-    private val genresId: Int,
+class RecommendBookPagingSource(
+    private val api: BookApiService
 ) : PagingSource<Int, Book>() {
+
     companion object {
         const val PAGE_SIZE = 10
     }
 
     override fun getRefreshKey(state: PagingState<Int, Book>): Int? {
         return state.anchorPosition?.let { anchor ->
-            state.closestPageToPosition(anchor)?.prevKey?.plus(1) ?: state.closestPageToPosition(
-                anchor
-            )?.nextKey?.minus(1)
+            state.closestPageToPosition(anchor)?.prevKey?.plus(1)
+                ?: state.closestPageToPosition(anchor)?.nextKey?.minus(1)
         }
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Book> {
         val page = params.key ?: 1
         return try {
-            val response =
-                api.getBooksByGenres(page = page, limit = PAGE_SIZE, genresId = genresId)
+            val response = api.getBooksRecommend(page = page, limit = PAGE_SIZE)
             if (response.isSuccessful) {
-                val items: List<Book> = response.body()?.data?.data?.map { it.toBook() } ?: emptyList()
+                val paginatedData = response.body()?.data
+                val items = paginatedData?.data?.map { it.toBook() } ?: emptyList()
+                val total = paginatedData?.total ?: 0
+                val hasNextPage = page * PAGE_SIZE < total
                 LoadResult.Page(
                     data = items,
                     prevKey = if (page == 1) null else page - 1,
-                    nextKey = if (items.isEmpty()) null else page + 1
+                    nextKey = if (hasNextPage) page + 1 else null
                 )
             } else {
                 LoadResult.Error(Exception("API error: ${response.code()} ${response.message()}"))

@@ -3,7 +3,6 @@ package com.mit.learning_english.presentation.feature.bookdetail
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,8 +12,6 @@ import com.mit.learning_english.presentation.base.BaseFragment
 import com.mit.learning_english.presentation.extensions.loadImage
 import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailViewModel>() {
@@ -77,15 +74,15 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
         collectStateProperty(viewModel.uiState, { it.chapters }) { chapters ->
             if (chapters.isNotEmpty()) {
                 chapterAdapter.submitList(chapters)
-                binding.tvReadTime.text = getString(R.string.minutes_format, chapters.sumOf { chapter -> chapter.totalDuration })
+                binding.tvReadTimeAndPage.text = getString(R.string.minutes_format, chapters.sumOf { chapter -> chapter.totalDuration })
                 binding.tvTotalPages.text = getString(R.string.total_page_format, chapters.sumOf { chapter -> chapter.totalPages })
             }
         }
         collectStateProperty(viewModel.uiState, { it.isFavorite }) { isFavorite ->
             if (!isFavorite) {
-                binding.layoutMenu.icFavorite.backgroundTintList = android.content.res.ColorStateList.valueOf(requireContext().getColor(R.color.gray))
+                binding.layoutMenu.icFavorite.setImageResource(R.drawable.ic_unfavorite)
             } else {
-                binding.layoutMenu.icFavorite.backgroundTintList = android.content.res.ColorStateList.valueOf(requireContext().getColor(R.color.primary))
+                binding.layoutMenu.icFavorite.setImageResource(R.drawable.ic_favorite)
             }
         }
         

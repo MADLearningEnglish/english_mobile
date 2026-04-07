@@ -8,4 +8,5 @@ data class Book(
     val blurb: String,
     val genresName: String,
     val authorsName: String,
+    val chapters: List<Chapter>,
 )

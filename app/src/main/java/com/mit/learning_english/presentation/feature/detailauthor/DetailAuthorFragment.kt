@@ -1,10 +1,8 @@
-package com.mit.learning_english.presentation.feature.historyreadbook
+package com.mit.learning_english.presentation.feature.detailauthor
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -12,76 +10,83 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mit.learning_english.R
-import com.mit.learning_english.databinding.FragmentHistoryReadBookBinding
+import com.mit.learning_english.databinding.FragmentDetailAuthorBinding
 import com.mit.learning_english.presentation.base.BaseFragment
+import com.mit.learning_english.presentation.extensions.loadAvatar
+import com.mit.learning_english.presentation.feature.recommendbook.RecommendBookPagingAdapter
 import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class HistoryReadBookFragment :
-    BaseFragment<FragmentHistoryReadBookBinding, HistoryReadBookViewModel>() {
+class DetailAuthorFragment : BaseFragment<FragmentDetailAuthorBinding, DetailAuthorViewModel>() {
+    override val viewModel: DetailAuthorViewModel by viewModels()
 
-    override val viewModel: HistoryReadBookViewModel by viewModels()
-    private lateinit var historyAdapter: HistoryReadBookPagingAdapter
+    private lateinit var authorBooksAdapter: RecommendBookPagingAdapter
 
     override fun verifyBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): FragmentHistoryReadBookBinding {
-        return FragmentHistoryReadBookBinding.inflate(inflater, container, false)
+    ): FragmentDetailAuthorBinding {
+        return FragmentDetailAuthorBinding.inflate(inflater, container, false)
     }
 
     override fun setupView() {
-        historyAdapter = HistoryReadBookPagingAdapter { book ->
+        authorBooksAdapter = RecommendBookPagingAdapter { book ->
             viewModel.onBookClick(book.id)
         }
-        binding.rvHistoryBooks.apply {
-            adapter = historyAdapter
+        binding.rvAuthorBooks.apply {
+            adapter = authorBooksAdapter
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             addItemDecoration(VerticalSpacingItemDecoration(12))
         }
     }
 
     override fun bindView() {
-        binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
-        }
+        binding.btnBack.setOnClickListener { findNavController().navigateUp() }
     }
 
     override fun observeViewModel() {
         super.observeViewModel()
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.historyBooks.collectLatest { pagingData ->
-                    historyAdapter.submitData(pagingData)
-                }
-            }
+        collectStateProperty(viewModel.uiState, { it.authorName }) { name ->
+            binding.tvAuthorName.text = name
+        }
+        collectStateProperty(viewModel.uiState, { it.authorNationality }) { nationality ->
+            binding.tvAuthorNationality.text = nationality
+        }
+        collectStateProperty(viewModel.uiState, { it.authorBiography }) { biography ->
+            binding.tvAuthorBiography.text = biography
+        }
+        collectStateProperty(viewModel.uiState, { it.authorAvatar }) { avatar ->
+            binding.ivAuthorAvatar.loadAvatar(avatar, binding.shimmerAvatar)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                historyAdapter.loadStateFlow.collectLatest { loadState ->
+                viewModel.authorBooks.collectLatest { pagingData ->
+                    authorBooksAdapter.submitData(pagingData)
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                authorBooksAdapter.loadStateFlow.collectLatest { loadState ->
                     when (val refreshState = loadState.source.refresh) {
                         is LoadState.Loading -> showLoading()
                         is LoadState.NotLoading -> {
                             hideLoading()
-                            val isEmpty =
-                                loadState.source.append.endOfPaginationReached && historyAdapter.itemCount == 0
+                            val isEmpty = loadState.source.append.endOfPaginationReached &&
+                                authorBooksAdapter.itemCount == 0
                             binding.tvEmptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE
                         }
 
                         is LoadState.Error -> {
                             hideLoading()
                             binding.tvEmptyState.visibility = View.GONE
-                            Toast.makeText(
-                                requireContext(),
-                                refreshState.error.localizedMessage
-                                    ?: getString(R.string.failed_to_load_books),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            viewModel.setErrorMessage(
+                                refreshState.error.localizedMessage ?: "Failed to load books"
+                            )
                         }
                     }
                 }
@@ -90,11 +95,12 @@ class HistoryReadBookFragment :
 
         collectEvent(viewModel.event) { event ->
             when (event) {
-                is HistoryReadBookEvent.NavigateToBookDetail -> {
-                    findNavController().navigate(
-                        R.id.bookDetailFragment,
-                        bundleOf("bookId" to event.bookId)
-                    )
+                is DetailAuthorEvent.NavigateToBookDetail -> {
+                    val action =
+                        DetailAuthorFragmentDirections.actionDetailAuthorFragmentToBookDetailFragment(
+                            event.bookId
+                        )
+                    findNavController().navigate(action)
                 }
             }
         }
