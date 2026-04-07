@@ -1,5 +1,6 @@
-package com.mit.learning_english.presentation.feature.bookbygenre
+package com.mit.learning_english.presentation.feature.booksbygenre
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -86,6 +87,7 @@ class BookByGenreFragment : BaseFragment<FragmentBookByGenreBinding, BookByGenre
                                     ?: getString(R.string.failed_to_load_books),
                                 Toast.LENGTH_SHORT
                             ).show()
+                            Log.d("BookByGenre",refreshState.error.localizedMessage)
                         }
 
                         is LoadState.NotLoading -> {

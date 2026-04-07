@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="260dp"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/surface_gray"
+    android:background="@drawable/border_16"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/ivAuthorAvatar"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:src="@drawable/ic_avatar_default"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerAvatar"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        app:layout_constraintBottom_toBottomOf="@id/ivAuthorAvatar"
+        app:layout_constraintEnd_toEndOf="@id/ivAuthorAvatar"
+        app:layout_constraintStart_toStartOf="@id/ivAuthorAvatar"
+        app:layout_constraintTop_toTopOf="@id/ivAuthorAvatar">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/gray" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <TextView
+        android:id="@+id/tvAuthorName"
+        style="@style/TitleSmall"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toTopOf="@id/tvAuthorBiography"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivAuthorAvatar"
+        app:layout_constraintTop_toTopOf="@id/ivAuthorAvatar" />
+
+    <TextView
+        android:id="@+id/tvAuthorBiography"
+        style="@style/BodySmall"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:ellipsize="end"
+        android:maxLines="3"
+        app:layout_constraintBottom_toBottomOf="@id/ivAuthorAvatar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivAuthorAvatar"
+        app:layout_constraintTop_toBottomOf="@id/tvAuthorName" />
+</androidx.constraintlayout.widget.ConstraintLayout>

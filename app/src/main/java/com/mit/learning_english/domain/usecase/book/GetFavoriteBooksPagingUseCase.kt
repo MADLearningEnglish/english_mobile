@@ -6,10 +6,10 @@ import com.mit.learning_english.domain.repository.BookRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetBooksByGenreUseCase @Inject constructor(
+class GetFavoriteBooksPagingUseCase @Inject constructor(
     private val bookRepository: BookRepository
 ) {
-    operator fun invoke(genreId: Int): Flow<PagingData<Book>> {
-        return bookRepository.getBooksByGenres(genreId)
+    operator fun invoke(): Flow<PagingData<Book>> {
+        return bookRepository.getFavoriteBooksPaging()
     }
 }

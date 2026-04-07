@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".presentation.feature.home.">
+    tools:context=".presentation.feature.home.HomeFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -168,15 +168,6 @@
                 android:text="@string/genres"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rvRecommendBook" />
-            <TextView
-                android:id="@+id/tvExplores"
-                style="@style/BodySmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/explore"
-                android:textColor="@color/primary"
-                app:layout_constraintBottom_toBottomOf="@id/tvGenres"
-                app:layout_constraintEnd_toEndOf="parent" />
 
             <com.facebook.shimmer.ShimmerFrameLayout
                 android:id="@+id/shimmerGenres"
@@ -209,11 +200,99 @@
                 android:id="@+id/rvGenres"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="92dp"
                 android:layout_marginTop="8dp"
+                android:minHeight="92dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvGenres" />
+
+            <TextView
+                android:id="@+id/tvAuthors"
+                style="@style/TitleExtraSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/recommend_by_author"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rvGenres" />
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmerAuthors"
+                android:layout_width="0dp"
+                android:layout_height="88dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvAuthors">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@drawable/space_12"
+                    android:orientation="horizontal"
+                    android:showDividers="middle">
+
+                    <include layout="@layout/item_author_shimmer" />
+
+                    <include layout="@layout/item_author_shimmer" />
+
+                    <include layout="@layout/item_author_shimmer" />
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAuthors"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:minHeight="88dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvAuthors" />
+
+            <TextView
+                android:id="@+id/tvFavoriteBooks"
+                style="@style/TitleExtraSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/your_favorite_books"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rvAuthors" />
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmerFavoriteBooks"
+                android:layout_width="0dp"
+                android:layout_height="240dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvFavoriteBooks">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@drawable/space_12"
+                    android:orientation="horizontal"
+                    android:showDividers="middle">
+
+                    <include layout="@layout/item_book_recommend_shimmer" />
+
+                    <include layout="@layout/item_book_recommend_shimmer" />
+
+                    <include layout="@layout/item_book_recommend_shimmer" />
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvFavoriteBooks"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:minHeight="240dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvFavoriteBooks" />
 
             <TextView
                 android:id="@+id/tvRecentlyRead"
@@ -223,7 +302,7 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/recently_read"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rvGenres" />
+                app:layout_constraintTop_toBottomOf="@id/rvFavoriteBooks" />
 
             <TextView
                 android:id="@+id/tvViewAllRecentlyRead"

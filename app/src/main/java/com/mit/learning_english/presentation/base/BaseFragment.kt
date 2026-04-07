@@ -75,6 +75,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
         view.doOnPreDraw {
             startPostponedEnterTransition()
         }
+        postponeEnterTransition()
         setupView()
         bindView()
         observeViewModel()
@@ -158,7 +159,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
 
     protected open fun showError(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-        Log.d("Error Fragment ",message)
+        Log.d("Error Fragment",message)
     }
 
     override fun onDestroyView() {

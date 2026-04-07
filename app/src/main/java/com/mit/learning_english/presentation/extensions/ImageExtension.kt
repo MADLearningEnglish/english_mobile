@@ -21,6 +21,7 @@ fun ImageView.loadAvatar(url: String?, shimmer: ShimmerFrameLayout) {
         setImageResource(R.drawable.ic_avatar_default)
         return
     }
+    shimmer.visibility = View.VISIBLE
     shimmer.startShimmer()
     Glide.with(this).load(url).placeholder(R.drawable.ic_avatar_default)
         .error(R.drawable.ic_avatar_default).diskCacheStrategy(DiskCacheStrategy.ALL).circleCrop()
