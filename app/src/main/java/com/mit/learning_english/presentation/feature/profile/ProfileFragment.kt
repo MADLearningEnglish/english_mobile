@@ -10,7 +10,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.tabs.TabLayout
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentProfileBinding
 import com.mit.learning_english.presentation.base.BaseFragment
@@ -43,14 +43,38 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
                 else -> false
             }
         }
+        binding.cardProfileHeader.setOnClickListener {
+            viewModel.openEditProfile()
+        }
         binding.viewPagerProfile.adapter = ProfilePagerAdapter(this)
-        TabLayoutMediator(binding.tabLayoutProfile, binding.viewPagerProfile) { tab, pos ->
-            tab.text = when (pos) {
-                0 -> getString(R.string.profile_tab_progress)
-                1 -> getString(R.string.profile_tab_exercises)
-                else -> getString(R.string.profile_tab_corrections)
+        binding.tabLayoutProfile.removeAllTabs()
+        binding.tabLayoutProfile.addTab(
+            binding.tabLayoutProfile.newTab().setText(getString(R.string.profile_tab_progress))
+        )
+        binding.tabLayoutProfile.addTab(
+            binding.tabLayoutProfile.newTab().setText(getString(R.string.profile_tab_exercises))
+        )
+        binding.tabLayoutProfile.addTab(
+            binding.tabLayoutProfile.newTab().setText(getString(R.string.profile_tab_corrections))
+        )
+        binding.tabLayoutProfile.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                when (tab.position) {
+                    0 -> binding.viewPagerProfile.setCurrentItem(0, false)
+                    1 -> viewModel.openCompletedExercises()
+                    2 -> viewModel.openMyCorrections()
+                }
             }
-        }.attach()
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.tabLayoutProfile.selectTab(binding.tabLayoutProfile.getTabAt(0))
+        binding.viewPagerProfile.setCurrentItem(0, false)
     }
 
     override fun bindView() {
@@ -84,6 +108,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
                                 nav.navigate(R.id.action_mainFragment_to_editProfileFragment)
                             is ProfileEvent.OpenVocabularyList ->
                                 nav.navigate(R.id.action_mainFragment_to_profileVocabularyFragment)
+                            is ProfileEvent.OpenCompletedExercises ->
+                                nav.navigate(R.id.action_mainFragment_to_profileCompletedExercisesFragment)
+                            is ProfileEvent.OpenMyCorrections ->
+                                nav.navigate(R.id.action_mainFragment_to_profileMyCorrectionsFragment)
                             is ProfileEvent.OpenDailyActivity ->
                                 nav.navigate(R.id.action_mainFragment_to_profileDailyActivityFragment)
                             is ProfileEvent.OpenActivityDay ->

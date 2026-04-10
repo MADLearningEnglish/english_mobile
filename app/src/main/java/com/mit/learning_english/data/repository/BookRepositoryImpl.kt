@@ -38,8 +38,8 @@ class BookRepositoryImpl @Inject constructor(
             try {
                 val response = bookApi.getBooksRecommend()
                 Log.d("BookRepositoryImpl", response.body().toString())
-                val result = resultMapper.fromBaseResponse(response).map { list ->
-                    list.map {
+                val result = resultMapper.fromBaseResponse(response).map { page ->
+                    page.data.map {
                         it.toBook()
                     }
                 }

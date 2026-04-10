@@ -24,7 +24,7 @@ interface BookApiService {
     ): Response<BaseResponse<PaginatedResponse<BookResponse>>>
 
     @GET("book/v1/recommend")
-    suspend fun getBooksRecommend(): Response<BaseResponse<List<BookResponse>>>
+    suspend fun getBooksRecommend(): Response<BaseResponse<PaginatedResponse<BookResponse>>>
 
     @GET("book/v1/recommend/by-topic")
     suspend fun getRecommendByTopic(): Response<BaseResponse<List<BookResponse>>>

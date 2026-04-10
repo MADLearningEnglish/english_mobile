@@ -37,7 +37,11 @@ data class LearningActivityItem(
     val durationSeconds: Int?,
     val scorePercent: BigDecimal?,
     val wordsNewCount: Int?,
-    val detailJson: String?
+    val detailJson: String?,
+    val referenceType: String? = null,
+    val referenceId: Int? = null,
+    /** ISO-8601 từ API (vd. 2023-10-12T14:30:00) */
+    val startedAt: String? = null
 )
 
 data class ActivityDayDetail(
@@ -57,4 +61,36 @@ data class VocabularyWord(
     val favorite: Boolean,
     val needsAttention: Boolean,
     val audioUrl: String?
+)
+
+data class UserCorrectionItem(
+    val errorId: Int,
+    val errorType: String?,
+    val originalText: String?,
+    val suggestedText: String?,
+    val explanation: String?,
+    val occurredAt: String?,
+    val messageId: Int,
+    val sessionId: Int,
+    val sessionTitle: String?,
+    val sourceLabel: String?
+)
+
+data class SessionCorrectionDetail(
+    val errorId: Int,
+    val category: String?,
+    val originalText: String?,
+    val suggestedText: String?,
+    val explanation: String?
+)
+
+data class CorrectionSessionReview(
+    val sessionId: Int,
+    val contextHeader: String?,
+    val sessionTitle: String?,
+    val sessionStartedAt: String?,
+    val sessionEndedAt: String?,
+    val durationMinutes: Int?,
+    val improvementCount: Int,
+    val improvements: List<SessionCorrectionDetail>
 )

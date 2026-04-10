@@ -5,11 +5,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class ProfilePagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
-    override fun getItemCount(): Int = 3
+    override fun getItemCount(): Int = 1
 
-    override fun createFragment(position: Int): Fragment = when (position) {
-        0 -> ProfileProgressTabFragment()
-        1 -> ProfileExercisesTabFragment()
-        else -> ProfileCorrectionsTabFragment()
-    }
+    override fun createFragment(position: Int): Fragment = ProfileProgressTabFragment()
 }

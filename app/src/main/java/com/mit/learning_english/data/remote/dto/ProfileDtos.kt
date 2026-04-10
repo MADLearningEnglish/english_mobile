@@ -53,8 +53,8 @@ data class LearningActivityItemDto(
     @SerializedName("scorePercent") val scorePercent: java.math.BigDecimal?,
     @SerializedName("wordsNewCount") val wordsNewCount: Int?,
     @SerializedName("detailJson") val detailJson: String?,
-    @SerializedName("referenceType") val referenceType: String?,
-    @SerializedName("referenceId") val referenceId: Int?
+    @SerializedName(value = "referenceType", alternate = ["reference_type"]) val referenceType: String?,
+    @SerializedName(value = "referenceId", alternate = ["reference_id"]) val referenceId: Int?
 )
 
 data class ActivityDayDetailDto(
@@ -82,6 +82,43 @@ data class UserLearnedWordDto(
 data class UserLearnedWordPatchDto(
     @SerializedName("favorite") val favorite: Boolean? = null,
     @SerializedName("needsAttention") val needsAttention: Boolean? = null
+)
+
+data class UserLearnedWordCreateDto(
+    @SerializedName("term") val term: String,
+    @SerializedName("sourceModule") val sourceModule: String? = "AI_CHAT"
+)
+
+data class UserCorrectionItemDto(
+    @SerializedName("errorId") val errorId: Int?,
+    @SerializedName(value = "errorType", alternate = ["error_type"]) val errorType: String?,
+    @SerializedName(value = "originalText", alternate = ["original_text"]) val originalText: String?,
+    @SerializedName(value = "suggestedText", alternate = ["suggested_text"]) val suggestedText: String?,
+    @SerializedName("explanation") val explanation: String?,
+    @SerializedName(value = "occurredAt", alternate = ["occurred_at"]) val occurredAt: String?,
+    @SerializedName(value = "messageId", alternate = ["message_id"]) val messageId: Int?,
+    @SerializedName(value = "sessionId", alternate = ["session_id"]) val sessionId: Int?,
+    @SerializedName(value = "sessionTitle", alternate = ["session_title"]) val sessionTitle: String?,
+    @SerializedName(value = "sourceLabel", alternate = ["source_label"]) val sourceLabel: String?
+)
+
+data class SessionCorrectionDetailDto(
+    @SerializedName("errorId") val errorId: Int?,
+    @SerializedName("category") val category: String?,
+    @SerializedName(value = "originalText", alternate = ["original_text"]) val originalText: String?,
+    @SerializedName(value = "suggestedText", alternate = ["suggested_text"]) val suggestedText: String?,
+    @SerializedName("explanation") val explanation: String?
+)
+
+data class CorrectionSessionReviewDto(
+    @SerializedName(value = "sessionId", alternate = ["session_id"]) val sessionId: Int?,
+    @SerializedName(value = "contextHeader", alternate = ["context_header"]) val contextHeader: String?,
+    @SerializedName(value = "sessionTitle", alternate = ["session_title"]) val sessionTitle: String?,
+    @SerializedName(value = "sessionStartedAt", alternate = ["session_started_at"]) val sessionStartedAt: String?,
+    @SerializedName(value = "sessionEndedAt", alternate = ["session_ended_at"]) val sessionEndedAt: String?,
+    @SerializedName(value = "durationMinutes", alternate = ["duration_minutes"]) val durationMinutes: Int?,
+    @SerializedName(value = "improvementCount", alternate = ["improvement_count"]) val improvementCount: Int?,
+    @SerializedName("improvements") val improvements: List<SessionCorrectionDetailDto>? = emptyList()
 )
 
 data class SpringPageDto<T>(

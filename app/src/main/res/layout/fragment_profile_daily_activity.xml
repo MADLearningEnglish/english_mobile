@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="16dp"
+        android:paddingTop="8dp"
         android:paddingBottom="24dp">
 
         <com.google.android.material.appbar.MaterialToolbar
@@ -128,5 +129,11 @@
             android:textColor="@color/gray_400"
             android:textSize="14sp"
             tools:text="Today's activities appear in Profile → Exercises." />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/divider" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

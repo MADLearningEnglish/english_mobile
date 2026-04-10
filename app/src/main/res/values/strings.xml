@@ -136,6 +136,12 @@
     <string name="ai_scenarios_empty_filtered">No scenarios match your search or filter.</string>
     <string name="ai_chat_empty_hint">Bắt đầu hội thoại bằng cách nhập tin nhắn hoặc nhấn mic để nói với trợ lý.</string>
     <string name="ai_chat_encouragement_default">Keep up the great work! Your fluency score is improving.</string>
+    <string name="ai_action_translate">Translate</string>
+    <string name="ai_action_copy">Copy</string>
+    <string name="ai_action_save">Save</string>
+    <string name="ai_text_copied">Copied</string>
+    <string name="ai_text_saved">Saved to vocabulary</string>
+    <string name="ai_text_save_failed">Could not save word</string>
 
     <!-- Profile -->
     <string name="profile_avatar">Avatar</string>
@@ -150,6 +156,7 @@
     <string name="profile_language_separator">—</string>
     <string name="profile_language_knowledge">Language knowledge</string>
     <string name="profile_words_learned_format">%1$d Words learned</string>
+    <string name="profile_words_learned_card_cd">Words learned, open vocabulary list</string>
     <string name="profile_certificates_format">%1$d Certificates</string>
     <string name="profile_study_days">Study days</string>
     <string name="profile_active_days_format"><![CDATA[<font color="#E53935">📅</font> <font color="#007AFF">%1$d</font> Active day]]></string>
@@ -186,10 +193,35 @@
     <string name="activity_day_timeline">Daily Timeline</string>
     <string name="activity_day_insight">Daily Insight</string>
     <string name="activity_day_no_insight">Keep learning to unlock personalized insights.</string>
+    <string name="profile_activity_category_flashcards">Flashcards</string>
+    <string name="profile_activity_category_lessons">Lessons</string>
+    <string name="profile_activity_category_ai_chats">AI chats</string>
+    <string name="profile_activity_category_empty">No activities of this type on this day.</string>
+    <string name="profile_activity_open_unavailable">Cannot open this activity from here.</string>
+    <string name="profile_activity_category_title_format">%1$s — %2$s</string>
     <string name="daily_activity_title">Daily Activity</string>
     <string name="daily_goal_title">Daily Goal</string>
     <string name="completed_exercises_title">Completed Exercises</string>
+    <string name="completed_exercise_meta_format">%1$d mins • %2$s</string>
+    <string name="completed_exercises_tab_all">All</string>
+    <string name="completed_exercises_tab_exercises">Exercises</string>
+    <string name="completed_exercises_tab_lessons">Lessons</string>
     <string name="my_corrections_title">My Corrections</string>
+    <string name="corrections_recent_section">Recent AI Corrections</string>
+    <string name="corrections_clear_history">Clear history</string>
+    <string name="corrections_filter_all">All</string>
+    <string name="corrections_filter_grammar">Grammar</string>
+    <string name="corrections_filter_vocabulary">Vocabulary</string>
+    <string name="corrections_filter_spelling">Spelling</string>
+    <string name="correction_label_original">Original</string>
+    <string name="correction_label_corrected">Corrected</string>
+    <string name="correction_review_rule">Review Rule</string>
+    <string name="correction_speak_cd">Speak corrected sentence</string>
+    <string name="session_review_title">Session Review</string>
+    <string name="session_review_improvements">Identified Improvements</string>
+    <string name="session_review_meta_format">%1$s • %2$d minutes • %3$d Improvements</string>
+    <string name="corrections_clear_confirm">Delete all correction history on this device account?</string>
+    <string name="corrections_cleared">History cleared</string>
     <string name="daily_goal_hint_format">You\'ve completed %1$d%% of your daily learning target. Keep going!</string>
     <string name="daily_streak_format">%1$d Day Streak</string>
     <string name="daily_activity_footer">Open Profile → Exercises to see today\'s timeline. Heatmap in Profile shows your study days.</string>

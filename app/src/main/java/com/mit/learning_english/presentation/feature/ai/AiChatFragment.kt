@@ -1,7 +1,11 @@
 package com.mit.learning_english.presentation.feature.ai
 
 import android.Manifest
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +22,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentAiChatBinding
 import com.mit.learning_english.presentation.base.BaseFragment
+import com.mit.learning_english.presentation.feature.ai.AiChatMessageAdapter.SelectionAction
 import com.mit.learning_english.presentation.feature.ai.model.ChatListItem
 import com.mit.learning_english.presentation.feature.ai.model.toSessionSummaryArgs
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,6 +64,9 @@ class AiChatFragment : BaseFragment<FragmentAiChatBinding, AiChatViewModel>() {
                     .setMessage(explanation ?: getString(R.string.ai_ok))
                     .setPositiveButton(R.string.ai_ok, null)
                     .show()
+            },
+            onTextAction = { action, selectedText ->
+                onChatTextAction(action, selectedText)
             },
         )
     }
@@ -136,6 +144,35 @@ class AiChatFragment : BaseFragment<FragmentAiChatBinding, AiChatViewModel>() {
                     SessionSummaryDialogFragment.newInstance(ev.summary.toSessionSummaryArgs())
                         .show(childFragmentManager, "session_summary")
                 }
+                is AiChatEvent.ShowToast -> {
+                    Toast.makeText(requireContext(), ev.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun onChatTextAction(action: SelectionAction, selectedText: String) {
+        val text = selectedText.trim()
+        if (text.isBlank()) return
+        when (action) {
+            SelectionAction.TRANSLATE -> {
+                val url = "https://translate.google.com/?sl=en&tl=vi&text=${Uri.encode(text)}&op=translate"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                runCatching { startActivity(intent) }
+                    .onFailure {
+                        Toast.makeText(requireContext(), R.string.ai_action_translate, Toast.LENGTH_SHORT).show()
+                    }
+            }
+            SelectionAction.LISTEN -> {
+                tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "ai_chat_selected_tts")
+            }
+            SelectionAction.COPY -> {
+                val clipboard = requireContext().getSystemService(ClipboardManager::class.java)
+                clipboard?.setPrimaryClip(ClipData.newPlainText("ai_chat_selection", text))
+                Toast.makeText(requireContext(), R.string.ai_text_copied, Toast.LENGTH_SHORT).show()
+            }
+            SelectionAction.SAVE -> {
+                viewModel.saveSelectedTextToVocabulary(text)
             }
         }
     }

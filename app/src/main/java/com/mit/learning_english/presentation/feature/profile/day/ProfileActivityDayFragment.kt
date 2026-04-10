@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -13,6 +14,7 @@ import com.mit.learning_english.databinding.FragmentProfileActivityDayBinding
 import com.mit.learning_english.domain.repository.ProfileRepository
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.feature.profile.ProfileActivityRowAdapter
+import com.mit.learning_english.presentation.feature.profile.timelineCategoryKey
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -56,6 +58,17 @@ class ProfileActivityDayFragment : Fragment() {
         binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
         binding.rvTimeline.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTimeline.adapter = adapter
+        adapter.onItemClick = { item ->
+            item.timelineCategoryKey()?.let { category ->
+                findNavController().navigate(
+                    R.id.action_profileActivityDayFragment_to_profileActivityCategoryFragment,
+                    bundleOf(
+                        "isoDate" to date.toString(),
+                        "category" to category
+                    )
+                )
+            }
+        }
 
         binding.tvTimelineDate.text = date.format(
             DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.US)

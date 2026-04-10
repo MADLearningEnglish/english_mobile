@@ -9,7 +9,9 @@ import com.mit.learning_english.R
 import com.mit.learning_english.databinding.ItemProfileActivityRowBinding
 import com.mit.learning_english.domain.model.profile.LearningActivityItem
 
-class ProfileActivityRowAdapter : ListAdapter<LearningActivityItem, ProfileActivityRowAdapter.VH>(
+class ProfileActivityRowAdapter(
+    var onItemClick: ((LearningActivityItem) -> Unit)? = null
+) : ListAdapter<LearningActivityItem, ProfileActivityRowAdapter.VH>(
     object : DiffUtil.ItemCallback<LearningActivityItem>() {
         override fun areItemsTheSame(a: LearningActivityItem, b: LearningActivityItem) =
             a.id != null && a.id == b.id
@@ -28,12 +30,12 @@ class ProfileActivityRowAdapter : ListAdapter<LearningActivityItem, ProfileActiv
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onItemClick)
     }
 
     class VH(private val binding: ItemProfileActivityRowBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: LearningActivityItem) {
+        fun bind(item: LearningActivityItem, onItemClick: ((LearningActivityItem) -> Unit)?) {
             val ctx = binding.root.context
             val type = item.activityType?.uppercase().orEmpty()
             val title = item.title ?: type
@@ -63,6 +65,11 @@ class ProfileActivityRowAdapter : ListAdapter<LearningActivityItem, ProfileActiv
                     binding.imgTypeIcon.setBackgroundResource(R.drawable.bg_profile_activity_icon_blue)
                     binding.imgTypeIcon.setImageResource(R.drawable.ic_activity_flashcard)
                 }
+            }
+            binding.root.isClickable = onItemClick != null
+            binding.root.isFocusable = onItemClick != null
+            binding.root.setOnClickListener {
+                onItemClick?.invoke(item)
             }
         }
     }
