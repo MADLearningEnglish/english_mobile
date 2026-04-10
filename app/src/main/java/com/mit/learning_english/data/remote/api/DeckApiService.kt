@@ -20,7 +20,7 @@ interface DeckApiService {
     suspend fun createDeck(@Body request: CreateDeckRequestDto): Response<BaseResponse<DeckDto>>
 
     @GET("/api/deck/v1")
-    suspend fun getAllDecks(): Response<BaseResponse<List<DeckDto>>>
+    suspend fun getAllDecks(@Query("search") search: String? = null): Response<BaseResponse<List<DeckDto>>>
 
     @GET("/api/deck/v1/{id}")
     suspend fun getDeckById(@Path("id") deckId: Int): Response<BaseResponse<DeckDto>>

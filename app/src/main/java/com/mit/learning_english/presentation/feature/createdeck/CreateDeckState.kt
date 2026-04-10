@@ -4,9 +4,7 @@ import com.mit.learning_english.domain.model.FlashcardInput
 
 data class CreateDeckState(
     val title: String = "",
-    val description: String = "",
-    val coverImageUri: android.net.Uri? = null,
-    val coverImageUrl: String? = null,
+
     val isUploadingImages: Boolean = false,
     val flashcards: List<FlashcardInput> = listOf(FlashcardInput()),
     val expandedIndex: Int = 0,

@@ -22,7 +22,6 @@ class EditDeckViewModel @Inject constructor(
     private val getDeckByIdUseCase: GetDeckByIdUseCase,
     private val updateDeckUseCase: UpdateDeckUseCase,
     private val uploadFileUseCase: UploadFileUseCase,
-    private val fetchPhoneticUseCase: FetchPhoneticUseCase,
     savedStateHandle: SavedStateHandle,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<EditDeckState, EditDeckEvent>(EditDeckState()) {
@@ -47,8 +46,6 @@ class EditDeckViewModel @Inject constructor(
                     setState {
                         copy(
                             title = deck.title,
-                            description = deck.description ?: "",
-                            coverImageUrl = deck.coverImageUrl,
                             status = deck.status
                         )
                     }
@@ -67,12 +64,9 @@ class EditDeckViewModel @Inject constructor(
         val initialCards = deck.flashcards.map { f ->
             FlashcardUpdateInput(
                 id = f.id,
-                word = f.word,
-                phonetic = f.phonetic ?: "",
-                meaning = f.meaning,
-                exampleSentence = f.exampleSentence ?: "",
-                visualCueUrl = f.visualCueUrl,
-                note = f.note ?: "",
+                term = f.term,
+                definition = f.definition,
+                imageUrl = f.imageUrl,
                 status = 1
             )
         }
@@ -83,13 +77,8 @@ class EditDeckViewModel @Inject constructor(
         setState { copy(title = title) }
     }
 
-    fun onDescriptionChanged(description: String) {
-        setState { copy(description = description) }
-    }
 
-    fun onCoverImageSelected(uri: Uri) {
-        setState { copy(coverImageUri = uri) }
-    }
+
 
     fun toggleExpanded(index: Int) {
         setState {
@@ -124,34 +113,9 @@ class EditDeckViewModel @Inject constructor(
         setState { copy(flashcards = updated, expandedIndex = newExpanded) }
     }
 
-    fun autoFetchPhonetic(index: Int) {
-        val state = uiState.value
-        if (index !in state.flashcards.indices) return
-        val word = state.flashcards[index].word
-        if (word.isBlank()) {
-            emitEvent(EditDeckEvent.ShowSnackbar("Vui lòng nhập từ vựng trước"))
-            return
-        }
-
-        viewModelScope.launch(exceptionHandler) {
-            when (val result = fetchPhoneticUseCase(word)) {
-                is Result.Success -> {
-                    updatePhonetic(index, result.data)
-                }
-                is Result.Error -> {
-                    emitEvent(EditDeckEvent.ShowSnackbar(result.message ?: "Không tìm thấy phiên âm"))
-                }
-                else -> Unit
-            }
-        }
-    }
-
-    fun updateWord(index: Int, value: String) = updateField(index) { copy(word = value) }
-    fun updatePhonetic(index: Int, value: String) = updateField(index) { copy(phonetic = value) }
-    fun updateMeaning(index: Int, value: String) = updateField(index) { copy(meaning = value) }
-    fun updateExample(index: Int, value: String) = updateField(index) { copy(exampleSentence = value) }
-    fun updateNote(index: Int, value: String) = updateField(index) { copy(note = value) }
-    fun updateVisualCueUri(index: Int, uri: Uri) = updateField(index) { copy(visualCueUri = uri) }
+    fun updateTerm(index: Int, value: String) = updateField(index) { copy(term = value) }
+    fun updateDefinition(index: Int, value: String) = updateField(index) { copy(definition = value) }
+    fun updateImageUri(index: Int, uri: Uri) = updateField(index) { copy(imageUri = uri) }
 
     private fun updateField(index: Int, updater: FlashcardUpdateInput.() -> FlashcardUpdateInput) {
         val updated = uiState.value.flashcards.toMutableList()
@@ -167,7 +131,7 @@ class EditDeckViewModel @Inject constructor(
             emitEvent(EditDeckEvent.ShowSnackbar("Vui lòng nhập tên bộ thẻ"))
             return
         }
-        val validCards = state.flashcards.filter { it.status == 0 || (it.word.isNotBlank() && it.meaning.isNotBlank()) }
+        val validCards = state.flashcards.filter { it.status == 0 || (it.term.isNotBlank() && it.definition.isNotBlank()) }
         if (validCards.filter { it.status != 0 }.isEmpty()) {
             emitEvent(EditDeckEvent.ShowSnackbar("Vui lòng thêm ít nhất 1 từ hợp lệ"))
             return
@@ -176,25 +140,13 @@ class EditDeckViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             setState { copy(isSaving = true, isUploadingImages = true) }
             
-            // Upload cover image
-            var finalCoverUrl: String? = state.coverImageUrl
-            if (state.coverImageUri != null) {
-                when (val result = uploadFileUseCase(state.coverImageUri, context)) {
-                    is Result.Success -> finalCoverUrl = result.data.url
-                    is Result.Error -> {
-                        setState { copy(isSaving = false, isUploadingImages = false) }
-                        emitEvent(EditDeckEvent.ShowSnackbar("Lỗi tải ảnh cover: ${result.message}"))
-                        return@launch
-                    }
-                    else -> Unit
-                }
-            }
+
 
             // Upload flashcard images
             val uploadedCards = validCards.map { card ->
-                if (card.visualCueUri != null) {
-                    when (val result = uploadFileUseCase(card.visualCueUri, context)) {
-                        is Result.Success -> card.copy(visualCueUrl = result.data.url)
+                if (card.imageUri != null) {
+                    when (val result = uploadFileUseCase(card.imageUri, context)) {
+                        is Result.Success -> card.copy(imageUrl = result.data.url)
                         is Result.Error -> {
                             setState { copy(isSaving = false, isUploadingImages = false) }
                             emitEvent(EditDeckEvent.ShowSnackbar("Lỗi tải ảnh thẻ: ${result.message}"))
@@ -211,8 +163,6 @@ class EditDeckViewModel @Inject constructor(
 
             val request = UpdateDeckRequest(
                 title = state.title.trim(),
-                description = state.description.trim().ifBlank { null },
-                coverImageUrl = finalCoverUrl,
                 status = state.status,
                 flashcards = uploadedCards
             )

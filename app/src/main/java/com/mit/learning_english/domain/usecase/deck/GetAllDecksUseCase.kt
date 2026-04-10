@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetAllDecksUseCase @Inject constructor(
     private val deckRepository: DeckRepository
 ) {
-    suspend operator fun invoke(): Result<List<Deck>> {
-        return deckRepository.getAllDecks()
+    suspend operator fun invoke(search: String? = null): Result<List<Deck>> {
+        return deckRepository.getAllDecks(search)
     }
 }

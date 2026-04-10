@@ -5,22 +5,16 @@ import com.google.gson.annotations.SerializedName
 data class DeckDto(
     @SerializedName("id") val id: Int,
     @SerializedName("title") val title: String,
-    @SerializedName("description") val description: String?,
-    @SerializedName("coverImageUrl") val coverImageUrl: String?,
-    @SerializedName("totalWords") val totalWords: Int,
+
     @SerializedName("status") val status: Int,
     @SerializedName("flashcards") val flashcards: List<FlashcardDto>?
 )
 
 data class FlashcardDto(
     @SerializedName("id") val id: Int,
-    @SerializedName("word") val word: String,
-    @SerializedName("phonetic") val phonetic: String?,
-    @SerializedName("meaning") val meaning: String,
-    @SerializedName("partOfSpeech") val partOfSpeech: String?,
-    @SerializedName("exampleSentence") val exampleSentence: String?,
-    @SerializedName("note") val note: String?,
-    @SerializedName("visualCueUrl") val visualCueUrl: String?
+    @SerializedName("term") val term: String,
+    @SerializedName("definition") val definition: String,
+    @SerializedName("imageUrl") val imageUrl: String?
 )
 
 data class StudyResultDto(
