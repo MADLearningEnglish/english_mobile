@@ -2,18 +2,15 @@ package com.mit.learning_english.presentation.feature.decklist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.mit.learning_english.R
 import com.mit.learning_english.databinding.ItemDeckBinding
 import com.mit.learning_english.domain.model.Deck
 
 class DeckListAdapter(
     private val onStartClick: (Deck) -> Unit,
-    private val onEditClick: (Deck) -> Unit,
+    private val onEditClick: (Deck) -> Unit, // Keeping these to avoid breaking Fragment method signatures
     private val onDeleteClick: (Deck) -> Unit
 ) : ListAdapter<Deck, DeckListAdapter.DeckViewHolder>(DIFF_CALLBACK) {
 
@@ -30,34 +27,11 @@ class DeckListAdapter(
 
         fun bind(deck: Deck) {
             binding.tvTitle.text = deck.title
-            val wordCountLabel = if (deck.totalWords == 1) "1 từ" else "${deck.totalWords} từ"
-            binding.tvWordCount.text = wordCountLabel
+            binding.tvWordCount.text = "Học phần • ${deck.flashcards.size} thuật ngữ"
 
-            // Description
-            if (!deck.description.isNullOrBlank()) {
-                binding.tvDescription.text = deck.description
-                binding.tvDescription.visibility = android.view.View.VISIBLE
-            } else {
-                binding.tvDescription.visibility = android.view.View.GONE
-            }
-
-            // Cover image
-            if (!deck.coverImageUrl.isNullOrBlank()) {
-                Glide.with(binding.imgCover)
-                    .load(deck.coverImageUrl)
-                    .centerCrop()
-                    .placeholder(R.drawable.ic_hero_placeholder)
-                    .error(R.drawable.ic_hero_placeholder)
-                    .into(binding.imgCover)
-            } else {
-                binding.imgCover.setImageResource(R.drawable.ic_hero_placeholder)
-            }
-
-            // Listeners
-            binding.btnStart.setOnClickListener { onStartClick(deck) }
+            // Allow touching the entire row to start reviewing
             binding.cardRoot.setOnClickListener { onStartClick(deck) }
-
-            // Options Menu (Edit/Delete)
+            
             binding.btnEdit.setOnClickListener { onEditClick(deck) }
             binding.btnDelete.setOnClickListener { onDeleteClick(deck) }
         }
