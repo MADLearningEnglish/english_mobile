@@ -189,7 +189,7 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
 
         sheetBinding.btnStartStudy.setOnClickListener {
             dialog.dismiss()
-            val bundle = android.os.Bundle().apply {
+            val bundle = Bundle().apply {
                 putInt("deckId", deckId)
                 putString("deckTitle", "Luyện tập")
             }
