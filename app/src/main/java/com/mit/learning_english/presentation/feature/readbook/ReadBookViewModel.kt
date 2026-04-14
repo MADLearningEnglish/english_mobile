@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -230,26 +231,23 @@ class ReadBookViewModel @Inject constructor(
         readingSessionStartElapsed = SystemClock.elapsedRealtime()
     }
 
-    /**
-     * Gọi khi rời màn đọc: cập nhật tiến độ + (nếu ≥ ~15s) gửi thời lượng để server ghi LESSON.
-     */
     fun reportReadingProgressOnLeave() {
         val start = readingSessionStartElapsed ?: return
         readingSessionStartElapsed = null
         val s = uiState.value
-        val book = s.book ?: return
-        val total = s.totalPages
-        if (total <= 0) return
+        if(s.book==null) return
         val currentPage = s.currentPageNumber
         val durationSec = ((SystemClock.elapsedRealtime() - start) / 1000).toInt()
         if (durationSec < 15) return
         viewModelScope.launch(exceptionHandler) {
             updateBookReadingProgressUseCase(
-                bookId = book.id,
+                bookId = s.book.id,
                 lastReadPageNumber = currentPage,
-                totalPages = total,
-                durationSeconds = durationSec
+                lastRead = LocalDateTime.now(),
+                duration = durationSec
             )
         }
     }
+
+
 }

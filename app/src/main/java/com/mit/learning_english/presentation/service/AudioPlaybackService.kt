@@ -12,7 +12,7 @@ import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import com.mit.learning_english.R
-import com.mit.learning_english.presentation.MainActivity
+import com.mit.learning_english.presentation.feature.root.MainActivity
 
 class AudioPlaybackService : MediaSessionService() {
 

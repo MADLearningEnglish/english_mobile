@@ -26,6 +26,7 @@ import com.mit.learning_english.domain.util.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class BookRepositoryImpl @Inject constructor(
@@ -192,15 +193,15 @@ class BookRepositoryImpl @Inject constructor(
     override suspend fun updateReadingProgress(
         bookId: Int,
         lastReadPageNumber: Int,
-        totalPages: Int,
-        durationSeconds: Int?
+        lastRead: LocalDateTime,
+        duration:Int
     ): Result<Unit> {
         return withContext(Dispatchers.IO) {
             try {
                 val body = BookReadingProgressRequestDto(
                     lastReadPageNumber = lastReadPageNumber,
-                    totalPages = totalPages,
-                    durationSeconds = durationSeconds
+                    lastRead = lastRead,
+                    duration =duration
                 )
                 val response = bookApi.updateReadingProgress(bookId, body)
                 if (response.isSuccessful) {

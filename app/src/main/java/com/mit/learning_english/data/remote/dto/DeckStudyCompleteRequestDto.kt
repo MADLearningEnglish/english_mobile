@@ -9,8 +9,4 @@ data class DeckStudyCompleteRequestDto(
     @SerializedName("quizTotal") val quizTotal: Int? = null
 )
 
-data class BookReadingProgressRequestDto(
-    @SerializedName("lastReadPageNumber") val lastReadPageNumber: Int,
-    @SerializedName("totalPages") val totalPages: Int,
-    @SerializedName("durationSeconds") val durationSeconds: Int? = null
-)
+

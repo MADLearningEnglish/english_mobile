@@ -42,6 +42,8 @@
     <string name="favorite">Favorite</string>
     <string name="download">Download</string>
     <string name="share">Share</string>
+    <string name="share_book_message">Read \"%1$s\" on FluLingO: %2$s</string>
+    <string name="share_book_title">Share book via</string>
     <string name="search">Search</string>
     <string name="minutes_format">%1$d Minutes</string>
     <string name="total_page_format">%1$d Pages</string>

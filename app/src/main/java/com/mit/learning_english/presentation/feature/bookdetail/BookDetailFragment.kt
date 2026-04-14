@@ -1,5 +1,6 @@
 package com.mit.learning_english.presentation.feature.bookdetail
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
@@ -11,6 +12,7 @@ import com.mit.learning_english.databinding.FragmentBookDetailBinding
 import com.mit.learning_english.presentation.base.BaseFragment
 import com.mit.learning_english.presentation.extensions.loadImage
 import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
+import com.mit.learning_english.shared.Constant
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -53,7 +55,21 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
             layoutMenu.btnFavorite.setOnClickListener {
                 viewModel.clickedFavorite()
             }
+            layoutMenu.btnShare.setOnClickListener {
+                shareBook()
+            }
         }
+    }
+
+    private fun shareBook() {
+        val state = viewModel.uiState.value
+        val shareUrl = "${Constant.DEEP_LINK_HTTPS_BOOK_URL}${state.id}"
+        val shareText = getString(R.string.share_book_message, state.title, shareUrl)
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, shareText)
+        }
+        startActivity(Intent.createChooser(sendIntent, getString(R.string.share_book_title)))
     }
 
     override fun observeViewModel() {
