@@ -7,6 +7,8 @@ import com.mit.learning_english.domain.model.BookDetail
 import com.mit.learning_english.domain.model.BookReponse
 import com.mit.learning_english.domain.util.Result
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
+import kotlin.time.Duration
 
 interface BookRepository {
     fun getAuthorsPaging(): Flow<PagingData<Author>>
@@ -38,8 +40,8 @@ interface BookRepository {
     suspend fun updateReadingProgress(
         bookId: Int,
         lastReadPageNumber: Int,
-        totalPages: Int,
-        durationSeconds: Int?
+        lastRead: LocalDateTime,
+        duration: Int
     ): Result<Unit>
 
 }

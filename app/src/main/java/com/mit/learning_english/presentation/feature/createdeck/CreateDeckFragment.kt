@@ -145,7 +145,7 @@ class CreateDeckFragment : BaseFragment<FragmentCreateDeckBinding, CreateDeckVie
 
         sheetBinding.btnStartStudy.setOnClickListener {
             dialog.dismiss()
-            val bundle = android.os.Bundle().apply {
+            val bundle = Bundle().apply {
                 putInt("deckId", deckId)
                 putString("deckTitle", "Luyện tập")
             }

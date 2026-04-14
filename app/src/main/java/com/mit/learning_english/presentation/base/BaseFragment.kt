@@ -57,9 +57,6 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
      * Bind data: gọi ViewModel, set listeners, bind dữ liệu...
      */
     abstract fun bindView()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

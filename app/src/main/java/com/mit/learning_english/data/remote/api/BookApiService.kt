@@ -77,5 +77,4 @@ interface BookApiService {
         @Path("bookId") bookId: Int,
         @Body body: BookReadingProgressRequestDto
     ): Response<BaseResponse<String>>
-
 }

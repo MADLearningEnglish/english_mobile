@@ -110,7 +110,7 @@ class DeckRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateDeck(deckId: Int, request: com.mit.learning_english.domain.model.UpdateDeckRequest): Result<Deck> = withContext(Dispatchers.IO) {
+    override suspend fun updateDeck(deckId: Int, request: UpdateDeckRequest): Result<Deck> = withContext(Dispatchers.IO) {
         try {
             val response = apiService.updateDeck(deckId, request.toDto())
             if (response.isSuccessful && response.body()?.data != null) {
