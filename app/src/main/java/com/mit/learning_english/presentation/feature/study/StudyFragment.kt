@@ -49,6 +49,7 @@ class StudyFragment : BaseFragment<FragmentStudyBinding, StudyViewModel>() {
         tts = TextToSpeech(requireContext()) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 tts?.language = Locale.US
+                tts?.setSpeechRate(1.2f) // Tăng tốc độ đọc lên 1.2x
             }
         }
     }
@@ -64,45 +65,17 @@ class StudyFragment : BaseFragment<FragmentStudyBinding, StudyViewModel>() {
 
         binding.btnSpeakerFront.setOnClickListener { speakWord() }
 
+        binding.btnPreviousCard.setOnClickListener {
+            lastIsFlipped = null
+            viewModel.onPreviousCard()
+        }
+
         binding.btnNextCard.setOnClickListener {
             lastIsFlipped = null
             viewModel.onNextCard()
         }
 
-        binding.btnCompleteBack.setOnClickListener {
-            findNavController().popBackStack()
-        }
-
         binding.btnEmptyBack.setOnClickListener { viewModel.onNavigateBack() }
-
-        // ── Quiz controls ───────────────────────────────────────────────────
-        val choiceButtons = listOf(
-            binding.btnChoice1, binding.btnChoice2, binding.btnChoice3, binding.btnChoice4
-        )
-        choiceButtons.forEach { btn ->
-            btn.setOnClickListener { viewModel.onAnswerSelected(btn.text.toString()) }
-        }
-
-        binding.btnFillBlankSubmit.setOnClickListener {
-            val input = binding.etFillBlank.text?.toString() ?: return@setOnClickListener
-            if (input.isNotBlank()) {
-                viewModel.onFillBlankSubmit(input)
-                hideKeyboard()
-            }
-        }
-
-        binding.etFillBlank.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val input = binding.etFillBlank.text?.toString() ?: ""
-                if (input.isNotBlank()) {
-                    viewModel.onFillBlankSubmit(input)
-                    hideKeyboard()
-                }
-                true
-            } else false
-        }
-
-        binding.btnQuizNext.setOnClickListener { viewModel.onQuizNext() }
     }
 
     override fun observeViewModel() {
@@ -138,35 +111,35 @@ class StudyFragment : BaseFragment<FragmentStudyBinding, StudyViewModel>() {
         if (!isLoading && state.flashcards.isEmpty() && !state.isComplete) {
             binding.layoutEmpty.visibility = View.VISIBLE
             binding.cardContainer.visibility = View.GONE
-            binding.btnNextCard.visibility = View.GONE
+            binding.layoutBottom.visibility = View.GONE
             binding.layoutHeader.visibility = View.GONE
-            binding.layoutQuiz.visibility = View.GONE
             return
         } else {
             binding.layoutEmpty.visibility = View.GONE
+            binding.layoutBottom.visibility = View.VISIBLE
         }
 
         // Quiz vs Flashcard mode
-        if (state.studyMode == StudyMode.QUIZ) {
-            renderQuizMode(state)
-        } else {
-            renderFlashcardMode(state)
-        }
+        renderFlashcardMode(state)
 
         // Header is always visible when there is content
         if (!state.isComplete) {
             binding.layoutHeader.visibility = View.VISIBLE
-            binding.tvDeckTitle.text = state.deckTitle
             binding.tvProgress.text = state.progressText
+            
+            // Cập nhật thanh tiến trình (progress bar)
+            if (state.totalCount > 0) {
+                val progress = ((state.currentIndex + 1).toFloat() / state.totalCount * 100).toInt()
+                binding.progressBar.progress = progress
+            }
         }
     }
 
     // ── Flashcard rendering ───────────────────────────────────────────────
 
     private fun renderFlashcardMode(state: StudyState) {
-        binding.layoutQuiz.visibility = View.GONE
         binding.cardContainer.visibility = View.VISIBLE
-        binding.btnNextCard.visibility = View.VISIBLE
+        binding.layoutBottom.visibility = View.VISIBLE
 
         state.currentFlashcard?.let { bindFlashcard(it) }
 
@@ -193,163 +166,22 @@ class StudyFragment : BaseFragment<FragmentStudyBinding, StudyViewModel>() {
     }
 
     private fun bindFlashcard(flashcard: Flashcard) {
-        binding.tvWordFront.text = flashcard.word
-        binding.tvPhoneticFront.text = flashcard.phonetic ?: ""
-        binding.tvPhoneticFront.isVisible = !flashcard.phonetic.isNullOrBlank()
+        binding.tvWordFront.text = flashcard.term
+        binding.tvMeaning.text = flashcard.definition
 
-        binding.tvWordBack.text = flashcard.word
-        val pos = flashcard.partOfSpeech
-        binding.tvPartOfSpeech.text = if (!pos.isNullOrBlank()) "($pos)" else ""
-        binding.tvPartOfSpeech.isVisible = !pos.isNullOrBlank()
-
-        binding.tvMeaning.text = flashcard.meaning
-
-        val example = flashcard.exampleSentence
-        if (!example.isNullOrBlank()) {
-            binding.layoutExample.visibility = View.VISIBLE
-            val highlighted = example.replace(
-                flashcard.word,
-                "<b><font color='#8C2BEE'>${flashcard.word}</font></b>",
-                ignoreCase = true
-            )
-            binding.tvExampleSentence.text =
-                Html.fromHtml(highlighted, Html.FROM_HTML_MODE_COMPACT)
-        } else {
-            binding.layoutExample.visibility = View.GONE
-        }
-
-        val note = flashcard.note
-        binding.layoutNote.isVisible = !note.isNullOrBlank()
-        if (!note.isNullOrBlank()) binding.tvNote.text = note
-
-        val imageUrl = flashcard.visualCueUrl
+        val imageUrl = com.mit.learning_english.shared.MediaUrlResolver.resolve(flashcard.imageUrl)
         if (!imageUrl.isNullOrBlank()) {
             binding.imgVisualCue.visibility = View.VISIBLE
-            Glide.with(this).load(imageUrl).centerCrop()
+            Glide.with(this).load(imageUrl).centerInside()
                 .placeholder(R.drawable.ic_hero_placeholder)
                 .error(R.drawable.ic_hero_placeholder)
                 .into(binding.imgVisualCue)
         } else {
-            Glide.with(this).load(R.drawable.ic_hero_placeholder).centerCrop()
-                .into(binding.imgVisualCue)
+            binding.imgVisualCue.visibility = View.GONE
         }
     }
 
-    // ── Quiz rendering ────────────────────────────────────────────────────
 
-    private fun renderQuizMode(state: StudyState) {
-        binding.cardContainer.visibility = View.GONE
-        binding.btnNextCard.visibility = View.GONE
-        binding.layoutQuiz.visibility = View.VISIBLE
-
-        val question = state.currentQuestion ?: return
-
-        // Badge
-        binding.tvQuizTypeBadge.text = when (question.type) {
-            QuizType.MEANING_TO_WORD -> "🔤  NGHĨA → TỪ"
-            QuizType.WORD_TO_MEANING -> "📖  TỪ → NGHĨA"
-            QuizType.FILL_BLANK      -> "✏️  ĐIỀN VÀO CHỖ TRỐNG"
-        }
-
-        // Prompt
-        binding.tvQuizPrompt.text = when (question.type) {
-            QuizType.MEANING_TO_WORD -> "Từ tiếng Anh nào có nghĩa là:\n\"${question.prompt}\""
-            QuizType.WORD_TO_MEANING -> "Từ \"${question.prompt}\" có nghĩa là gì?"
-            QuizType.FILL_BLANK      -> question.prompt
-        }
-
-        // Toggle MCQ / FillBlank
-        if (question.type == QuizType.FILL_BLANK) {
-            binding.layoutMcqChoices.visibility = View.GONE
-            binding.layoutFillBlank.visibility = View.VISIBLE
-            if (!state.isAnswerRevealed) {
-                binding.etFillBlank.isEnabled = true
-                binding.btnFillBlankSubmit.isEnabled = true
-                binding.etFillBlank.text?.clear()
-            } else {
-                binding.etFillBlank.isEnabled = false
-                binding.btnFillBlankSubmit.isEnabled = false
-            }
-        } else {
-            binding.layoutFillBlank.visibility = View.GONE
-            binding.layoutMcqChoices.visibility = View.VISIBLE
-            bindMcqChoices(question, state.selectedAnswer, state.isAnswerRevealed)
-        }
-
-        // Feedback row
-        if (state.isAnswerRevealed) {
-            val isCorrect = when (question.type) {
-                QuizType.FILL_BLANK -> state.selectedAnswer
-                    ?.trim()?.equals(question.correctAnswer.trim(), ignoreCase = true) == true
-                else -> state.selectedAnswer == question.correctAnswer
-            }
-            showFeedback(isCorrect, question.correctAnswer)
-            binding.btnQuizNext.visibility = View.VISIBLE
-        } else {
-            binding.layoutQuizFeedback.visibility = View.GONE
-            binding.btnQuizNext.visibility = View.GONE
-        }
-    }
-
-    private fun bindMcqChoices(
-        question: QuizQuestion,
-        selectedAnswer: String?,
-        isRevealed: Boolean
-    ) {
-        val buttons = listOf(
-            binding.btnChoice1, binding.btnChoice2, binding.btnChoice3, binding.btnChoice4
-        )
-        question.choices.forEachIndexed { index, choice ->
-            val btn = buttons.getOrNull(index) ?: return@forEachIndexed
-            btn.visibility = View.VISIBLE
-            btn.text = choice
-            btn.isEnabled = !isRevealed
-
-            // Reset styling
-            btn.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.white)
-            btn.setTextColor(ContextCompat.getColor(requireContext(), R.color.body_primary))
-            (btn as? MaterialButton)?.strokeColor =
-                ContextCompat.getColorStateList(requireContext(), R.color.divider)
-
-            if (isRevealed) {
-                when {
-                    choice == question.correctAnswer -> {
-                        btn.backgroundTintList =
-                            ContextCompat.getColorStateList(requireContext(), R.color.quiz_correct)
-                        btn.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-                    }
-                    choice == selectedAnswer -> {
-                        btn.backgroundTintList =
-                            ContextCompat.getColorStateList(requireContext(), R.color.quiz_wrong)
-                        btn.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-                    }
-                }
-            }
-        }
-        // Hide unused buttons (shouldn't happen with 4 choices)
-        for (i in question.choices.size until buttons.size) {
-            buttons[i].visibility = View.GONE
-        }
-    }
-
-    private fun showFeedback(isCorrect: Boolean, correctAnswer: String) {
-        binding.layoutQuizFeedback.visibility = View.VISIBLE
-        if (isCorrect) {
-            binding.imgFeedbackIcon.setImageResource(R.drawable.ic_lightbulb)
-            binding.imgFeedbackIcon.imageTintList =
-                ContextCompat.getColorStateList(requireContext(), R.color.quiz_correct)
-            binding.tvFeedbackText.text = "✅ Chính xác!"
-            binding.tvFeedbackText.setTextColor(
-                ContextCompat.getColor(requireContext(), R.color.quiz_correct))
-        } else {
-            binding.imgFeedbackIcon.setImageResource(R.drawable.ic_lightbulb)
-            binding.imgFeedbackIcon.imageTintList =
-                ContextCompat.getColorStateList(requireContext(), R.color.quiz_wrong)
-            binding.tvFeedbackText.text = "❌ Đáp án đúng: $correctAnswer"
-            binding.tvFeedbackText.setTextColor(
-                ContextCompat.getColor(requireContext(), R.color.quiz_wrong))
-        }
-    }
 
     // =================== Card Flip ===================
 
@@ -392,24 +224,8 @@ class StudyFragment : BaseFragment<FragmentStudyBinding, StudyViewModel>() {
 
     private fun showCompleteState() {
         val state = viewModel.uiState.value
-
-        binding.cardContainer.visibility = View.GONE
-        binding.btnNextCard.visibility = View.GONE
-        binding.layoutHeader.visibility = View.GONE
-        binding.layoutQuiz.visibility = View.GONE
-
-        binding.tvCompleteSubtitle.text =
-            "Bạn đã học hết ${state.totalCount} từ trong bộ thẻ này."
-
-        if (state.quizTotal > 0) {
-            binding.tvQuizScore.visibility = View.VISIBLE
-            binding.tvQuizScore.text =
-                "Kiểm tra: ${state.quizScore} / ${state.quizTotal} câu đúng 🎯"
-        } else {
-            binding.tvQuizScore.visibility = View.GONE
-        }
-
-        binding.layoutComplete.visibility = View.VISIBLE
+        findNavController().popBackStack()
+        android.widget.Toast.makeText(requireContext(), "Đã ôn tập xong thẻ ghi nhớ!", android.widget.Toast.LENGTH_SHORT).show()
     }
 
     // =================== Audio ===================
@@ -420,7 +236,7 @@ class StudyFragment : BaseFragment<FragmentStudyBinding, StudyViewModel>() {
             requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
         if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) <= 0) return
         try {
-            tts?.speak(flashcard.word, TextToSpeech.QUEUE_FLUSH, null, null)
+            tts?.speak(flashcard.term, TextToSpeech.QUEUE_FLUSH, null, null)
         } catch (e: Exception) {
             e.printStackTrace()
         }

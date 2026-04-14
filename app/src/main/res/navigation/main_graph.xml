@@ -26,6 +26,9 @@
             android:id="@+id/action_mainFragment_to_studyFragment"
             app:destination="@id/studyFragment" />
         <action
+            android:id="@+id/action_mainFragment_to_quizFragment"
+            app:destination="@id/quizFragment" />
+        <action
             android:id="@+id/action_mainFragment_to_editDeckFragment"
             app:destination="@id/editDeckFragment" />
         <action
@@ -146,6 +149,21 @@
         android:name="com.mit.learning_english.presentation.feature.study.StudyFragment"
         android:label="Luyện tập"
         tools:layout="@layout/fragment_study">
+        <argument
+            android:name="deckId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="deckTitle"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/quizFragment"
+        android:name="com.mit.learning_english.presentation.feature.study.quiz.QuizFragment"
+        android:label="Học"
+        tools:layout="@layout/fragment_quiz">
         <argument
             android:name="deckId"
             android:defaultValue="0"

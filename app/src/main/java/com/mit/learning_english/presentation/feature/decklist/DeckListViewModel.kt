@@ -19,10 +19,12 @@ class DeckListViewModel @Inject constructor(
         loadDecks()
     }
 
+    private var currentSearchQuery: String? = null
+
     fun loadDecks() {
         viewModelScope.launch(exceptionHandler) {
             setLoading(true)
-            val result = getAllDecksUseCase()
+            val result = getAllDecksUseCase(currentSearchQuery)
             setLoading(false)
             when (result) {
                 is Result.Success -> setState { copy(decks = result.data) }
@@ -32,8 +34,24 @@ class DeckListViewModel @Inject constructor(
         }
     }
 
-    fun onStartStudy(deckId: Int, deckTitle: String) {
-        emitEvent(DeckListEvent.NavigateToStudy(deckId, deckTitle))
+    fun onSearchTextChanged(query: String) {
+        val trimmedQuery = query.trim().takeIf { it.isNotEmpty() }
+        if (currentSearchQuery != trimmedQuery) {
+            currentSearchQuery = trimmedQuery
+            loadDecks()
+        }
+    }
+
+    fun onDeckClick(deckId: Int, deckTitle: String) {
+        emitEvent(DeckListEvent.ShowStudyModeDialog(deckId, deckTitle))
+    }
+
+    fun onStudyModeSelected(deckId: Int, deckTitle: String, isQuiz: Boolean) {
+        if (isQuiz) {
+            emitEvent(DeckListEvent.NavigateToQuiz(deckId, deckTitle))
+        } else {
+            emitEvent(DeckListEvent.NavigateToStudy(deckId, deckTitle))
+        }
     }
 
     fun onEditDeck(deckId: Int) {

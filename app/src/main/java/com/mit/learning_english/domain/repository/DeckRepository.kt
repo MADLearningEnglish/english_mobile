@@ -9,7 +9,7 @@ import com.mit.learning_english.domain.util.Result
 
 interface DeckRepository {
     suspend fun createDeck(request: CreateDeckRequest): Result<Deck>
-    suspend fun getAllDecks(): Result<List<Deck>>
+    suspend fun getAllDecks(search: String? = null): Result<List<Deck>>
     suspend fun getFlashcardsToStudy(deckId: Int): Result<List<Flashcard>>
     suspend fun getAllFlashcards(deckId: Int): Result<List<Flashcard>>
 

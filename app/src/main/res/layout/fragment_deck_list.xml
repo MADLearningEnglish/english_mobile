@@ -4,92 +4,78 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".presentation.feature.decklist.DeckListFragment">
 
-    <!-- ===================== HEADER ===================== -->
-    <LinearLayout
-        android:id="@+id/layoutHeader"
+    <!-- Header -> "Thư viện" and "+" -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_header_lively"
-        android:elevation="0dp"
-        android:orientation="vertical"
         android:paddingStart="24dp"
-        android:paddingTop="52dp"
         android:paddingEnd="24dp"
-        android:paddingBottom="24dp">
+        android:paddingTop="48dp"
+        android:paddingBottom="16dp">
 
-        <!-- Back button + title row -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thư viện"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/body_primary"
+            android:layout_centerVertical="true"/>
+
+        <ImageButton
+            android:id="@+id/fabCreate"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_add"
+            app:tint="@color/body_primary"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
+
+    <!-- Search Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="16dp">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
+            android:background="@drawable/border_16"
             android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:orientation="horizontal">
 
-
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_weight="1"
-                android:letterSpacing="0.02"
-                android:text="Flashcard của bạn"
-                android:textColor="@color/body_primary"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- Motivation row -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:lineSpacingMultiplier="1.2"
-                        android:text="Cùng học&#10;từ vựng nhé!"
-                        android:textColor="@color/accent_blue"
-                        android:textSize="28sp"
-                        android:textStyle="bold" />
-
-                    <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginStart="8dp"
-                        android:src="@drawable/ic_star_color" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Hero avatar / Mascot -->
             <ImageView
-                android:id="@+id/imgHero"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/header_mascot" />
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_search"
+                app:tint="@color/body_primary"/>
+
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="Tìm kiếm bộ thẻ"
+                android:textSize="15sp"
+                android:layout_marginStart="12dp"
+                android:textColor="@color/body_primary"
+                android:textColorHint="@color/gray_400"
+                android:singleLine="true"
+                android:imeOptions="actionSearch"/>
         </LinearLayout>
     </LinearLayout>
 
-    <!-- ===================== SCROLLABLE CONTENT ===================== -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -104,18 +90,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <!-- Deck List -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvDecks"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:clipToPadding="false"
-                    android:paddingStart="12dp"
-                    android:paddingTop="8dp"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="88dp"
-                    android:scrollbars="none"
-                    tools:listitem="@layout/item_deck" />
+                    android:orientation="vertical">
+
+
+                    <!-- Deck List -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvDecks"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clipToPadding="false"
+                        android:paddingStart="24dp"
+                        android:paddingTop="0dp"
+                        android:paddingEnd="24dp"
+                        android:paddingBottom="48dp"
+                        android:scrollbars="none"
+                        tools:listitem="@layout/item_deck" />
+                </LinearLayout>
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
             <!-- Shimmer Loading -->
@@ -123,9 +116,9 @@
                 android:id="@+id/shimmerLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingStart="20dp"
+                android:paddingStart="24dp"
                 android:paddingTop="8dp"
-                android:paddingEnd="20dp"
+                android:paddingEnd="24dp"
                 android:visibility="gone">
 
                 <LinearLayout
@@ -133,55 +126,10 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
+                    <include layout="@layout/item_deck_shimmer" />
+                    <include layout="@layout/item_deck_shimmer" />
+                    <include layout="@layout/item_deck_shimmer" />
 
-                        <FrameLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            android:layout_weight="1">
-
-                            <include layout="@layout/item_deck_shimmer" />
-                        </FrameLayout>
-
-                        <FrameLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight="1">
-
-                            <include layout="@layout/item_deck_shimmer" />
-                        </FrameLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
-
-                        <FrameLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            android:layout_weight="1">
-
-                            <include layout="@layout/item_deck_shimmer" />
-                        </FrameLayout>
-
-                        <FrameLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight="1">
-
-                            <include layout="@layout/item_deck_shimmer" />
-                        </FrameLayout>
-                    </LinearLayout>
                 </LinearLayout>
             </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -215,29 +163,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="Tạo bộ thẻ đầu tiên\nbằng nút + bên dưới nhé!"
+                    android:text="Tạo bộ thẻ đầu tiên\nbằng nút + ở trên nhé!"
                     android:textColor="@color/gray_400"
                     android:textSize="14sp" />
             </LinearLayout>
 
         </FrameLayout>
-
-        <!-- Floating Action Button -->
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/fabCreate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
-            android:backgroundTint="@color/accent_blue"
-            android:text="Thêm mới"
-            android:textColor="@color/white"
-            app:icon="@drawable/ic_add"
-            app:iconTint="@color/white" />
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <!-- ===================== BOTTOM NAV ===================== -->
-
 </LinearLayout>
