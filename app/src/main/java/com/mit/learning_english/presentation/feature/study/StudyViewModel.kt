@@ -53,7 +53,7 @@ class StudyViewModel @Inject constructor(
         }
     }
 
-    // =================== Flashcard actions ===================
+    // =================== Flashcard actions hdhdhdhjhdjhjfhfhjhjf===================
 
     fun flipCard() {
         setState { copy(isFlipped = !isFlipped) }
@@ -97,6 +97,7 @@ class StudyViewModel @Inject constructor(
                 cardsReviewed = state.totalCount,
                 quizCorrect = null,
                 quizTotal = null
+               
             )
         }
     }
