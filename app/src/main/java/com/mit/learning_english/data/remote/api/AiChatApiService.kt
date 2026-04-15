@@ -1,6 +1,7 @@
 package com.mit.learning_english.data.remote.api
 
 import com.mit.learning_english.data.remote.dto.AiScenarioDto
+import com.mit.learning_english.data.remote.dto.AiChatSessionDetailDto
 import com.mit.learning_english.data.remote.dto.BaseResponse
 import com.mit.learning_english.data.remote.dto.ChatMessageDetailItemDto
 import com.mit.learning_english.data.remote.dto.ChatSessionHistoryItemDto
@@ -66,6 +67,11 @@ interface AiChatApiService {
     suspend fun sessionTranscript(
         @Path("sessionId") sessionId: Int,
     ): Response<BaseResponse<List<ChatMessageDetailItemDto>>>
+
+    @GET("ai-chat/v1/sessions/{sessionId}/detail")
+    suspend fun sessionDetail(
+        @Path("sessionId") sessionId: Int,
+    ): Response<BaseResponse<AiChatSessionDetailDto>>
 
     @DELETE("ai-chat/v1/sessions/{sessionId}")
     suspend fun deleteSession(

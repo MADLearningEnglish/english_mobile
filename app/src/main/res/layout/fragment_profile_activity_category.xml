@@ -13,7 +13,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/white"
         app:navigationIcon="@drawable/ic_arrow_back"
-        app:titleTextColor="@color/body_primary"
+        app:titleTextColor="@color/profile_tile_text"
         tools:title="Flashcards — Apr 10, 2026" />
 
     <TextView

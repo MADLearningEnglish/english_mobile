@@ -14,7 +14,7 @@
         android:background="@color/white"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:title="@string/vocabulary_list_title"
-        app:titleTextColor="@color/body_primary" />
+        app:titleTextColor="@color/profile_tile_text" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"

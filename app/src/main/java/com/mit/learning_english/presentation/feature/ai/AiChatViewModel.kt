@@ -64,7 +64,8 @@ class AiChatViewModel @Inject constructor(
                         .firstOrNull { it.senderType?.equals("USER", true) == true }
                         ?.feedback
                         ?.let { fb ->
-                            fb.overallComment?.takeIf { it.isNotBlank() }
+                            fb.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
+                                ?: fb.overallComment?.takeIf { it.isNotBlank() }
                                 ?: fb.naturalSuggestion?.takeIf { it.isNotBlank() }
                         }
                     setState {
@@ -91,7 +92,8 @@ class AiChatViewModel @Inject constructor(
             repository.sendText(sessionId, trimmed)
                 .onSuccess { res ->
                     val feedback = res.feedback
-                    val hint = feedback?.overallComment?.takeIf { it.isNotBlank() }
+                    val hint = feedback?.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
+                        ?: feedback?.overallComment?.takeIf { it.isNotBlank() }
                         ?: feedback?.naturalSuggestion?.takeIf { it.isNotBlank() }
                     val appended = appendSendResponseItems(
                         feedback,
@@ -181,7 +183,8 @@ class AiChatViewModel @Inject constructor(
                 .onSuccess { res ->
                     val feedback = res.feedback
                     val userText = res.userMessage?.content.orEmpty()
-                    val hint = feedback?.overallComment?.takeIf { it.isNotBlank() }
+                    val hint = feedback?.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
+                        ?: feedback?.overallComment?.takeIf { it.isNotBlank() }
                         ?: feedback?.naturalSuggestion?.takeIf { it.isNotBlank() }
                     val appended = appendSendResponseItems(
                         feedback,

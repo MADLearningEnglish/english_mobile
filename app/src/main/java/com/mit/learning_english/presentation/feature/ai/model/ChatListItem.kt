@@ -103,6 +103,12 @@ fun mapTranscriptToChatItems(
     if (instruction.isNotBlank()) {
         add(ChatListItem.ScenarioCard(instruction))
     }
+    val hasOpeningAi = transcript.any {
+        it.senderType?.equals("AI", ignoreCase = true) == true && !it.content.isNullOrBlank()
+    }
+    if (!hasOpeningAi) {
+        add(ChatListItem.Assistant(buildFallbackOpening(instruction)))
+    }
     for (m in transcript) {
         when (m.senderType?.uppercase()) {
             "AI" -> add(ChatListItem.Assistant(m.content.orEmpty()))
@@ -124,6 +130,14 @@ fun mapTranscriptToChatItems(
             }
         }
     }
+}
+
+private fun buildFallbackOpening(instruction: String): String {
+    val normalized = instruction.trim()
+    if (normalized.isNotBlank()) {
+        return "Hi! Let's start. $normalized"
+    }
+    return "Hi! Nice to meet you. What would you like to talk about today?"
 }
 
 fun appendSendResponseItems(

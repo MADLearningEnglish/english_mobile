@@ -16,13 +16,15 @@ data class ProfileUiState(
     val todayActivities: com.mit.learning_english.domain.model.profile.ActivityDayDetail? = null,
     val errorMessage: String? = null
 ) {
+    private companion object {
+        const val KNOWLEDGE_WORD_TARGET = 100L
+    }
     /**
-     * % hiển thị trên donut: căn theo từ đã học (6 từ ≈ 100% như mockup 3 từ = 50%).
-     * Có thể thay bằng field API sau này.
+     * % hiển thị trên donut: tiến độ từ vựng theo mốc 100 từ.
      */
     fun knowledgePercent(): Int {
         val w = stats?.wordsLearnedCount ?: 0L
-        return ((w * 100L) / 6L).toInt().coerceIn(0, 100)
+        return ((w * 100L) / KNOWLEDGE_WORD_TARGET).toInt().coerceIn(0, 100)
     }
 }
 

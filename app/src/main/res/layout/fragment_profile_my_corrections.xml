@@ -14,7 +14,7 @@
         android:background="@color/white"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:title="@string/my_corrections_title"
-        app:titleTextColor="@color/body_primary" />
+        app:titleTextColor="@color/profile_tile_text" />
 
     <HorizontalScrollView
         android:layout_width="match_parent"

@@ -13,6 +13,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mit.learning_english.R
+import com.mit.learning_english.data.repository.AiChatRepository
 import com.mit.learning_english.databinding.FragmentProfileActivityCategoryBinding
 import com.mit.learning_english.domain.model.profile.LearningActivityItem
 import com.mit.learning_english.domain.repository.ProfileRepository
@@ -35,6 +36,8 @@ class ProfileActivityCategoryFragment : Fragment() {
 
     @Inject
     lateinit var profileRepository: ProfileRepository
+    @Inject
+    lateinit var aiChatRepository: AiChatRepository
 
     private val listAdapter = ProfileActivityRowAdapter(
         onItemClick = { item -> openActivityTarget(item) }
@@ -61,7 +64,8 @@ class ProfileActivityCategoryFragment : Fragment() {
         val dateLabel = date.format(DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.US))
         val categoryLabel = when (category) {
             ProfileActivityCategoryKey.FLASHCARD -> getString(R.string.profile_activity_category_flashcards)
-            ProfileActivityCategoryKey.LESSON_AND_EXERCISE -> getString(R.string.profile_activity_category_lessons)
+            ProfileActivityCategoryKey.BOOKS_DAY -> getString(R.string.profile_activity_category_books)
+            ProfileActivityCategoryKey.EXERCISES_DAY -> getString(R.string.profile_activity_category_exercises)
             ProfileActivityCategoryKey.AI_CHAT -> getString(R.string.profile_activity_category_ai_chats)
             else -> category
         }
@@ -105,18 +109,22 @@ class ProfileActivityCategoryFragment : Fragment() {
                 )
             }
             type.contains("AI") && refType == "AI_CHAT_SESSION" && refId != null -> {
-                nav.navigate(
-                    R.id.action_mainFragment_to_aiChatFragment,
-                    bundleOf(
-                        "sessionId" to refId,
-                        "title" to (item.title ?: ""),
-                        "aiRole" to "",
-                        "levelName" to "",
-                        "instruction" to ""
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val detail = aiChatRepository.sessionDetail(refId).getOrNull()
+                    nav.navigate(
+                        R.id.action_mainFragment_to_aiChatFragment,
+                        bundleOf(
+                            "sessionId" to refId,
+                            "title" to (detail?.title ?: item.title ?: ""),
+                            "aiRole" to (detail?.aiRole ?: ""),
+                            "levelName" to "",
+                            "instruction" to (detail?.instruction ?: "")
+                        )
                     )
-                )
+                }
             }
-            (type.contains("LESSON") || type.contains("EXERCISE")) && refType == "BOOK" && refId != null -> {
+            (type.contains("BOOK") || type.contains("EXERCISE"))
+                && refType == "BOOK" && refId != null -> {
                 nav.navigate(
                     R.id.action_mainFragment_to_bookDetailFragment,
                     bundleOf("bookId" to refId)

@@ -175,6 +175,18 @@
             android:name="instruction"
             android:defaultValue=""
             app:argType="string" />
+        <argument
+            android:name="goalType"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="focusSkill"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="coachingMode"
+            android:defaultValue=""
+            app:argType="string" />
     </fragment>
 
     <fragment

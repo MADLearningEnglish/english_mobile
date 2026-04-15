@@ -3,7 +3,6 @@ package com.mit.learning_english.presentation.feature.chat
 import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.data.remote.dto.AiScenarioDto
 import com.mit.learning_english.data.remote.dto.CreateChatSessionRequestDto
-import com.mit.learning_english.data.remote.dto.CreateChatSessionResponseDto
 import com.mit.learning_english.data.repository.AiChatRepository
 import com.mit.learning_english.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +22,9 @@ data class ChooseTopicUiState(
     val searchQuery: String = "",
     /** Sau lần gọi API list scenarios gần nhất (để không hiện empty khi đang load). */
     val scenariosFetchCompleted: Boolean = false,
+    val goalType: String = "COMMUNICATION",
+    val focusSkill: String = "GRAMMAR",
+    val coachingMode: String = "COACH",
 )
 
 sealed class ChooseTopicEvent {
@@ -32,6 +34,9 @@ sealed class ChooseTopicEvent {
         val aiRole: String,
         val levelName: String,
         val instruction: String,
+        val goalType: String,
+        val focusSkill: String,
+        val coachingMode: String,
     ) : ChooseTopicEvent()
 }
 
@@ -57,6 +62,18 @@ class ChooseTopicViewModel @Inject constructor(
     fun onFilterSelected(filter: TopicLevelFilter) {
         setState { copy(selectedFilter = filter) }
         loadScenarios(filter)
+    }
+
+    fun onGoalSelected(goalType: String) {
+        setState { copy(goalType = goalType) }
+    }
+
+    fun onFocusSelected(focusSkill: String) {
+        setState { copy(focusSkill = focusSkill) }
+    }
+
+    fun onModeSelected(mode: String) {
+        setState { copy(coachingMode = mode) }
     }
 
     private fun levelIdFor(filter: TopicLevelFilter): Int? = when (filter) {
@@ -90,9 +107,7 @@ class ChooseTopicViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             setLoading(true)
             try {
-                repository.createSession(CreateChatSessionRequestDto(scenarioId = 0))
-                    .onSuccess { res -> emitOpenChat(res, levelName = "FREE", scenario = null) }
-                    .onFailure { onError(it) }
+                emitOpenChat(levelName = "FREE", scenario = null)
             } finally {
                 setLoading(false)
             }
@@ -100,13 +115,11 @@ class ChooseTopicViewModel @Inject constructor(
     }
 
     fun startScenario(scenario: AiScenarioDto) {
-        val sid = scenario.id ?: return
+        scenario.id ?: return
         viewModelScope.launch(exceptionHandler) {
             setLoading(true)
             try {
-                repository.createSession(CreateChatSessionRequestDto(scenarioId = sid))
-                    .onSuccess { res -> emitOpenChat(res, scenario.levelName.orEmpty(), scenario) }
-                    .onFailure { onError(it) }
+                emitOpenChat(scenario.levelName.orEmpty(), scenario)
             } finally {
                 setLoading(false)
             }
@@ -114,25 +127,41 @@ class ChooseTopicViewModel @Inject constructor(
     }
 
     private fun emitOpenChat(
-        res: CreateChatSessionResponseDto,
         levelName: String,
         scenario: AiScenarioDto?,
     ) {
-        val sessionId = res.sessionId ?: run {
-            emitError("Invalid session")
-            return
-        }
-        val title = res.title ?: scenario?.title.orEmpty()
-        val aiRole = res.aiRole ?: scenario?.aiRole.orEmpty()
-        val instruction = res.instruction ?: scenario?.instruction.orEmpty()
-        emitEvent(
-            ChooseTopicEvent.OpenChat(
-                sessionId = sessionId,
-                title = title,
-                aiRole = aiRole,
-                levelName = levelName,
-                instruction = instruction,
-            ),
+        val state = uiState.value
+        val req = CreateChatSessionRequestDto(
+            scenarioId = if (scenario?.id == null) 0 else scenario.id,
+            goalType = state.goalType,
+            focusSkill = state.focusSkill,
+            coachingMode = state.coachingMode,
+            fluencyMode = state.coachingMode.equals("FLUENCY", ignoreCase = true),
         )
+        viewModelScope.launch(exceptionHandler) {
+            repository.createSession(req)
+                .onSuccess { response ->
+                    val sessionId = response.sessionId ?: run {
+                        emitError("Invalid session")
+                        return@onSuccess
+                    }
+                    val title = response.title ?: scenario?.title.orEmpty()
+                    val aiRole = response.aiRole ?: scenario?.aiRole.orEmpty()
+                    val instruction = response.instruction ?: scenario?.instruction.orEmpty()
+                    emitEvent(
+                        ChooseTopicEvent.OpenChat(
+                            sessionId = sessionId,
+                            title = title,
+                            aiRole = aiRole,
+                            levelName = levelName,
+                            instruction = instruction,
+                            goalType = response.goalType ?: state.goalType,
+                            focusSkill = response.focusSkill ?: state.focusSkill,
+                            coachingMode = response.coachingMode ?: state.coachingMode,
+                        ),
+                    )
+                }
+                .onFailure { onError(it) }
+        }
     }
 }

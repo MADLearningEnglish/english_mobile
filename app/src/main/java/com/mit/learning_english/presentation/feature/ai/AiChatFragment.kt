@@ -89,7 +89,9 @@ class AiChatFragment : BaseFragment<FragmentAiChatBinding, AiChatViewModel>() {
             "FREE" -> getString(R.string.ai_difficulty_free).uppercase(Locale.US)
             else -> args.levelName.uppercase(Locale.US)
         }
-        binding.textLevel.text = getString(R.string.ai_level_line_format, levelLabel)
+        val goal = args.goalType.takeIf { it.isNotBlank() }?.replace('_', ' ') ?: "GENERAL"
+        val mode = args.coachingMode.takeIf { it.isNotBlank() }?.replace('_', ' ') ?: "COACH"
+        binding.textLevel.text = getString(R.string.ai_level_line_format, levelLabel) + " • " + goal + " • " + mode
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
         binding.btnFinish.setOnClickListener { confirmEndSession() }
         binding.btnSettings.setOnClickListener {

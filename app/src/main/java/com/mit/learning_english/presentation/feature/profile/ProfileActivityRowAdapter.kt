@@ -38,14 +38,24 @@ class ProfileActivityRowAdapter(
         fun bind(item: LearningActivityItem, onItemClick: ((LearningActivityItem) -> Unit)?) {
             val ctx = binding.root.context
             val type = item.activityType?.uppercase().orEmpty()
-            val title = item.title ?: type
-            binding.tvTitle.text = title
+            val rawTitle = item.title?.trim().orEmpty()
+            binding.tvTitle.text = when {
+                type.contains("BOOK") && rawTitle.isNotEmpty() ->
+                    ctx.getString(R.string.profile_activity_title_book_format, rawTitle)
+                type.contains("BOOK") ->
+                    ctx.getString(R.string.book)
+                type.contains("EXERCISE") && rawTitle.isNotEmpty() ->
+                    ctx.getString(R.string.profile_activity_title_exercise_format, rawTitle)
+                type.contains("EXERCISE") ->
+                    ctx.getString(R.string.profile_activity_exercise_label)
+                else -> item.title?.ifBlank { null } ?: type.replace('_', ' ')
+            }
             val mins = (item.durationSeconds ?: 0) / 60
             val extra = buildString {
                 when {
                     type.contains("FLASHCARD") ->
                         append(" • ").append(item.wordsNewCount ?: 0).append(" words")
-                    type.contains("LESSON") || type.contains("EXERCISE") ->
+                    type.contains("BOOK") || type.contains("EXERCISE") ->
                         item.scorePercent?.let { append(" • ").append(it.toInt()).append("% score") }
                     type.contains("AI_CHAT") || type.contains("AI") -> { }
                 }
@@ -53,7 +63,11 @@ class ProfileActivityRowAdapter(
             binding.tvSubtitle.text = ctx.getString(R.string.profile_activity_subtitle_format, mins, extra)
 
             when {
-                type.contains("LESSON") || type.contains("EXERCISE") -> {
+                type.contains("BOOK") -> {
+                    binding.imgTypeIcon.setBackgroundResource(R.drawable.bg_profile_activity_icon_orange)
+                    binding.imgTypeIcon.setImageResource(R.drawable.ic_book)
+                }
+                type.contains("EXERCISE") -> {
                     binding.imgTypeIcon.setBackgroundResource(R.drawable.bg_profile_activity_icon_orange)
                     binding.imgTypeIcon.setImageResource(R.drawable.ic_activity_lesson)
                 }

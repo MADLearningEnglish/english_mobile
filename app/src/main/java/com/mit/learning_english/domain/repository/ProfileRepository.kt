@@ -21,7 +21,7 @@ interface ProfileRepository {
     suspend fun getStatsOverview(): Result<LearningStatsOverview>
     suspend fun getHeatmap(from: LocalDate?, to: LocalDate?): Result<List<HeatmapDay>>
     suspend fun getActivityDay(date: LocalDate): Result<ActivityDayDetail>
-    /** filter: ALL | LESSON | EXERCISE */
+    /** filter: ALL | EXERCISE | BOOK */
     fun completedExercisesPager(filter: String, query: String?): Flow<PagingData<LearningActivityItem>>
     /** filter: ALL | GRAMMAR | VOCABULARY | SPELLING */
     fun correctionsPager(filter: String, query: String?): Flow<PagingData<UserCorrectionItem>>

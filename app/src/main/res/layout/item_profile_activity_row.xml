@@ -41,7 +41,7 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/body_primary"
+                android:textColor="@color/profile_tile_text"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 tools:text="Flashcards" />

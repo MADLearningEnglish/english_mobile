@@ -194,8 +194,12 @@
     <string name="activity_day_insight">Daily Insight</string>
     <string name="activity_day_no_insight">Keep learning to unlock personalized insights.</string>
     <string name="profile_activity_category_flashcards">Flashcards</string>
-    <string name="profile_activity_category_lessons">Lessons</string>
+    <string name="profile_activity_category_books">Books</string>
+    <string name="profile_activity_category_exercises">Exercises</string>
     <string name="profile_activity_category_ai_chats">AI chats</string>
+    <string name="profile_activity_title_book_format">Book: %1$s</string>
+    <string name="profile_activity_title_exercise_format">Exercise: %1$s</string>
+    <string name="profile_activity_exercise_label">Exercise</string>
     <string name="profile_activity_category_empty">No activities of this type on this day.</string>
     <string name="profile_activity_open_unavailable">Cannot open this activity from here.</string>
     <string name="profile_activity_category_title_format">%1$s — %2$s</string>
@@ -205,7 +209,7 @@
     <string name="completed_exercise_meta_format">%1$d mins • %2$s</string>
     <string name="completed_exercises_tab_all">All</string>
     <string name="completed_exercises_tab_exercises">Exercises</string>
-    <string name="completed_exercises_tab_lessons">Lessons</string>
+    <string name="completed_exercises_tab_books">Books</string>
     <string name="my_corrections_title">My Corrections</string>
     <string name="corrections_recent_section">Recent AI Corrections</string>
     <string name="corrections_clear_history">Clear history</string>

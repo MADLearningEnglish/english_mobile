@@ -231,7 +231,7 @@ class ReadBookViewModel @Inject constructor(
     }
 
     /**
-     * Gọi khi rời màn đọc: cập nhật tiến độ + (nếu ≥ ~15s) gửi thời lượng để server ghi LESSON.
+     * Gọi khi rời màn đọc: cập nhật tiến độ + (nếu ≥ ~15s) gửi thời lượng để server ghi BOOK.
      */
     fun reportReadingProgressOnLeave() {
         val start = readingSessionStartElapsed ?: return

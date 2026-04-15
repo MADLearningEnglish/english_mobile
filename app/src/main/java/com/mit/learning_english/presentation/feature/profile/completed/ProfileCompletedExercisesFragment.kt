@@ -53,14 +53,14 @@ class ProfileCompletedExercisesFragment : Fragment() {
 
         binding.tabFilter.addTab(binding.tabFilter.newTab().setText(R.string.completed_exercises_tab_all))
         binding.tabFilter.addTab(binding.tabFilter.newTab().setText(R.string.completed_exercises_tab_exercises))
-        binding.tabFilter.addTab(binding.tabFilter.newTab().setText(R.string.completed_exercises_tab_lessons))
+        binding.tabFilter.addTab(binding.tabFilter.newTab().setText(R.string.completed_exercises_tab_books))
 
         binding.tabFilter.addOnTabSelectedListener(object :
             com.google.android.material.tabs.TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: com.google.android.material.tabs.TabLayout.Tab?) {
                 val f = when (tab?.position) {
                     1 -> "EXERCISE"
-                    2 -> "LESSON"
+                    2 -> "BOOK"
                     else -> "ALL"
                 }
                 viewModel.setFilter(f)

@@ -135,6 +135,44 @@
         </LinearLayout>
     </HorizontalScrollView>
 
+    <LinearLayout
+        android:id="@+id/planRow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chipScroll">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGoal"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textAllCaps="false"
+            android:text="Goal: Communication" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMode"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textAllCaps="false"
+            android:text="Mode: Coach" />
+    </LinearLayout>
+
     <FrameLayout
         android:id="@+id/listContainer"
         android:layout_width="0dp"
@@ -143,7 +181,7 @@
         app:layout_constraintBottom_toTopOf="@id/btnFreeTalk"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chipScroll">
+        app:layout_constraintTop_toBottomOf="@id/planRow">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerScenarios"
