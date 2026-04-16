@@ -44,6 +44,12 @@
             android:id="@+id/action_mainFragment_to_profileVocabularyFragment"
             app:destination="@id/profileVocabularyFragment" />
         <action
+            android:id="@+id/action_mainFragment_to_profileCompletedExercisesFragment"
+            app:destination="@id/profileCompletedExercisesFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_profileMyCorrectionsFragment"
+            app:destination="@id/profileMyCorrectionsFragment" />
+        <action
             android:id="@+id/action_mainFragment_to_profileDailyActivityFragment"
             app:destination="@id/profileDailyActivityFragment" />
         <action
@@ -226,6 +232,18 @@
             android:name="instruction"
             android:defaultValue=""
             app:argType="string" />
+        <argument
+            android:name="goalType"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="focusSkill"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="coachingMode"
+            android:defaultValue=""
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -241,6 +259,32 @@
         tools:layout="@layout/fragment_profile_vocabulary" />
 
     <fragment
+        android:id="@+id/profileCompletedExercisesFragment"
+        android:name="com.mit.learning_english.presentation.feature.profile.completed.ProfileCompletedExercisesFragment"
+        android:label="@string/completed_exercises_title"
+        tools:layout="@layout/fragment_profile_completed_exercises" />
+
+    <fragment
+        android:id="@+id/profileMyCorrectionsFragment"
+        android:name="com.mit.learning_english.presentation.feature.profile.corrections.ProfileMyCorrectionsFragment"
+        android:label="@string/my_corrections_title"
+        tools:layout="@layout/fragment_profile_my_corrections">
+        <action
+            android:id="@+id/action_profileMyCorrectionsFragment_to_correctionSessionReviewFragment"
+            app:destination="@id/correctionSessionReviewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/correctionSessionReviewFragment"
+        android:name="com.mit.learning_english.presentation.feature.profile.corrections.CorrectionSessionReviewFragment"
+        android:label="@string/session_review_title"
+        tools:layout="@layout/fragment_correction_session_review">
+        <argument
+            android:name="sessionId"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
         android:id="@+id/profileDailyActivityFragment"
         android:name="com.mit.learning_english.presentation.feature.profile.daily.ProfileDailyActivityFragment"
         android:label="@string/daily_activity_title"
@@ -253,6 +297,22 @@
         tools:layout="@layout/fragment_profile_activity_day">
         <argument
             android:name="isoDate"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_profileActivityDayFragment_to_profileActivityCategoryFragment"
+            app:destination="@id/profileActivityCategoryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileActivityCategoryFragment"
+        android:name="com.mit.learning_english.presentation.feature.profile.day.ProfileActivityCategoryFragment"
+        android:label="Activities"
+        tools:layout="@layout/fragment_profile_activity_category">
+        <argument
+            android:name="isoDate"
+            app:argType="string" />
+        <argument
+            android:name="category"
             app:argType="string" />
     </fragment>
     <fragment

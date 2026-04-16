@@ -48,6 +48,7 @@
     <color name="profile_content_bg">#000000</color>
     <color name="profile_tab_strip_bg">#FFFFFF</color>
     <color name="profile_stat_tile_bg">#FFFFFF</color>
+    <color name="profile_tile_text">#121212</color>
     <color name="profile_donut_track">#48484A</color>
     <color name="profile_week_inactive">#3A3A3C</color>
     <color name="profile_tab_text_selected">#121212</color>

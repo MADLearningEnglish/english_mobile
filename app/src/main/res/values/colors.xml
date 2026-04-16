@@ -103,6 +103,7 @@
     <color name="profile_content_bg">#FFFFFF</color>
     <color name="profile_tab_strip_bg">#FFFFFF</color>
     <color name="profile_stat_tile_bg">#F8F8F8</color>
+    <color name="profile_tile_text">#121212</color>
     <color name="profile_donut_track">#E8F2FF</color>
     <color name="profile_week_inactive">#EEEEEE</color>
     <color name="profile_menu_icon_bg">#FFEBEE</color>

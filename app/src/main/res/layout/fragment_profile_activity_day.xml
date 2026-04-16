@@ -13,23 +13,26 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/white"
         app:navigationIcon="@drawable/ic_arrow_back"
-        app:titleTextColor="@color/body_primary" />
+        app:titleTextColor="@color/profile_tile_text" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:clipToPadding="false">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="16dp"
+            android:paddingTop="8dp"
             android:paddingBottom="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
@@ -93,7 +96,7 @@
                             android:id="@+id/tvActivityCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/body_primary"
+                            android:textColor="@color/profile_tile_text"
                             android:textSize="22sp"
                             android:textStyle="bold"
                             tools:text="3" />
@@ -164,7 +167,7 @@
                 android:id="@+id/rvTimeline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:nestedScrollingEnabled="false"
                 tools:itemCount="3"
                 tools:listitem="@layout/item_profile_activity_row" />
@@ -211,7 +214,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:textColor="@color/body_primary"
+                        android:textColor="@color/profile_tile_text"
                         android:textSize="14sp"
                         tools:text="You maintained your streak today!" />
                 </LinearLayout>

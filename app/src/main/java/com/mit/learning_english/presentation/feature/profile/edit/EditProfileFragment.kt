@@ -33,7 +33,10 @@ class EditProfileFragment : BaseFragment<FragmentProfileEditBinding, EditProfile
 
     override fun setupView() {
         binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
-        binding.imgAvatar.setOnClickListener { pickImage.launch("image/*") }
+        val openPicker = { pickImage.launch("image/*") }
+        binding.imgAvatar.setOnClickListener { openPicker() }
+        binding.tvUpdateAvatar.setOnClickListener { openPicker() }
+        binding.tvTapPhoto.setOnClickListener { openPicker() }
         binding.btnSave.setOnClickListener {
             viewModel.save(binding.etDisplayName.text?.toString().orEmpty())
         }

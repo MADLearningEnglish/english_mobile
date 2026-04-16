@@ -20,7 +20,7 @@
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_arrow_back"
             app:title="@string/edit_profile_title"
-            app:titleTextColor="@color/ai_title_navy" />
+            app:titleTextColor="@color/body_primary" />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgAvatar"
@@ -34,6 +34,7 @@
             tools:src="@drawable/ic_profile_placeholder" />
 
         <TextView
+            android:id="@+id/tvUpdateAvatar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -44,6 +45,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tvTapPhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -133,7 +135,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
                 android:text="@string/edit_profile_visibility_hint"
-                android:textColor="@color/body_primary"
+                android:textColor="@color/profile_tile_text"
                 android:textSize="14sp" />
         </LinearLayout>
 
