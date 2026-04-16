@@ -79,7 +79,11 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
     override fun bindView() {
         binding.btnBack.setOnClickListener { viewModel.onNavigateBack() }
         binding.btnSave.setOnClickListener { viewModel.saveDeck() }
-        binding.btnAddFlashcard.setOnClickListener { viewModel.addFlashcard() }
+        binding.btnAddFlashcard.setOnClickListener {
+            binding.rvFlashcards.scrollToPosition(adapter.itemCount - 1)
+            viewModel.addFlashcard()
+
+        }
 
         binding.etDeckTitle.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit

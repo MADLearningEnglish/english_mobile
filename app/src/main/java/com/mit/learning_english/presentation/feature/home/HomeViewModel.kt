@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getBookRecommendUseCase: GetBookRecommendUseCase,
-    private val getAuthorsUseCase: GetAuthorsUseCase,
+    getAuthorsUseCase: GetAuthorsUseCase,
     getFavoriteBooksPagingUseCase: GetFavoriteBooksPagingUseCase,
     private val getGenresUseCase: GetGenresUseCase,
     getRecentlyReadBookUseCase: GetRecentlyReadBookUseCase

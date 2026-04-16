@@ -14,6 +14,6 @@ data class BookResponse(
     @SerializedName("lastReadNumberPage") val lastReadNumberPage: Int = 0,
     @SerializedName("progressPercent") val progressPercent: Double = 0.0,
     @SerializedName("lastReadTime") val lastReadTime: String? = null,
-    @SerializedName("isFavorite") val isFavorite: Boolean = false,
+    @SerializedName("favorite") val isFavorite: Boolean = false,
     @SerializedName("blurb") val blurb:String?=null,
 )

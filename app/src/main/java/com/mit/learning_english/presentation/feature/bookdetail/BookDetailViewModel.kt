@@ -1,5 +1,6 @@
 package com.mit.learning_english.presentation.feature.bookdetail
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.domain.usecase.book.GetBookDetailByIdUseCase
 import com.mit.learning_english.domain.usecase.book.UpdateFavoriteBookUseCase
@@ -17,7 +18,6 @@ class BookDetailViewModel @Inject constructor(
 ) : BaseViewModel<BookDetailState, BookDetailEvent>(BookDetailState()) {
     fun getBookDetail(bookId: Int) {
         viewModelScope.launch(exceptionHandler) {
-
             setLoading(true)
             val startTime = System.currentTimeMillis()
             getBookDetailByIdUseCase(bookId).onSuccess { book ->
@@ -35,6 +35,7 @@ class BookDetailViewModel @Inject constructor(
                         isFavorite = book.isFavorite
                     ) 
                 }
+                Log.d("isFavorite", book.isFavorite.toString())
             }.onError { error ->
                 emitError(error.message)
             }

@@ -39,6 +39,7 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
             layoutManager = LinearLayoutManager(requireContext())
             addItemDecoration(VerticalSpacingItemDecoration(12))
         }
+
     }
 
     override fun bindView() {
@@ -90,7 +91,7 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
         collectStateProperty(viewModel.uiState, { it.chapters }) { chapters ->
             if (chapters.isNotEmpty()) {
                 chapterAdapter.submitList(chapters)
-                binding.tvReadTimeAndPage.text = getString(R.string.minutes_format, chapters.sumOf { chapter -> chapter.totalDuration })
+                binding.tvReadTimeAndPage.text = getString(R.string.minutes_format, chapters.sumOf { chapter -> chapter.totalDuration }/3600)
                 binding.tvTotalPages.text = getString(R.string.total_page_format, chapters.sumOf { chapter -> chapter.totalPages })
             }
         }

@@ -32,7 +32,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>() {
         binding.bottomNavView.setOnItemSelectedListener { item ->
             val options = NavOptions.Builder()
                 .setLaunchSingleTop(true)
-                .setRestoreState(true)
+                .setRestoreState(false)
                 .setPopUpTo(navController.graph.startDestinationId,
                     inclusive = false,
                     saveState = true
