@@ -70,6 +70,7 @@ data class UserCorrectionItem(
     val suggestedText: String?,
     val explanation: String?,
     val occurredAt: String?,
+    val occurredAtEpochMs: Long?,
     val messageId: Int,
     val sessionId: Int,
     val sessionTitle: String?,

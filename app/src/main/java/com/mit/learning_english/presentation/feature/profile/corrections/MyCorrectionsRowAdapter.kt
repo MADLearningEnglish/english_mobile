@@ -11,8 +11,13 @@ import com.mit.learning_english.databinding.ItemMyCorrectionCardBinding
 class MyCorrectionsRowAdapter(
     private val onReviewRule: (sessionId: Int) -> Unit,
     private val onSpeakCorrected: (text: String) -> Unit,
-    private val relativeTime: (iso: String?) -> String
+    private val relativeTime: (occurredAtEpochMs: Long?, occurredAt: String?) -> String
 ) : PagingDataAdapter<CorrectionRow, RecyclerView.ViewHolder>(DIFF) {
+
+    fun refreshTimes() {
+        // Rebind visible items so relative "x giây trước" stays accurate.
+        notifyDataSetChanged()
+    }
 
     override fun getItemViewType(position: Int): Int =
         when (getItem(position)) {
@@ -53,11 +58,11 @@ class MyCorrectionsRowAdapter(
         private val binding: ItemMyCorrectionCardBinding,
         private val onReviewRule: (Int) -> Unit,
         private val onSpeakCorrected: (String) -> Unit,
-        private val relativeTime: (String?) -> String
+        private val relativeTime: (Long?, String?) -> String
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: com.mit.learning_english.domain.model.profile.UserCorrectionItem) {
-            binding.tvRelative.text = relativeTime(item.occurredAt)
+            binding.tvRelative.text = relativeTime(item.occurredAtEpochMs, item.occurredAt)
             binding.tvErrorType.text = item.errorType?.replace('_', ' ')?.replaceFirstChar { it.titlecase() }
                 ?: "Correction"
             binding.tvOriginal.text = item.originalText.orEmpty().ifBlank { "—" }
