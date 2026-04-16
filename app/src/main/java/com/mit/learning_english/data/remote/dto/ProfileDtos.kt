@@ -96,6 +96,7 @@ data class UserCorrectionItemDto(
     @SerializedName(value = "suggestedText", alternate = ["suggested_text"]) val suggestedText: String?,
     @SerializedName("explanation") val explanation: String?,
     @SerializedName(value = "occurredAt", alternate = ["occurred_at"]) val occurredAt: String?,
+    @SerializedName(value = "occurredAtEpochMs", alternate = ["occurred_at_epoch_ms"]) val occurredAtEpochMs: Long?,
     @SerializedName(value = "messageId", alternate = ["message_id"]) val messageId: Int?,
     @SerializedName(value = "sessionId", alternate = ["session_id"]) val sessionId: Int?,
     @SerializedName(value = "sessionTitle", alternate = ["session_title"]) val sessionTitle: String?,

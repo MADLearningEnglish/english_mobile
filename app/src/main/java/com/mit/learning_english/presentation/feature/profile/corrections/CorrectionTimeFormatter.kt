@@ -1,22 +1,23 @@
 package com.mit.learning_english.presentation.feature.profile.corrections
 
 import android.content.Context
-import android.text.format.DateUtils
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 object CorrectionTimeFormatter {
 
-    fun bucketKey(iso: String?): String {
-        val d = parseLocalDate(iso) ?: return ""
+    fun bucketKey(epochMs: Long?, iso: String?): String {
+        val d = parseLocalDate(epochMs, iso) ?: return ""
         return d.toString()
     }
 
-    fun bucketTitle(iso: String?): String {
-        val d = parseLocalDate(iso) ?: return ""
+    fun bucketTitle(epochMs: Long?, iso: String?): String {
+        val d = parseLocalDate(epochMs, iso) ?: return ""
         val today = LocalDate.now()
         return when {
             d == today -> "Today"
@@ -25,22 +26,49 @@ object CorrectionTimeFormatter {
         }
     }
 
-    fun relativeShort(context: Context, iso: String?): String {
-        if (iso.isNullOrBlank()) return "—"
-        val ms = toEpochMillis(iso) ?: return iso
-        return DateUtils.getRelativeTimeSpanString(
-            ms,
-            System.currentTimeMillis(),
-            DateUtils.MINUTE_IN_MILLIS
-        ).toString()
+    fun relativeShort(context: Context, epochMs: Long?, iso: String?): String {
+        val ms = epochMs ?: iso?.let(::toEpochMillis) ?: return "—"
+        val now = System.currentTimeMillis()
+        val diffMs = now - ms
+        if (diffMs < 0L) {
+            // Client/server clock skew or backend epoch mismatch: treat as "just now".
+            return "0 giây trước"
+        }
+        val diffSeconds = diffMs / 1000L
+        return when {
+            diffSeconds < 60L -> "${diffSeconds} giây trước"
+            diffSeconds < 3600L -> {
+                val minutes = diffSeconds / 60L
+                "$minutes phút trước"
+            }
+            diffSeconds < 86_400L -> {
+                val hours = diffSeconds / 3600L
+                "$hours giờ trước"
+            }
+            diffSeconds < 2_592_000L -> {
+                val days = diffSeconds / 86_400L
+                "$days ngày trước"
+            }
+            else -> {
+                val d = parseLocalDate(ms, iso)
+                d?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.forLanguageTag("vi"))) ?: "—"
+            }
+        }
     }
 
     fun formatSessionDate(iso: String?): String {
-        val d = parseLocalDate(iso) ?: return "—"
+        val d = parseLocalDate(null, iso) ?: return "—"
         return d.format(DateTimeFormatter.ofPattern("MMM d", Locale.US))
     }
 
-    private fun parseLocalDate(iso: String?): LocalDate? {
+    private fun parseLocalDate(epochMs: Long?, iso: String?): LocalDate? {
+        if (epochMs != null) {
+            return runCatching {
+                java.time.Instant.ofEpochMilli(epochMs)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+            }.getOrNull()
+        }
         if (iso.isNullOrBlank()) return null
         return try {
             LocalDate.parse(iso.take(10))
@@ -54,11 +82,17 @@ object CorrectionTimeFormatter {
     }
 
     private fun toEpochMillis(iso: String): Long? {
-        return try {
-            val ldt = LocalDateTime.parse(iso.take(19))
-            ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        } catch (_: Exception) {
-            null
+        val raw = iso.trim()
+        if (raw.isEmpty()) return null
+        // If backend sends LocalDateTime without timezone, treat it as UTC to avoid "6h trước" drift.
+        val hasZone = raw.endsWith("Z") || raw.matches(".*[+-]\\\\d{2}:?\\\\d{2}$".toRegex())
+        return if (hasZone) {
+            runCatching { OffsetDateTime.parse(raw).toInstant().toEpochMilli() }.getOrNull()
+        } else {
+            runCatching {
+                val local = LocalDateTime.parse(raw.take(19))
+                local.toInstant(ZoneOffset.UTC).toEpochMilli()
+            }.getOrNull()
         }
     }
 }

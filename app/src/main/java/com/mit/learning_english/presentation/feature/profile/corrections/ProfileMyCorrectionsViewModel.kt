@@ -43,10 +43,20 @@ class ProfileMyCorrectionsViewModel @Inject constructor(
                 pd.pagingMap { item -> CorrectionRow.EntryRow(item) }
                     .insertSeparators { before: CorrectionRow.EntryRow?, after: CorrectionRow.EntryRow? ->
                         if (after == null) return@insertSeparators null
-                        val bk = before?.item?.let { CorrectionTimeFormatter.bucketKey(it.occurredAt) }
-                        val ak = CorrectionTimeFormatter.bucketKey(after.item.occurredAt)
+                        val bk = before?.item?.let {
+                            CorrectionTimeFormatter.bucketKey(it.occurredAtEpochMs, it.occurredAt)
+                        }
+                        val ak = CorrectionTimeFormatter.bucketKey(
+                            after.item.occurredAtEpochMs,
+                            after.item.occurredAt
+                        )
                         if (bk != ak) {
-                            CorrectionRow.Header(CorrectionTimeFormatter.bucketTitle(after.item.occurredAt))
+                            CorrectionRow.Header(
+                                CorrectionTimeFormatter.bucketTitle(
+                                    after.item.occurredAtEpochMs,
+                                    after.item.occurredAt
+                                )
+                            )
                         } else {
                             null
                         }
