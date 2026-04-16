@@ -69,10 +69,6 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.doOnPreDraw {
-            startPostponedEnterTransition()
-        }
-        postponeEnterTransition()
         setupView()
         bindView()
         observeViewModel()

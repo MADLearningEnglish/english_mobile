@@ -27,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class BookRepositoryImpl @Inject constructor(
@@ -200,10 +201,11 @@ class BookRepositoryImpl @Inject constructor(
             try {
                 val body = BookReadingProgressRequestDto(
                     lastReadPageNumber = lastReadPageNumber,
-                    lastRead = lastRead,
+                    lastRead = lastRead.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                     duration =duration
                 )
                 val response = bookApi.updateReadingProgress(bookId, body)
+                Log.d("updateReadingProgress",body.toString())
                 if (response.isSuccessful) {
                     Result.Success(Unit)
                 } else {
