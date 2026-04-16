@@ -6,7 +6,13 @@ import com.mit.learning_english.data.remote.dto.LearningActivityItemDto
 import com.mit.learning_english.data.remote.dto.LearningStatsOverviewDto
 import com.mit.learning_english.data.remote.dto.ProfileMeDto
 import com.mit.learning_english.data.remote.dto.UserLearnedWordDto
+import com.mit.learning_english.data.remote.dto.CorrectionSessionReviewDto
+import com.mit.learning_english.data.remote.dto.SessionCorrectionDetailDto
+import com.mit.learning_english.data.remote.dto.UserCorrectionItemDto
 import com.mit.learning_english.domain.model.profile.ActivityDayDetail
+import com.mit.learning_english.domain.model.profile.CorrectionSessionReview
+import com.mit.learning_english.domain.model.profile.SessionCorrectionDetail
+import com.mit.learning_english.domain.model.profile.UserCorrectionItem
 import com.mit.learning_english.domain.model.profile.HeatmapDay
 import com.mit.learning_english.domain.model.profile.LearningActivityItem
 import com.mit.learning_english.domain.model.profile.LearningStatsOverview
@@ -58,7 +64,10 @@ fun LearningActivityItemDto.toDomain(): LearningActivityItem = LearningActivityI
     durationSeconds = durationSeconds,
     scorePercent = scorePercent,
     wordsNewCount = wordsNewCount,
-    detailJson = detailJson
+    detailJson = detailJson,
+    referenceType = referenceType,
+    referenceId = referenceId,
+    startedAt = startedAt
 )
 
 fun ActivityDayDetailDto.toActivityDayDetail(): ActivityDayDetail? {
@@ -75,6 +84,49 @@ fun ActivityDayDetailDto.toActivityDayDetail(): ActivityDayDetail? {
     } catch (_: Exception) {
         null
     }
+}
+
+fun UserCorrectionItemDto.toUserCorrectionItem(): UserCorrectionItem? {
+    val eid = errorId ?: return null
+    val mid = messageId ?: return null
+    val sid = sessionId ?: return null
+    return UserCorrectionItem(
+        errorId = eid,
+        errorType = errorType,
+        originalText = originalText,
+        suggestedText = suggestedText,
+        explanation = explanation,
+        occurredAt = occurredAt,
+        messageId = mid,
+        sessionId = sid,
+        sessionTitle = sessionTitle,
+        sourceLabel = sourceLabel
+    )
+}
+
+fun SessionCorrectionDetailDto.toDetail(): SessionCorrectionDetail? {
+    val eid = errorId ?: return null
+    return SessionCorrectionDetail(
+        errorId = eid,
+        category = category,
+        originalText = originalText,
+        suggestedText = suggestedText,
+        explanation = explanation
+    )
+}
+
+fun CorrectionSessionReviewDto.toDomain(): CorrectionSessionReview? {
+    val sid = sessionId ?: return null
+    return CorrectionSessionReview(
+        sessionId = sid,
+        contextHeader = contextHeader,
+        sessionTitle = sessionTitle,
+        sessionStartedAt = sessionStartedAt,
+        sessionEndedAt = sessionEndedAt,
+        durationMinutes = durationMinutes,
+        improvementCount = improvementCount ?: 0,
+        improvements = improvements?.mapNotNull { it.toDetail() }.orEmpty()
+    )
 }
 
 fun UserLearnedWordDto.toVocabularyWord(): VocabularyWord? {

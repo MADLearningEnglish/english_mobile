@@ -17,6 +17,10 @@ data class CreateChatSessionRequestDto(
     val userId: Int? = null,
     val scenarioId: Int? = null,
     val maxTurns: Int? = null,
+    val goalType: String? = null,
+    val focusSkill: String? = null,
+    val coachingMode: String? = null,
+    val fluencyMode: Boolean? = null,
 )
 
 data class CreateChatSessionResponseDto(
@@ -26,6 +30,10 @@ data class CreateChatSessionResponseDto(
     val instruction: String?,
     val status: String?,
     val currentTurn: Int?,
+    val goalType: String?,
+    val focusSkill: String?,
+    val coachingMode: String?,
+    val fluencyMode: Boolean?,
 )
 
 data class SendTextMessageRequestDto(
@@ -57,6 +65,13 @@ data class FeedbackDto(
     val improvedVersion: String?,
     val naturalSuggestion: String?,
     val errors: List<ErrorItemDto>?,
+    val feedbackLayers: FeedbackLayersDto?,
+)
+
+data class FeedbackLayersDto(
+    val layer1Tip: String?,
+    val layer2Explanation: String?,
+    val layer2Example: String?,
 )
 
 data class ChatMessageDetailItemDto(
@@ -101,4 +116,22 @@ data class ChatSessionHistoryItemDto(
     val levelId: Int?,
     val durationSeconds: Int?,
     val nextSuggestion: String?,
+)
+
+data class AiChatSessionDetailDto(
+    val sessionId: Int?,
+    val title: String?,
+    val sessionType: String?,
+    val scenarioId: Int?,
+    val topicId: Int?,
+    val levelId: Int?,
+    val aiRole: String?,
+    val instruction: String?,
+    val status: String?,
+    val currentTurn: Int?,
+    val maxTurns: Int?,
+    val goalType: String?,
+    val focusSkill: String?,
+    val coachingMode: String?,
+    val fluencyMode: Boolean?,
 )

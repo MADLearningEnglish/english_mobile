@@ -6,6 +6,8 @@ import android.os.Build
 import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.data.remote.dto.EndSessionResponseDto
 import com.mit.learning_english.data.repository.AiChatRepository
+import com.mit.learning_english.domain.repository.ProfileRepository
+import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
 import com.mit.learning_english.presentation.feature.ai.model.ChatListItem
 import com.mit.learning_english.presentation.feature.ai.model.appendSendResponseItems
@@ -29,11 +31,13 @@ data class AiChatUiState(
 
 sealed class AiChatEvent {
     data class ShowSummary(val summary: EndSessionResponseDto) : AiChatEvent()
+    data class ShowToast(val message: String) : AiChatEvent()
 }
 
 @HiltViewModel
 class AiChatViewModel @Inject constructor(
     private val repository: AiChatRepository,
+    private val profileRepository: ProfileRepository,
 ) : BaseViewModel<AiChatUiState, AiChatEvent>(AiChatUiState()) {
 
     private var sessionId: Int = 0
@@ -60,7 +64,8 @@ class AiChatViewModel @Inject constructor(
                         .firstOrNull { it.senderType?.equals("USER", true) == true }
                         ?.feedback
                         ?.let { fb ->
-                            fb.overallComment?.takeIf { it.isNotBlank() }
+                            fb.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
+                                ?: fb.overallComment?.takeIf { it.isNotBlank() }
                                 ?: fb.naturalSuggestion?.takeIf { it.isNotBlank() }
                         }
                     setState {
@@ -87,7 +92,8 @@ class AiChatViewModel @Inject constructor(
             repository.sendText(sessionId, trimmed)
                 .onSuccess { res ->
                     val feedback = res.feedback
-                    val hint = feedback?.overallComment?.takeIf { it.isNotBlank() }
+                    val hint = feedback?.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
+                        ?: feedback?.overallComment?.takeIf { it.isNotBlank() }
                         ?: feedback?.naturalSuggestion?.takeIf { it.isNotBlank() }
                     val appended = appendSendResponseItems(
                         feedback,
@@ -177,7 +183,8 @@ class AiChatViewModel @Inject constructor(
                 .onSuccess { res ->
                     val feedback = res.feedback
                     val userText = res.userMessage?.content.orEmpty()
-                    val hint = feedback?.overallComment?.takeIf { it.isNotBlank() }
+                    val hint = feedback?.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
+                        ?: feedback?.overallComment?.takeIf { it.isNotBlank() }
                         ?: feedback?.naturalSuggestion?.takeIf { it.isNotBlank() }
                     val appended = appendSendResponseItems(
                         feedback,
@@ -209,6 +216,18 @@ class AiChatViewModel @Inject constructor(
                 }
                 .onFailure { onError(it) }
             setLoading(false)
+        }
+    }
+
+    fun saveSelectedTextToVocabulary(text: String) {
+        val term = text.trim()
+        if (term.isEmpty()) return
+        viewModelScope.launch(exceptionHandler) {
+            when (profileRepository.addVocabulary(term)) {
+                is Result.Success -> emitEvent(AiChatEvent.ShowToast("Saved to vocabulary"))
+                is Result.Error -> emitEvent(AiChatEvent.ShowToast("Could not save word"))
+                else -> Unit
+            }
         }
     }
 

@@ -95,6 +95,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:contentDescription="@string/profile_words_learned_card_cd"
                 app:cardBackgroundColor="@color/profile_stat_tile_bg"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
@@ -123,6 +127,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:gravity="center"
+                        android:textColor="@color/profile_tile_text"
                         android:textAppearance="@style/TextAppearance.App.Body.Small"
                         tools:text="3 Words learned" />
                 </LinearLayout>
@@ -162,6 +167,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:gravity="center"
+                        android:textColor="@color/profile_tile_text"
                         android:textAppearance="@style/TextAppearance.App.Body.Small"
                         tools:text="1 Certificates" />
                 </LinearLayout>
@@ -253,12 +259,15 @@
             <TextView
                 android:id="@+id/tvRatingCorrection"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginEnd="4dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_profile_rating_chip"
                 android:drawablePadding="6dp"
                 android:gravity="center"
                 android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/profile_tile_text"
                 android:textAppearance="@style/TextAppearance.App.Body.Small"
                 app:drawableStartCompat="@drawable/ic_profile_rating_chat"
                 tools:text="5 correction" />
@@ -266,13 +275,16 @@
             <TextView
                 android:id="@+id/tvRatingLikes"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="6dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_profile_rating_chip"
                 android:drawablePadding="6dp"
                 android:gravity="center"
                 android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/profile_tile_text"
                 android:textAppearance="@style/TextAppearance.App.Body.Small"
                 app:drawableStartCompat="@drawable/ic_profile_rating_heart"
                 tools:text="3 likes" />
@@ -280,12 +292,15 @@
             <TextView
                 android:id="@+id/tvRatingBest"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginStart="4dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_profile_rating_chip"
                 android:drawablePadding="6dp"
                 android:gravity="center"
                 android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/profile_tile_text"
                 android:textAppearance="@style/TextAppearance.App.Body.Small"
                 app:drawableStartCompat="@drawable/ic_profile_rating_star"
                 tools:text="1 the best" />

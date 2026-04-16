@@ -2,6 +2,7 @@ package com.mit.learning_english.data.repository
 
 import com.mit.learning_english.data.remote.api.AiChatApiService
 import com.mit.learning_english.data.remote.dto.AiScenarioDto
+import com.mit.learning_english.data.remote.dto.AiChatSessionDetailDto
 import com.mit.learning_english.data.remote.dto.ChatMessageDetailItemDto
 import com.mit.learning_english.data.remote.dto.ChatSessionHistoryItemDto
 import com.mit.learning_english.data.remote.dto.CreateChatSessionRequestDto
@@ -70,6 +71,13 @@ class AiChatRepository @Inject constructor(
             val res = api.sessionTranscript(sessionId)
             if (!res.isSuccessful) error(res.errorBody()?.string() ?: res.message())
             res.body()?.data ?: emptyList()
+        }
+
+    suspend fun sessionDetail(sessionId: Int): Result<AiChatSessionDetailDto> =
+        runCatching {
+            val res = api.sessionDetail(sessionId)
+            if (!res.isSuccessful) error(res.errorBody()?.string() ?: res.message())
+            res.body()?.data ?: error("Empty body")
         }
 
     suspend fun history(): Result<List<ChatSessionHistoryItemDto>> =

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface"
+    android:background="@color/profile_content_bg"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -14,14 +14,18 @@
         android:background="@color/white"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:title="@string/vocabulary_list_title"
-        app:titleTextColor="@color/body_primary" />
+        app:titleTextColor="@color/profile_tile_text" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         app:boxBackgroundMode="outline"
+        app:boxCornerRadiusBottomEnd="28dp"
+        app:boxCornerRadiusBottomStart="28dp"
+        app:boxCornerRadiusTopEnd="28dp"
+        app:boxCornerRadiusTopStart="28dp"
         app:startIconDrawable="@drawable/ic_search"
         app:startIconTint="@color/gray_400">
 
@@ -38,10 +42,12 @@
         android:id="@+id/tabFilter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
-        android:background="@color/surface"
+        android:background="@android:color/transparent"
         app:tabIndicatorColor="@color/primary"
         app:tabMode="fixed"
+        app:tabRippleColor="@android:color/transparent"
         app:tabSelectedTextColor="@color/primary"
         app:tabTextColor="@color/gray_400" />
 
@@ -52,6 +58,7 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:paddingHorizontal="16dp"
+        android:paddingTop="8dp"
         android:paddingBottom="16dp"
         tools:listitem="@layout/item_profile_vocab_word" />
 </LinearLayout>
