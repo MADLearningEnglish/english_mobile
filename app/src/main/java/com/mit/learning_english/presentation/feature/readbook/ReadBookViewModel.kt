@@ -8,6 +8,7 @@ import com.mit.learning_english.domain.model.Chapter
 import com.mit.learning_english.domain.model.Page
 import com.mit.learning_english.domain.usecase.book.GetBookDetailByIdUseCase
 import android.os.SystemClock
+import android.util.Log
 import com.mit.learning_english.domain.usecase.book.UpdateBookReadingProgressUseCase
 import com.mit.learning_english.domain.usecase.page.GetPagesByBookUseCase
 import com.mit.learning_english.domain.usecase.page.LookupTextUseCase
@@ -15,11 +16,14 @@ import com.mit.learning_english.presentation.base.BaseViewModel
 import com.mit.learning_english.shared.Constant
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -74,6 +78,7 @@ class ReadBookViewModel @Inject constructor(
                 val initialKey = (firstPage / Constant.PAGE_SIZE_PAGE) * Constant.PAGE_SIZE_PAGE
                 setState { copy(currentPageNumber = firstPage, activeChapterId = resolvedChapterId) }
                 emitEvent(ReadBookEvent.GoToChapter(firstPage))
+                Log.d("ReadBookViewModel",firstPage.toString()+chapterId.toString()+bookDetail.lastReadNumberPage)
                 pagingParams.value = PagingParams(bookId, totalPages, initialKey)
                 markReadingSessionStarted()
             }.onError { e ->
@@ -233,19 +238,21 @@ class ReadBookViewModel @Inject constructor(
 
     fun reportReadingProgressOnLeave() {
         val start = readingSessionStartElapsed ?: return
-        readingSessionStartElapsed = null
         val s = uiState.value
-        if(s.book==null) return
+        val bookId = s.book?.id ?: return
+        readingSessionStartElapsed = null
         val currentPage = s.currentPageNumber
-        val durationSec = ((SystemClock.elapsedRealtime() - start) / 1000).toInt()
-        if (durationSec < 15) return
+        val durationSec = ((SystemClock.elapsedRealtime() - start) / 1000).toInt().coerceAtLeast(1)
         viewModelScope.launch(exceptionHandler) {
-            updateBookReadingProgressUseCase(
-                bookId = s.book.id,
-                lastReadPageNumber = currentPage,
-                lastRead = LocalDateTime.now(),
-                duration = durationSec
-            )
+            // Keep this fire-and-forget update alive while leaving the screen.
+            withContext(Dispatchers.IO + NonCancellable) {
+                updateBookReadingProgressUseCase(
+                    bookId = bookId,
+                    lastReadPageNumber = currentPage,
+                    lastRead = LocalDateTime.now(),
+                    duration = durationSec
+                )
+            }
         }
     }
 

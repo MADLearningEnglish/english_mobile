@@ -259,9 +259,8 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
             when (event) {
                 is ReadBookEvent.GoToChapter -> {
                     pendingScrollPosition = event.index
-                    if (pageAdapter.itemCount > event.index) {
-                        binding.viewPager.setCurrentItem(event.index, false)
-                    }
+                    binding.viewPager.setCurrentItem(event.index, false)
+
                 }
                 ReadBookEvent.ShareBook -> {}
                 is ReadBookEvent.PlayAudio -> playAudio(event.url)

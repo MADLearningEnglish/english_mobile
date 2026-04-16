@@ -94,6 +94,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.fetchRecommendBooks()
+        viewModel.fetchGenres()
+        if (::authorAdapter.isInitialized) authorAdapter.refresh()
+        if (::favoriteBooksAdapter.isInitialized) favoriteBooksAdapter.refresh()
+        if (::recentBooksAdapter.isInitialized) recentBooksAdapter.refresh()
+    }
+
     private fun setupAppBarCollapseAnimation() {
         binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             val totalScrollRange = appBarLayout.totalScrollRange
