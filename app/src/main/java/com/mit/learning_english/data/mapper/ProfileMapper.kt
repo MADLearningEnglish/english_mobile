@@ -97,6 +97,7 @@ fun UserCorrectionItemDto.toUserCorrectionItem(): UserCorrectionItem? {
         suggestedText = suggestedText,
         explanation = explanation,
         occurredAt = occurredAt,
+        occurredAtEpochMs = occurredAtEpochMs,
         messageId = mid,
         sessionId = sid,
         sessionTitle = sessionTitle,

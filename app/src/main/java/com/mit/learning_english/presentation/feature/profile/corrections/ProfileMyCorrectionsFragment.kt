@@ -2,11 +2,9 @@ package com.mit.learning_english.presentation.feature.profile.corrections
 
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -23,6 +21,7 @@ import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentProfileMyCorrectionsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -45,21 +44,9 @@ class ProfileMyCorrectionsFragment : Fragment() {
             onSpeakCorrected = { text ->
                 tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "correction_tts")
             },
-            relativeTime = { iso ->
-                CorrectionTimeFormatter.relativeShort(requireContext(), iso)
+            relativeTime = { epochMs, iso ->
+                CorrectionTimeFormatter.relativeShort(requireContext(), epochMs, iso)
             }
-        )
-    }
-
-    private var filterViews: List<TextView> = emptyList()
-    private var selectedFilterIndex = 0
-    private val filterValues = listOf("ALL", "GRAMMAR", "VOCABULARY", "SPELLING")
-    private val filterLabels by lazy {
-        listOf(
-            getString(R.string.corrections_filter_all),
-            getString(R.string.corrections_filter_grammar),
-            getString(R.string.corrections_filter_vocabulary),
-            getString(R.string.corrections_filter_spelling)
         )
     }
 
@@ -86,8 +73,6 @@ class ProfileMyCorrectionsFragment : Fragment() {
                 return true
             }
         })
-
-        buildFilterChips()
 
         binding.btnClearHistory.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
@@ -122,50 +107,20 @@ class ProfileMyCorrectionsFragment : Fragment() {
                         }
                     }
                 }
+                launch {
+                    while (true) {
+                        delay(1000)
+                        adapter.refreshTimes()
+                    }
+                }
             }
         }
     }
 
-    private fun buildFilterChips() {
-        binding.rowFilterChips.removeAllViews()
-        val padH = resources.getDimensionPixelSize(R.dimen.spacing_md)
-        val padV = resources.getDimensionPixelSize(R.dimen.spacing_sm)
-        val spacing = resources.getDimensionPixelSize(R.dimen.spacing_sm)
-        filterViews = filterLabels.mapIndexed { index, label ->
-            val tv = TextView(requireContext()).apply {
-                text = label
-                textSize = 12f
-                gravity = Gravity.CENTER
-                setPadding(padH, padV, padH, padV)
-                layoutParams = ViewGroup.MarginLayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    marginEnd = spacing
-                }
-                setOnClickListener {
-                    selectedFilterIndex = index
-                    viewModel.setFilter(filterValues[index])
-                    filterViews.forEachIndexed { i, v -> applyChipStyle(v, i == selectedFilterIndex) }
-                }
-            }
-            applyChipStyle(tv, index == selectedFilterIndex)
-            binding.rowFilterChips.addView(tv)
-            tv
-        }
-    }
-
-    private fun applyChipStyle(tv: TextView, selected: Boolean) {
-        tv.setBackgroundResource(
-            if (selected) R.drawable.bg_profile_level_badge else R.drawable.bg_profile_rating_chip
-        )
-        tv.setTextColor(
-            ContextCompat.getColor(
-                requireContext(),
-                if (selected) R.color.primary else R.color.gray_400
-            )
-        )
-        tv.setTypeface(null, if (selected) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
+    override fun onResume() {
+        super.onResume()
+        viewModel.refresh()
+        adapter.refresh()
     }
 
     override fun onDestroyView() {
