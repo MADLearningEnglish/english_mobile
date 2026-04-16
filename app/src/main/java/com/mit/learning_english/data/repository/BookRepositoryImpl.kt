@@ -10,36 +10,57 @@ import com.mit.learning_english.data.mapper.toBookDetail
 import com.mit.learning_english.data.mapper.toBookHistory
 import com.mit.learning_english.data.paging.BookByGenresPagingSource
 import com.mit.learning_english.data.paging.BookHistoryPagingSource
+import com.mit.learning_english.data.paging.AuthorPagingSource
+import com.mit.learning_english.data.paging.AuthorBooksPagingSource
+import com.mit.learning_english.data.paging.FavoriteBookPagingSource
+import com.mit.learning_english.data.paging.RecommendBookPagingSource
 import com.mit.learning_english.data.paging.SearchBookPagingSource
 import com.mit.learning_english.data.remote.dto.BookReadingProgressRequestDto
 import com.mit.learning_english.data.remote.api.BookApiService
 import com.mit.learning_english.domain.model.Book
 import com.mit.learning_english.domain.model.BookDetail
 import com.mit.learning_english.domain.model.BookReponse
+import com.mit.learning_english.domain.model.Author
 import com.mit.learning_english.domain.repository.BookRepository
 import com.mit.learning_english.domain.util.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class BookRepositoryImpl @Inject constructor(
     private val bookApi: BookApiService, private val resultMapper: ResultMapper
 ) : BookRepository {
-    override suspend fun getBooksByGenres(genresId: Int): Flow<PagingData<Book>> {
+    override fun getAuthorsPaging(): Flow<PagingData<Author>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 20, prefetchDistance = 5, enablePlaceholders = false
+                pageSize = AuthorPagingSource.PAGE_SIZE,
+                prefetchDistance = 5,
+                enablePlaceholders = false,
+                initialLoadSize = AuthorPagingSource.PAGE_SIZE
+            ),
+            pagingSourceFactory = { AuthorPagingSource(bookApi) }
+        ).flow
+    }
+
+    override fun getBooksByGenres(genresId: Int): Flow<PagingData<Book>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = BookByGenresPagingSource.PAGE_SIZE,
+                prefetchDistance = 5,
+                enablePlaceholders = false,
+                initialLoadSize = BookByGenresPagingSource.PAGE_SIZE
             ), pagingSourceFactory = { BookByGenresPagingSource(bookApi, genresId) }).flow
     }
 
     override suspend fun getBooksRecommend(): Result<List<Book>> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = bookApi.getBooksRecommend()
+                val response = bookApi.getBooksRecommend(page = 1, limit = 10)
                 Log.d("BookRepositoryImpl", response.body().toString())
-                val result = resultMapper.fromBaseResponse(response).map { page ->
-                    page.data.map {
+                val result = resultMapper.fromBaseResponse(response).map { pageResponse ->
+                    pageResponse.data.map {
                         it.toBook()
                     }
                 }
@@ -49,6 +70,42 @@ class BookRepositoryImpl @Inject constructor(
                 resultMapper.fromException(e)
             }
         }
+    }
+
+    override fun getBooksRecommendPaging(): Flow<PagingData<Book>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = RecommendBookPagingSource.PAGE_SIZE,
+                prefetchDistance = 5,
+                enablePlaceholders = false,
+                initialLoadSize = RecommendBookPagingSource.PAGE_SIZE
+            ),
+            pagingSourceFactory = { RecommendBookPagingSource(bookApi) }
+        ).flow
+    }
+
+    override fun getFavoriteBooksPaging(): Flow<PagingData<Book>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = FavoriteBookPagingSource.PAGE_SIZE,
+                prefetchDistance = 5,
+                enablePlaceholders = false,
+                initialLoadSize = FavoriteBookPagingSource.PAGE_SIZE
+            ),
+            pagingSourceFactory = { FavoriteBookPagingSource(bookApi) }
+        ).flow
+    }
+
+    override fun getBooksByAuthorPaging(authorId: Int): Flow<PagingData<Book>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = AuthorBooksPagingSource.PAGE_SIZE,
+                prefetchDistance = 5,
+                enablePlaceholders = false,
+                initialLoadSize = AuthorBooksPagingSource.PAGE_SIZE
+            ),
+            pagingSourceFactory = { AuthorBooksPagingSource(bookApi, authorId) }
+        ).flow
     }
 
     override suspend fun getRecommendByTopic(): Result<List<Book>> {
@@ -136,15 +193,15 @@ class BookRepositoryImpl @Inject constructor(
     override suspend fun updateReadingProgress(
         bookId: Int,
         lastReadPageNumber: Int,
-        totalPages: Int,
-        durationSeconds: Int?
+        lastRead: LocalDateTime,
+        duration:Int
     ): Result<Unit> {
         return withContext(Dispatchers.IO) {
             try {
                 val body = BookReadingProgressRequestDto(
                     lastReadPageNumber = lastReadPageNumber,
-                    totalPages = totalPages,
-                    durationSeconds = durationSeconds
+                    lastRead = lastRead,
+                    duration =duration
                 )
                 val response = bookApi.updateReadingProgress(bookId, body)
                 if (response.isSuccessful) {

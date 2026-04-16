@@ -27,7 +27,7 @@
     <color name="surface">#F8F8F8</color>
     <color name="surface_variant">#E8F2FF</color>
     <color name="surface_gray">#FFF8F8F8</color>
-    <color name="gray">#F5F5F5</color>
+    <color name="gray">#FFF8F8F8</color>
 
     <!-- Text -->
     <color name="body_primary">#121212</color>

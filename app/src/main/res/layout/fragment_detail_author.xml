@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".presentation.feature.detailauthor.DetailAuthorFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@string/book"
+            android:padding="2dp"
+            android:src="@drawable/ic_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvScreenTitle"
+            style="@style/HeadlineExtraSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="@string/author_detail_title"
+            app:layout_constraintBottom_toBottomOf="@id/btnBack"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btnBack"
+            app:layout_constraintTop_toTopOf="@id/btnBack" />
+
+        <ImageView
+            android:id="@+id/ivAuthorAvatar"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_avatar_default"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnBack" />
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerAvatar"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            app:layout_constraintBottom_toBottomOf="@id/ivAuthorAvatar"
+            app:layout_constraintEnd_toEndOf="@id/ivAuthorAvatar"
+            app:layout_constraintStart_toStartOf="@id/ivAuthorAvatar"
+            app:layout_constraintTop_toTopOf="@id/ivAuthorAvatar">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/gray" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <TextView
+            android:id="@+id/tvAuthorName"
+            style="@style/TitleMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivAuthorAvatar"
+            app:layout_constraintTop_toTopOf="@id/ivAuthorAvatar"
+            tools:text="Jules Verne" />
+
+        <TextView
+            android:id="@+id/tvAuthorNationality"
+            style="@style/BodySmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/body_secondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivAuthorAvatar"
+            app:layout_constraintTop_toBottomOf="@id/tvAuthorName"
+            tools:text="France" />
+
+        <TextView
+            android:id="@+id/tvAuthorBiography"
+            style="@style/BodySmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/body_secondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivAuthorAvatar"
+            tools:text="French novelist, poet, and playwright best known for adventure novels." />
+
+        <TextView
+            android:id="@+id/tvBooksTitle"
+            style="@style/TitleSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/books_by_author_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvAuthorBiography" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvAuthorBooks"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:clipToPadding="false"
+            android:paddingBottom="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvBooksTitle"
+            tools:listitem="@layout/item_recommend_book_vertical" />
+
+        <TextView
+            android:id="@+id/tvEmptyState"
+            style="@style/BodySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/author_books_empty"
+            android:textColor="@color/body_secondary"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/rvAuthorBooks"
+            app:layout_constraintEnd_toEndOf="@id/rvAuthorBooks"
+            app:layout_constraintStart_toStartOf="@id/rvAuthorBooks"
+            app:layout_constraintTop_toTopOf="@id/rvAuthorBooks"
+            tools:visibility="visible" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/overlayLoading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieLoading"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading_circle" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

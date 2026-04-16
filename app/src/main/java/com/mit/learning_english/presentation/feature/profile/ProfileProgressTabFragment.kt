@@ -55,7 +55,7 @@ class ProfileProgressTabFragment : Fragment() {
     }
 
     private fun render(state: ProfileUiState) {
-        val p = state.profile
+        state.profile
         val s = state.stats
         val pct = state.knowledgePercent()
         binding.donutKnowledge.progress = pct / 100f

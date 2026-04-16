@@ -10,6 +10,10 @@ class BookByGenresPagingSource(
     private val api: BookApiService,
     private val genresId: Int,
 ) : PagingSource<Int, Book>() {
+    companion object {
+        const val PAGE_SIZE = 10
+    }
+
     override fun getRefreshKey(state: PagingState<Int, Book>): Int? {
         return state.anchorPosition?.let { anchor ->
             state.closestPageToPosition(anchor)?.prevKey?.plus(1) ?: state.closestPageToPosition(
@@ -22,9 +26,9 @@ class BookByGenresPagingSource(
         val page = params.key ?: 1
         return try {
             val response =
-                api.getBooksByGenres(page = page, size = params.loadSize, genresId = genresId)
+                api.getBooksByGenres(page = page, limit = PAGE_SIZE, genresId = genresId)
             if (response.isSuccessful) {
-                val items: List<Book> = response.body()?.data?.map { it.toBook() } ?: emptyList()
+                val items: List<Book> = response.body()?.data?.data?.map { it.toBook() } ?: emptyList()
                 LoadResult.Page(
                     data = items,
                     prevKey = if (page == 1) null else page - 1,

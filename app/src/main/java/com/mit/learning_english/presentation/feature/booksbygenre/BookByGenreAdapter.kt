@@ -1,11 +1,12 @@
-package com.mit.learning_english.presentation.feature.bookbygenre
+package com.mit.learning_english.presentation.feature.booksbygenre
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.mit.learning_english.databinding.ItemBookRecommendAllBinding
+import com.mit.learning_english.R
+import com.mit.learning_english.databinding.ItemRecommendBookVerticalBinding
 import com.mit.learning_english.domain.model.Book
 import com.mit.learning_english.presentation.extensions.loadImage
 
@@ -14,7 +15,7 @@ class BookByGenreAdapter(
 ) : PagingDataAdapter<Book, BookByGenreAdapter.BookByGenreViewHolder>(BookByGenreComparator) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookByGenreViewHolder {
-        val binding = ItemBookRecommendAllBinding.inflate(
+        val binding = ItemRecommendBookVerticalBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -27,19 +28,21 @@ class BookByGenreAdapter(
     }
 
     class BookByGenreViewHolder(
-        private val binding: ItemBookRecommendAllBinding,
+        private val binding: ItemRecommendBookVerticalBinding,
         private val onItemClick: (Book) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-
         fun bind(item: Book) {
-            binding.apply {
-                tvTitleBook.text = item.title
-                tvBookAuthor.text = item.authorsName
-                tvBookDescription.text = item.blurb
-                tvBookDuration.text = item.language
-                ivBookCover.loadImage(item.coverUrl)
-                root.setOnClickListener { onItemClick(item) }
-            }
+            val readMinutes:Int = (item.chapters.sumOf { it.totalDuration }/3600)
+            val pages = item.chapters.sumOf { chapter -> chapter.totalPages }
+            val context = binding.root.context
+
+            binding.ivBookCover.loadImage(item.coverUrl)
+            binding.tvBookTitle.text = item.title
+            binding.tvBookAuthor.text = item.authorsName
+            binding.tvBookDescription.text = item.blurb
+            binding.tvReadTimeAndPage.text = context.getString(R.string.recommend_read_time_format, readMinutes,pages)
+            binding.tvGenre.text = item.genresName
+            binding.root.setOnClickListener { onItemClick(item) }
         }
     }
 

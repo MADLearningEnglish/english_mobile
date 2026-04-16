@@ -31,7 +31,8 @@ fun BookResponse.toBook(): Book {
         coverUrl = coverUrl,
         blurb = blurb?:"",
         genresName = genresName,
-        authorsName = authorsName
+        authorsName = authorsName,
+        chapters = chapters?:emptyList()
     )
 }
 

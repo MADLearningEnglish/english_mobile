@@ -34,14 +34,10 @@ class CreateDeckFragment : BaseFragment<FragmentCreateDeckBinding, CreateDeckVie
 
     private var pendingImageIndex: Int? = null
 
-    private val selectCoverImageLauncher = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri ->
-        uri?.let { viewModel.onCoverImageSelected(it) }
-    }
-
     private val selectVisualCueLauncher = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri ->
         uri?.let { uri ->
             pendingImageIndex?.let { index ->
-                viewModel.updateVisualCueUri(index, uri)
+                viewModel.updateImageUri(index, uri)
                 pendingImageIndex = null
             }
         }
@@ -49,24 +45,13 @@ class CreateDeckFragment : BaseFragment<FragmentCreateDeckBinding, CreateDeckVie
 
     private val adapter by lazy {
         FlashcardInputAdapter(
-            onToggleExpand = { index ->
-                viewModel.toggleExpanded(index)
-                // Scroll to the expanded card after a short delay so it's visible above the keyboard
-                binding.rvFlashcards.postDelayed({
-                    binding.rvFlashcards.smoothScrollToPosition(index)
-                }, 150)
-            },
-            onDelete = { viewModel.removeFlashcard(it) },
-            onWordChanged = { i, v -> viewModel.updateWord(i, v) },
-            onPhoneticChanged = { i, v -> viewModel.updatePhonetic(i, v) },
-            onMeaningChanged = { i, v -> viewModel.updateMeaning(i, v) },
-            onExampleChanged = { i, v -> viewModel.updateExample(i, v) },
-            onNoteChanged = { i, v -> viewModel.updateNote(i, v) },
-            onVisualCueClick = { index ->
-                pendingImageIndex = index
+            onTermChanged = { i, v -> viewModel.updateTerm(i, v) },
+            onDefinitionChanged = { i, v -> viewModel.updateDefinition(i, v) },
+            onImagePickRequested = { i ->
+                pendingImageIndex = i
                 selectVisualCueLauncher.launch("image/*")
             },
-            onFetchPhoneticClick = { index -> viewModel.autoFetchPhonetic(index) }
+            onDeleteRequested = { i -> viewModel.removeFlashcard(i) }
         )
     }
 
@@ -95,10 +80,8 @@ class CreateDeckFragment : BaseFragment<FragmentCreateDeckBinding, CreateDeckVie
 
     override fun bindView() {
         binding.btnBack.setOnClickListener { viewModel.onNavigateBack() }
-        binding.btnCancel.setOnClickListener { viewModel.onNavigateBack() }
         binding.btnSave.setOnClickListener { viewModel.saveDeck() }
         binding.btnAddFlashcard.setOnClickListener { viewModel.addFlashcard() }
-        binding.cardCoverImage.setOnClickListener { selectCoverImageLauncher.launch("image/*") }
 
         binding.etDeckTitle.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
@@ -108,13 +91,7 @@ class CreateDeckFragment : BaseFragment<FragmentCreateDeckBinding, CreateDeckVie
             }
         })
 
-        binding.etDeckDescription.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.onDescriptionChanged(s?.toString() ?: "")
-            }
-        })
+
     }
 
     override fun observeViewModel() {
@@ -124,30 +101,10 @@ class CreateDeckFragment : BaseFragment<FragmentCreateDeckBinding, CreateDeckVie
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collectLatest { state ->
-                    // Word counter
-                    val countText = "${state.wordCount} / ${state.maxWords} từ"
-                    binding.tvWordCountLabel.text = countText
-                    binding.progressWordCount.progress = state.wordCount
-
-                    // Cover image preview
-                    if (state.coverImageUri != null) {
-                        binding.imgDeckCover.setImageURI(state.coverImageUri)
-                        binding.layoutUploadPrompt.isVisible = false
-                    } else if (state.coverImageUrl != null) {
-                        com.bumptech.glide.Glide.with(this@CreateDeckFragment)
-                            .load(state.coverImageUrl)
-                            .centerCrop()
-                            .into(binding.imgDeckCover)
-                        binding.layoutUploadPrompt.isVisible = false
-                    } else {
-                        binding.imgDeckCover.setImageDrawable(null)
-                        binding.layoutUploadPrompt.isVisible = true
-                    }
-
                     // Save button loading state
                     val isLoading = state.isSaving || state.isUploadingImages
                     binding.btnSave.isEnabled = !isLoading
-                    binding.btnSave.text = if (isLoading) "Đang lưu..." else "Lưu bộ thẻ"
+                    binding.btnSave.alpha = if (isLoading) 0.5f else 1.0f
 
                     // Add button: disable at limit
                     binding.btnAddFlashcard.alpha = if (state.isAtLimit) 0.4f else 1.0f
@@ -155,7 +112,7 @@ class CreateDeckFragment : BaseFragment<FragmentCreateDeckBinding, CreateDeckVie
 
                     // Flashcard list → convert to UI items
                     val items = state.flashcards.mapIndexed { i, card ->
-                        FlashcardUiItem(card, i, state.expandedIndex == i)
+                        FlashcardUiItem(card, i)
                     }
                     adapter.submitList(items)
                 }
@@ -188,7 +145,7 @@ class CreateDeckFragment : BaseFragment<FragmentCreateDeckBinding, CreateDeckVie
 
         sheetBinding.btnStartStudy.setOnClickListener {
             dialog.dismiss()
-            val bundle = android.os.Bundle().apply {
+            val bundle = Bundle().apply {
                 putInt("deckId", deckId)
                 putString("deckTitle", "Luyện tập")
             }

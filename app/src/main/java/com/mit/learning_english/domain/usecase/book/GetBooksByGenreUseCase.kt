@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetBooksByGenreUseCase @Inject constructor(
     private val bookRepository: BookRepository
 ) {
-    suspend operator fun invoke(genreId:Int): Flow<PagingData<Book>> {
+    operator fun invoke(genreId: Int): Flow<PagingData<Book>> {
         return bookRepository.getBooksByGenres(genreId)
     }
 }

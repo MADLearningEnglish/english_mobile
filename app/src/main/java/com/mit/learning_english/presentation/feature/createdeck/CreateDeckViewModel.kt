@@ -19,7 +19,6 @@ import com.mit.learning_english.domain.usecase.dictionary.FetchPhoneticUseCase
 class CreateDeckViewModel @Inject constructor(
     private val createDeckUseCase: CreateDeckUseCase,
     private val uploadFileUseCase: UploadFileUseCase,
-    private val fetchPhoneticUseCase: FetchPhoneticUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<CreateDeckState, CreateDeckEvent>(CreateDeckState()) {
 
@@ -27,13 +26,8 @@ class CreateDeckViewModel @Inject constructor(
         setState { copy(title = title) }
     }
 
-    fun onDescriptionChanged(desc: String) {
-        setState { copy(description = desc) }
-    }
 
-    fun onCoverImageSelected(uri: android.net.Uri) {
-        setState { copy(coverImageUri = uri) }
-    }
+
 
     fun addFlashcard() {
         val current = uiState.value
@@ -61,34 +55,9 @@ class CreateDeckViewModel @Inject constructor(
         }
     }
 
-    fun autoFetchPhonetic(index: Int) {
-        val state = uiState.value
-        if (index !in state.flashcards.indices) return
-        val word = state.flashcards[index].word
-        if (word.isBlank()) {
-            emitEvent(CreateDeckEvent.ShowSnackbar("Vui lòng nhập từ vựng trước"))
-            return
-        }
-
-        viewModelScope.launch(exceptionHandler) {
-            when (val result = fetchPhoneticUseCase(word)) {
-                is Result.Success -> {
-                    updatePhonetic(index, result.data)
-                }
-                is Result.Error -> {
-                    emitEvent(CreateDeckEvent.ShowSnackbar(result.message ?: "Không tìm thấy phiên âm"))
-                }
-                else -> Unit
-            }
-        }
-    }
-
-    fun updateWord(index: Int, value: String) = updateField(index) { copy(word = value) }
-    fun updatePhonetic(index: Int, value: String) = updateField(index) { copy(phonetic = value) }
-    fun updateMeaning(index: Int, value: String) = updateField(index) { copy(meaning = value) }
-    fun updateExample(index: Int, value: String) = updateField(index) { copy(exampleSentence = value) }
-    fun updateNote(index: Int, value: String) = updateField(index) { copy(note = value) }
-    fun updateVisualCueUri(index: Int, uri: android.net.Uri) = updateField(index) { copy(visualCueUri = uri) }
+    fun updateTerm(index: Int, value: String) = updateField(index) { copy(term = value) }
+    fun updateDefinition(index: Int, value: String) = updateField(index) { copy(definition = value) }
+    fun updateImageUri(index: Int, uri: android.net.Uri) = updateField(index) { copy(imageUri = uri) }
 
     private fun updateField(index: Int, updater: FlashcardInput.() -> FlashcardInput) {
         val updated = uiState.value.flashcards.toMutableList()
@@ -104,7 +73,7 @@ class CreateDeckViewModel @Inject constructor(
             emitEvent(CreateDeckEvent.ShowSnackbar("Vui lòng nhập tên bộ thẻ"))
             return
         }
-        val validCards = state.flashcards.filter { it.word.isNotBlank() && it.meaning.isNotBlank() }
+        val validCards = state.flashcards.filter { it.term.isNotBlank() && it.definition.isNotBlank() }
         if (validCards.isEmpty()) {
             emitEvent(CreateDeckEvent.ShowSnackbar("Vui lòng thêm ít nhất 1 từ hợp lệ"))
             return
@@ -112,25 +81,13 @@ class CreateDeckViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             setState { copy(isSaving = true, isUploadingImages = true) }
             
-            // Upload cover image
-            var finalCoverUrl: String? = null
-            if (state.coverImageUri != null) {
-                when (val result = uploadFileUseCase(state.coverImageUri, context)) {
-                    is Result.Success -> finalCoverUrl = result.data.url
-                    is Result.Error -> {
-                        setState { copy(isSaving = false, isUploadingImages = false) }
-                        emitEvent(CreateDeckEvent.ShowSnackbar("Lỗi tải ảnh cover: ${result.message}"))
-                        return@launch
-                    }
-                    else -> Unit
-                }
-            }
+
 
             // Upload flashcard images
             val uploadedCards = validCards.map { card ->
-                if (card.visualCueUri != null) {
-                    when (val result = uploadFileUseCase(card.visualCueUri, context)) {
-                        is Result.Success -> card.copy(visualCueUrl = result.data.url)
+                if (card.imageUri != null) {
+                    when (val result = uploadFileUseCase(card.imageUri, context)) {
+                        is Result.Success -> card.copy(imageUrl = result.data.url)
                         is Result.Error -> {
                             setState { copy(isSaving = false, isUploadingImages = false) }
                             emitEvent(CreateDeckEvent.ShowSnackbar("Lỗi tải ảnh thẻ: ${result.message}"))
@@ -147,8 +104,6 @@ class CreateDeckViewModel @Inject constructor(
 
             val request = CreateDeckRequest(
                 title = state.title.trim(),
-                description = state.description.trim().ifBlank { null },
-                coverImageUrl = finalCoverUrl,
                 flashcards = uploadedCards
             )
             when (val result = createDeckUseCase(request)) {

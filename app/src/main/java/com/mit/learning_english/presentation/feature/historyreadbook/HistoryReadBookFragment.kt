@@ -1,56 +1,112 @@
 package com.mit.learning_english.presentation.feature.historyreadbook
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.mit.learning_english.R
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import com.mit.learning_english.databinding.FragmentHistoryReadBookBinding
+import com.mit.learning_english.presentation.base.BaseFragment
+import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HistoryReadBookFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class HistoryReadBookFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+@AndroidEntryPoint
+class HistoryReadBookFragment :
+    BaseFragment<FragmentHistoryReadBookBinding, HistoryReadBookViewModel>() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    override val viewModel: HistoryReadBookViewModel by viewModels()
+    private lateinit var historyAdapter: HistoryReadBookPagingAdapter
+
+    override fun verifyBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentHistoryReadBookBinding {
+        return FragmentHistoryReadBookBinding.inflate(inflater, container, false)
+    }
+
+    override fun setupView() {
+        historyAdapter = HistoryReadBookPagingAdapter { book ->
+            viewModel.onBookClick(book.id)
+        }
+        binding.rvHistoryBooks.apply {
+            adapter = historyAdapter
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            addItemDecoration(VerticalSpacingItemDecoration(12))
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_history_read_book, container, false)
+    override fun bindView() {
+        binding.btnBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HistoryReadBookFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic fun newInstance(param1: String, param2: String) =
-                HistoryReadBookFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
+    override fun observeViewModel() {
+        super.observeViewModel()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.historyBooks.collectLatest { pagingData ->
+                    historyAdapter.submitData(pagingData)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                historyAdapter.loadStateFlow.collectLatest { loadState ->
+                    when (val refreshState = loadState.source.refresh) {
+                        is LoadState.Loading -> showLoading()
+                        is LoadState.NotLoading -> {
+                            hideLoading()
+                            val isEmpty =
+                                loadState.source.append.endOfPaginationReached && historyAdapter.itemCount == 0
+                            binding.tvEmptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE
+                        }
+
+                        is LoadState.Error -> {
+                            hideLoading()
+                            binding.tvEmptyState.visibility = View.GONE
+                            Toast.makeText(
+                                requireContext(),
+                                refreshState.error.localizedMessage
+                                    ?: getString(R.string.failed_to_load_books),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                 }
+            }
+        }
+
+        collectEvent(viewModel.event) { event ->
+            when (event) {
+                is HistoryReadBookEvent.NavigateToBookDetail -> {
+                    findNavController().navigate(
+                        R.id.bookDetailFragment,
+                        bundleOf("bookId" to event.bookId)
+                    )
+                }
+            }
+        }
+    }
+
+    override fun showLoading() {
+        binding.overlayLoading.visibility = View.VISIBLE
+        binding.lottieLoading.playAnimation()
+    }
+
+    override fun hideLoading() {
+        binding.lottieLoading.pauseAnimation()
+        binding.overlayLoading.visibility = View.GONE
     }
 }

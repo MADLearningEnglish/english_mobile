@@ -15,9 +15,6 @@ fun DeckDto.toDomain(): Deck {
     return Deck(
         id = id,
         title = title,
-        description = description,
-        coverImageUrl = coverImageUrl,
-        totalWords = totalWords,
         status = status,
         flashcards = flashcards?.map { it.toDomain() } ?: emptyList()
     )
@@ -26,13 +23,9 @@ fun DeckDto.toDomain(): Deck {
 fun FlashcardDto.toDomain(): Flashcard {
     return Flashcard(
         id = id,
-        word = word,
-        phonetic = phonetic,
-        meaning = meaning,
-        partOfSpeech = partOfSpeech,
-        exampleSentence = exampleSentence,
-        note = note,
-        visualCueUrl = visualCueUrl
+        term = term,
+        definition = definition,
+        imageUrl = imageUrl
     )
 }
 
@@ -42,20 +35,15 @@ fun StudyResultDto.toDomain(): StudyResult {
 
 fun FlashcardInput.toDto(): FlashcardCreateDto {
     return FlashcardCreateDto(
-        word = word,
-        phonetic = phonetic.ifBlank { null },
-        meaning = meaning,
-        exampleSentence = exampleSentence.ifBlank { null },
-        visualCueUrl = visualCueUrl,
-        note = note.ifBlank { null }
+        term = term,
+        definition = definition,
+        imageUrl = imageUrl
     )
 }
 
 fun CreateDeckRequest.toDto(): CreateDeckRequestDto {
     return CreateDeckRequestDto(
         title = title,
-        description = description,
-        coverImageUrl = coverImageUrl,
         flashcards = flashcards.map { it.toDto() }
     )
 }
@@ -63,12 +51,9 @@ fun CreateDeckRequest.toDto(): CreateDeckRequestDto {
 fun com.mit.learning_english.domain.model.FlashcardUpdateInput.toDto(): com.mit.learning_english.data.remote.dto.FlashcardUpdateDto {
     return com.mit.learning_english.data.remote.dto.FlashcardUpdateDto(
         id = id,
-        word = word,
-        phonetic = phonetic.ifBlank { null },
-        meaning = meaning,
-        exampleSentence = exampleSentence.ifBlank { null },
-        visualCueUrl = visualCueUrl,
-        note = note.ifBlank { null },
+        term = term,
+        definition = definition,
+        imageUrl = imageUrl,
         status = status
     )
 }
@@ -76,8 +61,6 @@ fun com.mit.learning_english.domain.model.FlashcardUpdateInput.toDto(): com.mit.
 fun com.mit.learning_english.domain.model.UpdateDeckRequest.toDto(): com.mit.learning_english.data.remote.dto.UpdateDeckRequestDto {
     return com.mit.learning_english.data.remote.dto.UpdateDeckRequestDto(
         title = title,
-        description = description,
-        coverImageUrl = coverImageUrl,
         status = status,
         flashcards = flashcards.map { it.toDto() }
     )

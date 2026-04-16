@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -30,16 +30,13 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
     override val viewModel: EditDeckViewModel by viewModels()
 
     private var isInitialDataLoaded = false
-    private var pendingImageIndex: Int? = null
 
-    private val selectCoverImageLauncher = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri ->
-        uri?.let { viewModel.onCoverImageSelected(it) }
-    }
+    private var pendingImageIndex: Int? = null
 
     private val selectVisualCueLauncher = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri ->
         uri?.let { uri ->
             pendingImageIndex?.let { index ->
-                viewModel.updateVisualCueUri(index, uri)
+                viewModel.updateImageUri(index, uri)
                 pendingImageIndex = null
             }
         }
@@ -47,23 +44,13 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
 
     private val adapter by lazy {
         FlashcardEditAdapter(
-            onToggleExpand = { index ->
-                viewModel.toggleExpanded(index)
-                binding.rvFlashcards.postDelayed({
-                    binding.rvFlashcards.smoothScrollToPosition(index)
-                }, 150)
-            },
-            onDelete = { viewModel.removeFlashcard(it) },
-            onWordChanged = { i, v -> viewModel.updateWord(i, v) },
-            onPhoneticChanged = { i, v -> viewModel.updatePhonetic(i, v) },
-            onMeaningChanged = { i, v -> viewModel.updateMeaning(i, v) },
-            onExampleChanged = { i, v -> viewModel.updateExample(i, v) },
-            onNoteChanged = { i, v -> viewModel.updateNote(i, v) },
-            onVisualCueClick = { index ->
-                pendingImageIndex = index
+            onTermChanged = { i, v -> viewModel.updateTerm(i, v) },
+            onDefinitionChanged = { i, v -> viewModel.updateDefinition(i, v) },
+            onImagePickRequested = { i ->
+                pendingImageIndex = i
                 selectVisualCueLauncher.launch("image/*")
             },
-            onFetchPhoneticClick = { index -> viewModel.autoFetchPhonetic(index) }
+            onDeleteRequested = { i -> viewModel.removeFlashcard(i) }
         )
     }
 
@@ -74,18 +61,25 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
         binding.rvFlashcards.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@EditDeckFragment.adapter
-            itemAnimator = null // prevents flicker when toggling expanded/collapsed
+            itemAnimator = null 
         }
         
         binding.tvTitle.text = "Chỉnh sửa bộ thẻ"
+
+        val rvDefaultBottomPadding = binding.rvFlashcards.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(binding.rvFlashcards) { view, insets ->
+            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val navBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            val extraPadding = if (imeHeight > 0) imeHeight else navBarHeight
+            view.updatePadding(bottom = maxOf(rvDefaultBottomPadding, extraPadding + 16))
+            insets
+        }
     }
 
     override fun bindView() {
         binding.btnBack.setOnClickListener { viewModel.onNavigateBack() }
-        binding.btnCancel.setOnClickListener { viewModel.onNavigateBack() }
         binding.btnSave.setOnClickListener { viewModel.saveDeck() }
         binding.btnAddFlashcard.setOnClickListener { viewModel.addFlashcard() }
-        binding.cardCoverImage.setOnClickListener { selectCoverImageLauncher.launch("image/*") }
 
         binding.etDeckTitle.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
@@ -95,88 +89,54 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
             }
         })
 
-        binding.etDeckDescription.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.onDescriptionChanged(s?.toString() ?: "")
-            }
-        })
+
     }
 
     override fun observeViewModel() {
         super.observeViewModel()
 
-        // Observe UI state
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collectLatest { state ->
-                    // Set fields only on initial data load (when deck data first arrives from API)
                     if (!isInitialDataLoaded && state.title.isNotEmpty()) {
                         isInitialDataLoaded = true
                         binding.etDeckTitle.setText(state.title)
-                        binding.etDeckDescription.setText(state.description)
                     }
 
-                    // Word counter
-                    val countText = "${state.wordCount} / ${state.maxWords} từ"
-                    binding.tvWordCountLabel.text = countText
-                    binding.progressWordCount.progress = state.wordCount
-
-                    // Cover image preview
-                    if (state.coverImageUri != null) {
-                        binding.imgDeckCover.setImageURI(state.coverImageUri)
-                        binding.layoutUploadPrompt.isVisible = false
-                    } else if (state.coverImageUrl != null) {
-                        com.bumptech.glide.Glide.with(this@EditDeckFragment)
-                            .load(state.coverImageUrl)
-                            .centerCrop()
-                            .into(binding.imgDeckCover)
-                        binding.layoutUploadPrompt.isVisible = false
-                    } else {
-                        binding.imgDeckCover.setImageDrawable(null)
-                        binding.layoutUploadPrompt.isVisible = true
-                    }
-
-                    // Save button loading state
                     val isLoading = state.isSaving || state.isUploadingImages
                     binding.btnSave.isEnabled = !isLoading
-                    binding.btnSave.text = if (isLoading) "Đang lưu..." else "Lưu thay đổi"
+                    binding.btnSave.alpha = if (isLoading) 0.5f else 1.0f
 
-                    // Add button: disable at limit
                     binding.btnAddFlashcard.alpha = if (state.isAtLimit) 0.4f else 1.0f
                     binding.btnAddFlashcard.isEnabled = !state.isAtLimit
 
-                    // Active flashcards (status != 0)
                     val activeCards = state.flashcards.mapIndexed { originalIndex, card ->
                         Pair(originalIndex, card)
                     }.filter { it.second.status != 0 }
 
                     val items = activeCards.map { (originalIndex, card) ->
-                        FlashcardEditUiItem(card, originalIndex, state.expandedIndex == originalIndex)
+                        FlashcardEditUiItem(card, originalIndex)
                     }
                     adapter.submitList(items)
                 }
             }
         }
 
-        // Observe one-time events
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.event.collectLatest { event ->
                     when (event) {
                         is EditDeckEvent.NavigateBack -> findNavController().navigateUp()
                         is EditDeckEvent.ShowSuccessDialog -> showSuccessDialog(event.deckId)
-                        is EditDeckEvent.ShowSnackbar ->
-                            Snackbar.make(binding.root, event.message, Snackbar.LENGTH_SHORT).show()
+                        is EditDeckEvent.ShowSnackbar -> Snackbar.make(binding.root, event.message, Snackbar.LENGTH_SHORT).show()
                     }
                 }
             }
         }
     }
 
-    override fun showLoading() { /* managed via state.isLoading */ }
-    override fun hideLoading() { /* managed via state.isLoading */ }
+    override fun showLoading() { }
+    override fun hideLoading() { }
 
     private fun showSuccessDialog(deckId: Int) {
         val dialog = BottomSheetDialog(requireContext(), R.style.ThemeOverlay_App_BottomSheetDialog)
@@ -189,7 +149,7 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
 
         sheetBinding.btnStartStudy.setOnClickListener {
             dialog.dismiss()
-            val bundle = android.os.Bundle().apply {
+            val bundle = Bundle().apply {
                 putInt("deckId", deckId)
                 putString("deckTitle", "Luyện tập")
             }

@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetPagesByBookUseCase @Inject constructor(
     private val pageRepository: PageRepository
 ) {
-    operator suspend fun invoke(bookId: Int, totalPages: Int, initialKey: Int = 0): Flow<PagingData<Page>> {
+    suspend operator fun invoke(bookId: Int, totalPages: Int, initialKey: Int = 0): Flow<PagingData<Page>> {
         return pageRepository.getPagesByBook(bookId, totalPages, initialKey)
     }
 }

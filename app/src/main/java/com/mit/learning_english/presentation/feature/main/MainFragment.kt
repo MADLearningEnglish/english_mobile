@@ -5,10 +5,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
+import androidx.navigation.fragment.findNavController
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentMainBinding
 import com.mit.learning_english.presentation.base.BaseFragment
+import com.mit.learning_english.presentation.feature.root.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,6 +46,14 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>() {
                 false
             }
         }
+
+        handlePendingDeepLink()
+    }
+
+    private fun handlePendingDeepLink() {
+        val bookId = MainActivity.consumePendingDeepLink() ?: return
+        val action = MainFragmentDirections.actionMainFragmentToBookDetailFragment(bookId)
+        findNavController().navigate(action)
     }
 
     override fun bindView() {}

@@ -31,11 +31,6 @@ interface AiChatApiService {
         @Query("includeFreeChat") includeFreeChat: Boolean = true,
     ): Response<BaseResponse<List<AiScenarioDto>>>
 
-    @GET("ai-chat/v1/scenarios/{scenarioId}")
-    suspend fun scenarioDetail(
-        @Path("scenarioId") scenarioId: Int,
-    ): Response<BaseResponse<AiScenarioDto>>
-
     @POST("ai-chat/v1/sessions")
     suspend fun createSession(
         @Body body: CreateChatSessionRequestDto,

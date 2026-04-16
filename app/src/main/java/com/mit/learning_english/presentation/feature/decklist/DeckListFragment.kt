@@ -28,7 +28,7 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
 
     private val adapter by lazy {
         DeckListAdapter(
-            onStartClick = { deck -> viewModel.onStartStudy(deck.id, deck.title) },
+            onStartClick = { deck -> viewModel.onDeckClick(deck.id, deck.title) },
             onEditClick = { deck -> viewModel.onEditDeck(deck.id) },
             onDeleteClick = { deck -> viewModel.onDeleteDeckRequest(deck.id, deck.title) }
         )
@@ -40,7 +40,7 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
 
     override fun setupView() {
         binding.rvDecks.apply {
-            layoutManager = GridLayoutManager(requireContext(), 2)
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
             adapter = this@DeckListFragment.adapter
             setHasFixedSize(true)
         }
@@ -55,6 +55,14 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
         binding.fabCreate.setOnClickListener {
             viewModel.onCreateDeck()
         }
+
+        binding.etSearch.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                viewModel.onSearchTextChanged(s?.toString() ?: "")
+            }
+        })
     }
 
     override fun observeViewModel() {
@@ -102,6 +110,18 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
                                     "deckTitle" to event.deckTitle
                                 )
                             )
+                        }
+                        is DeckListEvent.NavigateToQuiz -> {
+                            parentNavController.navigate(
+                                R.id.action_mainFragment_to_quizFragment,
+                                bundleOf(
+                                    "deckId" to event.deckId,
+                                    "deckTitle" to event.deckTitle
+                                )
+                            )
+                        }
+                        is DeckListEvent.ShowStudyModeDialog -> {
+                            showStudyModeDialog(event.deckId, event.deckTitle)
                         }
                         is DeckListEvent.NavigateToEditDeck -> {
                             parentNavController.navigate(
@@ -160,6 +180,17 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
             .setNegativeButton("Hủy", null)
             .setPositiveButton("Xóa") { _, _ ->
                 viewModel.onConfirmDelete(deckId)
+            }
+            .show()
+    }
+
+    private fun showStudyModeDialog(deckId: Int, deckTitle: String) {
+        val options = arrayOf("Luyện Thẻ (Flashcard)", "Học (Quiz)")
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Chọn chế độ ôn tập")
+            .setItems(options) { _, which ->
+                val isQuiz = which == 1
+                viewModel.onStudyModeSelected(deckId, deckTitle, isQuiz)
             }
             .show()
     }

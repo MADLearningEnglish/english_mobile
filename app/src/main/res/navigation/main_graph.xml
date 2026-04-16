@@ -26,6 +26,9 @@
             android:id="@+id/action_mainFragment_to_studyFragment"
             app:destination="@id/studyFragment" />
         <action
+            android:id="@+id/action_mainFragment_to_quizFragment"
+            app:destination="@id/quizFragment" />
+        <action
             android:id="@+id/action_mainFragment_to_editDeckFragment"
             app:destination="@id/editDeckFragment" />
         <action
@@ -52,6 +55,42 @@
         <action
             android:id="@+id/action_mainFragment_to_profileActivityDayFragment"
             app:destination="@id/profileActivityDayFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_detailAuthorFragment"
+            app:destination="@id/detailAuthorFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_historyReadBookFragment"
+            app:destination="@id/historyReadBookFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailAuthorFragment"
+        android:name="com.mit.learning_english.presentation.feature.detailauthor.DetailAuthorFragment"
+        android:label="fragment_detail_author"
+        tools:layout="@layout/fragment_detail_author">
+        <argument
+            android:name="authorId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="authorName"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="authorAvatar"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="authorNationality"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="authorBiography"
+            android:defaultValue=""
+            app:argType="string" />
+        <action
+            android:id="@+id/action_detailAuthorFragment_to_bookDetailFragment"
+            app:destination="@id/bookDetailFragment" />
     </fragment>
 
     <fragment
@@ -65,6 +104,9 @@
         <action
             android:id="@+id/action_bookDetailFragment_to_readBookFragment"
             app:destination="@id/readBookFragment" />
+
+        <deepLink app:uri="flulingo://book/{bookId}" />
+        <deepLink app:uri="https://flulingo.com/book/{bookId}" />
     </fragment>
 
     <fragment
@@ -124,8 +166,23 @@
     </fragment>
 
     <fragment
+        android:id="@+id/quizFragment"
+        android:name="com.mit.learning_english.presentation.feature.study.quiz.QuizFragment"
+        android:label="Học"
+        tools:layout="@layout/fragment_quiz">
+        <argument
+            android:name="deckId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="deckTitle"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+
+    <fragment
         android:id="@+id/bookByGenreFragment"
-        android:name="com.mit.learning_english.presentation.feature.bookbygenre.BookByGenreFragment"
+        android:name="com.mit.learning_english.presentation.feature.booksbygenre.BookByGenreFragment"
         android:label="fragment_book_by_genre"
         tools:layout="@layout/fragment_book_by_genre">
         <argument
@@ -258,4 +315,9 @@
             android:name="category"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/historyReadBookFragment"
+        android:name="com.mit.learning_english.presentation.feature.historyreadbook.HistoryReadBookFragment"
+        android:label="fragment_history_read_book"
+        tools:layout="@layout/fragment_history_read_book" />
 </navigation>
