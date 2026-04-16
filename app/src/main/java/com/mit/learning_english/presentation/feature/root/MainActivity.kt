@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             insets
         }
-        handleDeepLinkIntent(intent)
+//        handleDeepLinkIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {

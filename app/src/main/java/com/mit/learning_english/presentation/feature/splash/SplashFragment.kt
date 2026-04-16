@@ -45,23 +45,22 @@ class SplashFragment : BaseFragment<FragmentSplashBinding, SplashViewModel>() {
     }
 
     private fun handleNavigationEvent(event: SplashEvent) {
-        val navController = findNavController()
         when (event) {
             SplashEvent.NavigateToLogin -> {
                val action = SplashFragmentDirections.actionSplashFragmentToLoginFragment()
-                navController.navigate(action)
+                findNavController().navigate(action)
             }
             SplashEvent.NavigateToOnboardingBeforeLogin ->{
                 val action = SplashFragmentDirections.actionSplashFragmentToOnboardingFragment()
-                navController.navigate(action)
+                findNavController().navigate(action)
             }
             SplashEvent.NavigateToHome -> {
                 val action = SplashFragmentDirections.actionSplashFragmentToMain()
-                navController.navigate(action)
+                findNavController().navigate(action)
             }
             SplashEvent.NavigateToOnboardingAfterLogin -> {
                 val action = SplashFragmentDirections.actionSplashFragmentToOnboardingSecondFragment()
-                navController.navigate(action)
+                findNavController().navigate(action)
             }
         }
     }
