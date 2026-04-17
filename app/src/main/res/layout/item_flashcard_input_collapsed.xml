@@ -58,7 +58,7 @@
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Chỉnh sửa"
+        android:contentDescription="@string/common_edit"
         android:src="@drawable/ic_edit"
         app:tint="@color/gray_400" />
 

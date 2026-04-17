@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.domain.usecase.auth.RequestForgotPasswordOtpUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,7 +21,7 @@ class ForgotPasswordViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             val email = uiState.value.email
             if (email.isNullOrEmpty()) {
-                setState { copy(serverError = "Email is required") }
+                setState { copy(serverError = UiErrorKey.EMAIL_REQUIRED) }
                 return@launch
             }
 
@@ -31,7 +32,7 @@ class ForgotPasswordViewModel @Inject constructor(
             when (result) {
                 is Result.Success -> emitEvent(ForgotPasswordEvent.NavigateToEnterOtp)
                 is Result.Error -> setState { copy(serverError = result.message) }
-                else -> setState { copy(serverError = "Unknown error") }
+                else -> setState { copy(serverError = UiErrorKey.UNKNOWN) }
             }
         }
     }

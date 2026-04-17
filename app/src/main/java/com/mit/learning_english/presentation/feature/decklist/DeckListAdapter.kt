@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.mit.learning_english.R
 import com.mit.learning_english.databinding.ItemDeckBinding
 import com.mit.learning_english.domain.model.Deck
 
@@ -27,7 +28,10 @@ class DeckListAdapter(
 
         fun bind(deck: Deck) {
             binding.tvTitle.text = deck.title
-            binding.tvWordCount.text = "Học phần • ${deck.flashcards.size} thuật ngữ"
+            binding.tvWordCount.text = binding.root.context.getString(
+                R.string.deck_word_count_format,
+                deck.flashcards.size,
+            )
 
             // Allow touching the entire row to start reviewing
             binding.cardRoot.setOnClickListener { onStartClick(deck) }

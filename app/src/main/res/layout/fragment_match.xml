@@ -20,7 +20,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bạn đã sẵn sàng?"
+            android:text="@string/match_ready_title"
             android:textColor="#333333"
             android:textSize="28sp"
             android:textStyle="bold"
@@ -29,7 +29,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ghép tất cả các thuật ngữ theo định nghĩa của chúng trong 6 lượt chơi."
+            android:text="@string/match_intro_message"
             android:textColor="#666666"
             android:textSize="16sp"
             android:gravity="center"
@@ -40,7 +40,7 @@
             style="@style/Widget.Material3.Button"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Bắt đầu chơi"
+            android:text="@string/match_start_button"
             android:textSize="16sp"
             android:textColor="@color/white"
             android:backgroundTint="@color/purple_primary"
@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Lượt: 1/6"
+                android:text="@string/match_turn_default"
                 android:textColor="#333333"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -132,7 +132,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tuyệt vời!"
+            android:text="@string/quiz_success_title"
             android:textColor="#333333"
             android:textSize="32sp"
             android:textStyle="bold"
@@ -154,7 +154,7 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:backgroundTint="#008855"
-            android:text="Hoàn tất"
+            android:text="@string/quiz_done"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"

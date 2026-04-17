@@ -163,7 +163,7 @@
         android:gravity="center"
         android:paddingHorizontal="12dp"
         android:paddingVertical="6dp"
-        android:text="1.0x"
+        android:text="@string/read_speed_default"
         android:textColor="@color/body_primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layoutControlAudio" />

@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import com.mit.learning_english.R
+import com.mit.learning_english.shared.UiErrorKey
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
@@ -162,8 +163,43 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
     }
 
     protected open fun showError(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), resolveUiMessage(message), Toast.LENGTH_SHORT).show()
         Log.d("Error Fragment",message)
+    }
+
+    protected fun resolveUiMessage(message: String): String {
+        val resId = when (message) {
+            UiErrorKey.UNKNOWN -> R.string.error_unknown
+            UiErrorKey.INVALID_SESSION -> R.string.error_invalid_session
+            UiErrorKey.LOGIN_FAILED -> R.string.error_login_failed
+            UiErrorKey.SIGNUP_FAILED -> R.string.error_signup_failed
+            UiErrorKey.UPLOAD_FAILED -> R.string.error_upload_failed
+            UiErrorKey.FAILED_LOAD_PAGES -> R.string.error_failed_load_pages
+            UiErrorKey.FAILED_LOAD_BOOKS -> R.string.error_failed_load_books
+            UiErrorKey.FAILED_SEARCH_BOOKS -> R.string.error_failed_search_books
+            UiErrorKey.FAILED_LOAD_AUTHORS -> R.string.error_failed_load_authors
+            UiErrorKey.FAILED_LOAD_BOOK_DETAIL -> R.string.error_failed_load_book_detail
+            UiErrorKey.CANNOT_READ_IMAGE -> R.string.error_cannot_read_image
+            UiErrorKey.CANNOT_GET_RESULTS -> R.string.error_cannot_get_results
+            UiErrorKey.UPDATE_PROGRESS_FAILED -> R.string.error_update_progress_failed
+            UiErrorKey.HTTP_ERROR -> R.string.error_http_error
+            UiErrorKey.DICTIONARY_CONNECTION -> R.string.error_dictionary_connection
+            UiErrorKey.ERROR_UPLOADING_FILE -> R.string.error_uploading_file
+            UiErrorKey.OTP_OR_EMAIL_MISSING -> R.string.error_otp_or_email_missing
+            UiErrorKey.PASSWORD_MISMATCH_OR_EMPTY -> R.string.error_password_mismatch_or_empty
+            UiErrorKey.EMAIL_REQUIRED -> R.string.error_email_required
+            UiErrorKey.COULD_NOT_LOAD_PROFILE -> R.string.error_could_not_load_profile
+            UiErrorKey.COULD_NOT_LOAD_STATS -> R.string.error_could_not_load_stats
+            UiErrorKey.LOAD_DATA_VI -> R.string.error_load_data_vi
+            UiErrorKey.CREATE_DECK_VI -> R.string.error_create_deck_vi
+            UiErrorKey.DELETE_FAILED -> R.string.error_delete_failed
+            UiErrorKey.REVIEW_FAILED -> R.string.error_review_failed
+            UiErrorKey.STUDY_COMPLETE_FAILED -> R.string.error_study_complete_failed
+            UiErrorKey.AUTH_SIGNUP_VI -> R.string.error_auth_signup_vi
+            UiErrorKey.FILL_TERM_DEFINITION -> R.string.error_please_fill_term_definition
+            else -> 0
+        }
+        return if (resId != 0) getString(resId) else message
     }
 
     override fun onDestroyView() {

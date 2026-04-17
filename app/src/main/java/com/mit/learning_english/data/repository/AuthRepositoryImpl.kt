@@ -8,6 +8,7 @@ import com.mit.learning_english.data.remote.retrofit.AuthManager
 import com.mit.learning_english.domain.model.LoginRequest
 import com.mit.learning_english.domain.repository.AuthRepository
 import com.mit.learning_english.domain.util.Result
+import com.mit.learning_english.shared.UiErrorKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -54,11 +55,11 @@ class AuthRepositoryImpl @Inject constructor(
                             )
                             Result.Success(true)
                         } else {
-                            Result.Error(baseResponse.message ?: "Login failed")
+                            Result.Error(baseResponse.message ?: UiErrorKey.LOGIN_FAILED)
                         }
                     }
                     is Result.Error -> result
-                    else -> Result.Error("Unknown error")
+                    else -> Result.Error(UiErrorKey.UNKNOWN)
                 }
             } catch (e: Exception) {
                 resultMapper.fromException(e)
@@ -116,7 +117,7 @@ class AuthRepositoryImpl @Inject constructor(
                             }
                         }
                     }
-                    else -> Result.Error("Unknown error")
+                    else -> Result.Error(UiErrorKey.UNKNOWN)
                 }
             } catch (e: Exception) {
                 resultMapper.fromException(e)
@@ -145,11 +146,11 @@ class AuthRepositoryImpl @Inject constructor(
                         if (base.data != null) {
                             Result.Success(true)
                         } else {
-                            Result.Error(base.message ?: "Đăng ký thất bại")
+                            Result.Error(base.message ?: UiErrorKey.AUTH_SIGNUP_VI)
                         }
                     }
                     is Result.Error -> result
-                    else -> Result.Error("Unknown error")
+                    else -> Result.Error(UiErrorKey.UNKNOWN)
                 }
             } catch (e: Exception) {
                 resultMapper.fromException(e)
@@ -164,7 +165,7 @@ class AuthRepositoryImpl @Inject constructor(
                 when (val result = resultMapper.fromResponse(response)) {
                     is Result.Success -> Result.Success(true)
                     is Result.Error -> result
-                    else -> Result.Error("Unknown error")
+                    else -> Result.Error(UiErrorKey.UNKNOWN)
                 }
             } catch (e: Exception) {
                 resultMapper.fromException(e)
@@ -180,7 +181,7 @@ class AuthRepositoryImpl @Inject constructor(
                 when (val result = resultMapper.fromResponse(response)) {
                     is Result.Success -> Result.Success(true)
                     is Result.Error -> result
-                    else -> Result.Error("Unknown error")
+                    else -> Result.Error(UiErrorKey.UNKNOWN)
                 }
             } catch (e: Exception) {
                 resultMapper.fromException(e)
@@ -200,7 +201,7 @@ class AuthRepositoryImpl @Inject constructor(
                 when (val result = resultMapper.fromResponse(response)) {
                     is Result.Success -> Result.Success(true)
                     is Result.Error -> result
-                    else -> Result.Error("Unknown error")
+                    else -> Result.Error(UiErrorKey.UNKNOWN)
                 }
             } catch (e: Exception) {
                 resultMapper.fromException(e)

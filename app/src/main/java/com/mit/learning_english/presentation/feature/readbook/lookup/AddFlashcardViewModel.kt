@@ -6,6 +6,7 @@ import com.mit.learning_english.domain.model.UpdateDeckRequest
 import com.mit.learning_english.domain.usecase.deck.GetDeckByIdUseCase
 import com.mit.learning_english.domain.usecase.deck.UpdateDeckUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -24,7 +25,7 @@ class AddFlashcardViewModel @Inject constructor(
         val normalizedTerm = term.trim()
         val normalizedDefinition = definition.trim()
         if (normalizedTerm.isBlank() || normalizedDefinition.isBlank()) {
-            setState { copy(errorMessage = "Please fill in term and definition.") }
+            setState { copy(errorMessage = UiErrorKey.FILL_TERM_DEFINITION) }
             return
         }
 

@@ -145,7 +145,11 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
                             showDeleteDialog(event.deckId, event.deckTitle)
                         }
                         is DeckListEvent.ShowSnackbar -> {
-                            Snackbar.make(binding.root, event.message, Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(
+                                binding.root,
+                                resolveUiMessage(event.message),
+                                Snackbar.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
@@ -184,19 +188,23 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
 
     private fun showDeleteDialog(deckId: Int, deckTitle: String) {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Xóa bộ thẻ")
-            .setMessage("Bạn có chắc muốn xóa \"$deckTitle\" không? Hành động này không thể hoàn tác.")
-            .setNegativeButton("Hủy", null)
-            .setPositiveButton("Xóa") { _, _ ->
+            .setTitle(R.string.deck_delete_title)
+            .setMessage(getString(R.string.deck_delete_message, deckTitle))
+            .setNegativeButton(R.string.common_cancel, null)
+            .setPositiveButton(R.string.common_delete) { _, _ ->
                 viewModel.onConfirmDelete(deckId)
             }
             .show()
     }
 
     private fun showStudyModeDialog(deckId: Int, deckTitle: String) {
-        val options = arrayOf("Luyện Thẻ (Flashcard)", "Học (Quiz)", "Ghép thẻ (Match)")
+        val options = arrayOf(
+            getString(R.string.deck_study_mode_flashcard),
+            getString(R.string.deck_study_mode_quiz),
+            getString(R.string.deck_study_mode_match),
+        )
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Chọn chế độ ôn tập")
+            .setTitle(R.string.deck_study_mode_title)
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> viewModel.onStudyModeSelected(deckId, deckTitle, false) // Flashcard

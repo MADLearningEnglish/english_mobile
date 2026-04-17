@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.domain.usecase.auth.ResetForgotPasswordUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,7 +37,7 @@ class ResetPasswordViewModel @Inject constructor(
             val otp = uiState.value.otp ?: ""
 
             if (pwd.isNullOrEmpty() || rePwd.isNullOrEmpty() || pwd != rePwd) {
-                setState { copy(serverError = "Password mismatch or empty") }
+                setState { copy(serverError = UiErrorKey.PASSWORD_MISMATCH_OR_EMPTY) }
                 return@launch
             }
 
@@ -47,7 +48,7 @@ class ResetPasswordViewModel @Inject constructor(
             when (result) {
                 is Result.Success -> emitEvent(ResetPasswordEvent.NavigateToLogin)
                 is Result.Error -> setState { copy(serverError = result.message) }
-                else -> setState { copy(serverError = "Unknown error") }
+                else -> setState { copy(serverError = UiErrorKey.UNKNOWN) }
             }
         }
     }

@@ -117,7 +117,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:rotation="3"
-                    android:text="Hello → Hola"
+                    android:text="@string/onboarding_translation_sample"
                     android:textColor="@color/primary"
                     android:textSize="12sp"
                     android:textStyle="bold" />

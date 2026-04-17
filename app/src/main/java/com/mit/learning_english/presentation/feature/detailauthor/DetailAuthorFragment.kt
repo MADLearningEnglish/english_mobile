@@ -10,6 +10,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentDetailAuthorBinding
 import com.mit.learning_english.presentation.base.BaseFragment
 import com.mit.learning_english.presentation.extensions.loadAvatar
@@ -85,7 +86,7 @@ class DetailAuthorFragment : BaseFragment<FragmentDetailAuthorBinding, DetailAut
                             hideLoading()
                             binding.tvEmptyState.visibility = View.GONE
                             viewModel.setErrorMessage(
-                                refreshState.error.localizedMessage ?: "Failed to load books"
+                                refreshState.error.localizedMessage ?: getString(R.string.error_failed_load_books)
                             )
                         }
                     }
