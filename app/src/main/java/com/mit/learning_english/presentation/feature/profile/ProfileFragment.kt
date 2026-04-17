@@ -51,17 +51,13 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
             binding.tabLayoutProfile.newTab().setText(getString(R.string.profile_tab_progress))
         )
         binding.tabLayoutProfile.addTab(
-            binding.tabLayoutProfile.newTab().setText(getString(R.string.profile_tab_exercises))
-        )
-        binding.tabLayoutProfile.addTab(
             binding.tabLayoutProfile.newTab().setText(getString(R.string.profile_tab_corrections))
         )
         binding.tabLayoutProfile.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab.position) {
                     0 -> binding.viewPagerProfile.setCurrentItem(0, false)
-                    1 -> viewModel.openCompletedExercises()
-                    2 -> viewModel.openMyCorrections()
+                    1 -> viewModel.openMyCorrections()
                 }
             }
 
@@ -107,8 +103,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
                                 nav.navigate(R.id.action_mainFragment_to_editProfileFragment)
                             is ProfileEvent.OpenVocabularyList ->
                                 nav.navigate(R.id.action_mainFragment_to_profileVocabularyFragment)
-                            is ProfileEvent.OpenCompletedExercises ->
-                                nav.navigate(R.id.action_mainFragment_to_profileCompletedExercisesFragment)
                             is ProfileEvent.OpenMyCorrections ->
                                 nav.navigate(R.id.action_mainFragment_to_profileMyCorrectionsFragment)
                             is ProfileEvent.OpenDailyActivity ->
