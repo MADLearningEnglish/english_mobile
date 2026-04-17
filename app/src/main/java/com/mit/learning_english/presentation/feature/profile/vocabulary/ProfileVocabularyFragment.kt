@@ -41,28 +41,12 @@ class ProfileVocabularyFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
 
-        binding.tabFilter.addTab(binding.tabFilter.newTab().setText(R.string.vocabulary_tab_all))
-        binding.tabFilter.addTab(binding.tabFilter.newTab().setText(R.string.vocabulary_tab_favorites))
-        binding.tabFilter.addTab(binding.tabFilter.newTab().setText(R.string.vocabulary_tab_difficult))
+        binding.tabFilter.visibility = View.GONE
+        viewModel.setFilter("ALL")
 
         adapter = ProfileVocabularyAdapter { w -> viewModel.toggleFavorite(w) }
         binding.rvWords.layoutManager = LinearLayoutManager(requireContext())
         binding.rvWords.adapter = adapter
-
-        binding.tabFilter.addOnTabSelectedListener(object :
-            com.google.android.material.tabs.TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: com.google.android.material.tabs.TabLayout.Tab?) {
-                val f = when (tab?.position) {
-                    1 -> "FAVORITES"
-                    2 -> "DIFFICULT"
-                    else -> "ALL"
-                }
-                viewModel.setFilter(f)
-            }
-
-            override fun onTabUnselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}
-            override fun onTabReselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}
-        })
 
         binding.etSearch.doAfterTextChanged { e ->
             viewModel.setQuery(e?.toString())

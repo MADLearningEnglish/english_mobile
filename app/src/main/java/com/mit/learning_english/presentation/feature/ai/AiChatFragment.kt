@@ -13,7 +13,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -84,6 +88,7 @@ class AiChatFragment : BaseFragment<FragmentAiChatBinding, AiChatViewModel>() {
         }
         binding.recyclerChat.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerChat.adapter = messageAdapter
+        applyChatInsets()
         binding.textTitle.text = args.aiRole.ifBlank { args.title }
         val levelLabel = when (args.levelName.uppercase()) {
             "FREE" -> getString(R.string.ai_difficulty_free).uppercase(Locale.US)
@@ -205,5 +210,21 @@ class AiChatFragment : BaseFragment<FragmentAiChatBinding, AiChatViewModel>() {
         tts?.shutdown()
         tts = null
         super.onDestroyView()
+    }
+
+    private fun applyChatInsets() {
+        val baseBottomPadding = binding.bottomSection.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val systemBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            val bottomInset = maxOf(imeBottom, systemBottom)
+
+            binding.bottomSection.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = bottomInset
+            }
+            binding.bottomSection.updatePadding(bottom = baseBottomPadding + 6)
+            insets
+        }
+        ViewCompat.requestApplyInsets(binding.root)
     }
 }
