@@ -113,7 +113,7 @@ class QuizViewModel @Inject constructor(
     }
 
     private fun generateQuizQuestion(all: List<Flashcard>, target: Flashcard): QuizQuestion? {
-        if (all.size < 4) return null
+        if (all.isEmpty()) return null
 
         val distractors = all
             .filter { it.id != target.id }
