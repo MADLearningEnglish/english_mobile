@@ -5,6 +5,7 @@ import com.mit.learning_english.data.remote.dto.AiScenarioDto
 import com.mit.learning_english.data.remote.dto.CreateChatSessionRequestDto
 import com.mit.learning_english.data.repository.AiChatRepository
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -142,7 +143,7 @@ class ChooseTopicViewModel @Inject constructor(
             repository.createSession(req)
                 .onSuccess { response ->
                     val sessionId = response.sessionId ?: run {
-                        emitError("Invalid session")
+                        emitError(UiErrorKey.INVALID_SESSION)
                         return@onSuccess
                     }
                     val title = response.title ?: scenario?.title.orEmpty()

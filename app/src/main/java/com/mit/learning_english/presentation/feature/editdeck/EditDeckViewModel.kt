@@ -12,6 +12,7 @@ import com.mit.learning_english.domain.usecase.file.UploadFileUseCase
 import com.mit.learning_english.domain.usecase.dictionary.FetchPhoneticUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -53,7 +54,7 @@ class EditDeckViewModel @Inject constructor(
                 }
                 is Result.Error -> {
                     setLoading(false)
-                    emitEvent(EditDeckEvent.ShowSnackbar(result.message ?: "Lỗi tải dữ liệu"))
+                    emitEvent(EditDeckEvent.ShowSnackbar(result.message ?: UiErrorKey.LOAD_DATA_VI))
                 }
                 else -> setLoading(false)
             }
@@ -181,7 +182,7 @@ class EditDeckViewModel @Inject constructor(
                 }
                 is Result.Error -> {
                     setState { copy(isSaving = false) }
-                    emitEvent(EditDeckEvent.ShowSnackbar(result.message ?: "Lỗi không xác định"))
+                    emitEvent(EditDeckEvent.ShowSnackbar(result.message ?: UiErrorKey.UNKNOWN))
                 }
                 else -> setState { copy(isSaving = false) }
             }

@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.domain.usecase.auth.SignUpUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,7 +34,7 @@ class SignUpViewModel @Inject constructor(
                         setState { copy(serverError = null) }
                         emitEvent(SignUpEvent.NavigateToLogin)
                     } else {
-                        setState { copy(serverError = "Sign up failed") }
+                        setState { copy(serverError = UiErrorKey.SIGNUP_FAILED) }
                     }
                 } else if (result is Result.Error) {
                     setState { copy(serverError = result.message) }

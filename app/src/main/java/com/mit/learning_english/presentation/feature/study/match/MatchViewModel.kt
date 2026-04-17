@@ -6,6 +6,7 @@ import com.mit.learning_english.domain.usecase.deck.GetStudyFlashCardsUseCase
 import com.mit.learning_english.domain.usecase.deck.LogDeckStudyCompleteUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -45,7 +46,7 @@ class MatchViewModel @Inject constructor(
                 }
                 is Result.Error -> {
                     setLoading(false)
-                    emitError(result.message ?: "Lỗi tải dữ liệu")
+                    emitError(result.message ?: UiErrorKey.LOAD_DATA_VI)
                 }
                 else -> setLoading(false)
             }

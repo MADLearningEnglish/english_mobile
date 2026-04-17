@@ -4,7 +4,14 @@
     android:layout_height="match_parent"
     android:paddingBottom="16dp"
     android:scrollbars="none"
+    android:orientation="vertical"
     android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+
 
     <TextView
         android:id="@+id/tvPageContent"
@@ -15,6 +22,7 @@
         android:longClickable="true"
         android:textIsSelectable="true"
         android:paddingStart="16dp"
+        android:textColor="@color/body_primary"
         android:paddingEnd="12dp"
         android:textAlignment="viewStart"
         android:scrollbars="none"
@@ -22,8 +30,14 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         style="@style/BodyPage"/>
-
-
-
-
+    <TextView
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/body_primary"
+        android:id="@+id/tvPageNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/BodyPage"
+        />
+    </LinearLayout>
 </ScrollView>

@@ -43,7 +43,7 @@ class ForgotPasswordFragment : BaseFragment<FragmentForgotPasswordBinding, Forgo
         }
 
         collectStateProperty(viewModel.uiState, { it.serverError }) { serverError ->
-            binding.tvEmailError.text = serverError ?: ""
+            binding.tvEmailError.text = serverError?.let(::resolveUiMessage).orEmpty()
         }
     }
 }

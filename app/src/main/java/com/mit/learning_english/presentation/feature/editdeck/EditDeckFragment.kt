@@ -64,7 +64,7 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
             itemAnimator = null 
         }
         
-        binding.tvTitle.text = "Chỉnh sửa bộ thẻ"
+        binding.tvTitle.text = getString(R.string.deck_edit_title)
 
         val rvDefaultBottomPadding = binding.rvFlashcards.paddingBottom
         ViewCompat.setOnApplyWindowInsetsListener(binding.rvFlashcards) { view, insets ->
@@ -139,7 +139,11 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
                     when (event) {
                         is EditDeckEvent.NavigateBack -> findNavController().navigateUp()
                         is EditDeckEvent.ShowSuccessDialog -> showSuccessDialog(event.deckId)
-                        is EditDeckEvent.ShowSnackbar -> Snackbar.make(binding.root, event.message, Snackbar.LENGTH_SHORT).show()
+                        is EditDeckEvent.ShowSnackbar -> Snackbar.make(
+                            binding.root,
+                            resolveUiMessage(event.message),
+                            Snackbar.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
@@ -155,14 +159,14 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
         dialog.setContentView(sheetBinding.root)
         dialog.setCancelable(false)
         
-        sheetBinding.tvDialogTitle.text = "Cập nhật thành công!"
-        sheetBinding.tvDialogMessage.text = "Bộ thẻ của bạn đã được lưu lại."
+        sheetBinding.tvDialogTitle.text = getString(R.string.deck_update_success_title)
+        sheetBinding.tvDialogMessage.text = getString(R.string.deck_update_success_message)
 
         sheetBinding.btnStartStudy.setOnClickListener {
             dialog.dismiss()
             val bundle = Bundle().apply {
                 putInt("deckId", deckId)
-                putString("deckTitle", "Luyện tập")
+                putString("deckTitle", getString(R.string.nav_study))
             }
             val navOptions = androidx.navigation.NavOptions.Builder()
                 .setPopUpTo(R.id.mainFragment, false)

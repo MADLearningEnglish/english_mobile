@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.mit.learning_english.R
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mit.learning_english.databinding.FragmentMatchBinding
 import com.mit.learning_english.presentation.base.BaseFragment
@@ -107,7 +108,11 @@ class MatchFragment : BaseFragment<FragmentMatchBinding, MatchViewModel>() {
             binding.layoutGame.visibility = View.VISIBLE
             binding.layoutComplete.visibility = View.GONE
 
-            binding.tvRoundProgress.text = "Lượt: ${state.currentRound}/${state.totalRounds}"
+            binding.tvRoundProgress.text = getString(
+                R.string.match_turn_format,
+                state.currentRound,
+                state.totalRounds,
+            )
             adapter.submitList(state.cardsOnScreen)
         }
     }

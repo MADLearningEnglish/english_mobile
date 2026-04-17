@@ -14,6 +14,7 @@ import com.mit.learning_english.domain.usecase.genre.GetGenresUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
 import com.mit.learning_english.presentation.feature.historyreadbook.HistoryReadBookEvent
 import com.mit.learning_english.shared.FavoriteChangeNotifier
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -77,7 +78,7 @@ class HomeViewModel @Inject constructor(
             }.onLoading {
                 setState { copy(isGenresLoading = true) }
             }.onError { error ->
-                emitError(error.message ?: "Unknown error")
+                emitError(error.message ?: UiErrorKey.UNKNOWN)
             }
             setState { copy(isGenresLoading = false) }
         }

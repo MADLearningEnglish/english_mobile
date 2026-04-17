@@ -6,6 +6,7 @@ import android.provider.OpenableColumns
 import com.mit.learning_english.data.remote.dto.FileDto
 import com.mit.learning_english.domain.repository.FileRepository
 import com.mit.learning_english.domain.util.Result
+import com.mit.learning_english.shared.UiErrorKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -23,7 +24,7 @@ class UploadFileUseCase @Inject constructor(
         return@withContext try {
             val file = getFileFromUri(uri, context)
             if (file == null) {
-                return@withContext Result.Error("Cannot read file from uri")
+                return@withContext Result.Error(UiErrorKey.CANNOT_READ_IMAGE)
             }
             
             // Lấy mime type
@@ -43,7 +44,7 @@ class UploadFileUseCase @Inject constructor(
             
             result
         } catch (e: Exception) {
-            Result.Error(e.message ?: "Error uploading file")
+            Result.Error(e.message ?: UiErrorKey.ERROR_UPLOADING_FILE)
         }
     }
 

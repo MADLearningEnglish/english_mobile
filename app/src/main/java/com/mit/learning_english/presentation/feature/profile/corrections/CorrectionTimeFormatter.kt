@@ -1,6 +1,7 @@
 package com.mit.learning_english.presentation.feature.profile.corrections
 
 import android.content.Context
+import com.mit.learning_english.R
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
@@ -27,31 +28,32 @@ object CorrectionTimeFormatter {
     }
 
     fun relativeShort(context: Context, epochMs: Long?, iso: String?): String {
-        val ms = epochMs ?: iso?.let(::toEpochMillis) ?: return "—"
+        val ms = epochMs ?: iso?.let(::toEpochMillis) ?: return context.getString(R.string.profile_language_separator)
         val now = System.currentTimeMillis()
         val diffMs = now - ms
         if (diffMs < 0L) {
             // Client/server clock skew or backend epoch mismatch: treat as "just now".
-            return "0 giây trước"
+            return context.getString(R.string.time_relative_just_now_vi)
         }
         val diffSeconds = diffMs / 1000L
         return when {
-            diffSeconds < 60L -> "${diffSeconds} giây trước"
+            diffSeconds < 60L -> context.getString(R.string.time_relative_seconds_vi, diffSeconds)
             diffSeconds < 3600L -> {
                 val minutes = diffSeconds / 60L
-                "$minutes phút trước"
+                context.getString(R.string.time_relative_minutes_vi, minutes)
             }
             diffSeconds < 86_400L -> {
                 val hours = diffSeconds / 3600L
-                "$hours giờ trước"
+                context.getString(R.string.time_relative_hours_vi, hours)
             }
             diffSeconds < 2_592_000L -> {
                 val days = diffSeconds / 86_400L
-                "$days ngày trước"
+                context.getString(R.string.time_relative_days_vi, days)
             }
             else -> {
                 val d = parseLocalDate(ms, iso)
-                d?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.forLanguageTag("vi"))) ?: "—"
+                d?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.forLanguageTag("vi")))
+                    ?: context.getString(R.string.profile_language_separator)
             }
         }
     }
