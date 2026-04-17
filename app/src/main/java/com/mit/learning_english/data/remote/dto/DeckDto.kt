@@ -12,8 +12,8 @@ data class DeckDto(
 
 data class FlashcardDto(
     @SerializedName("id") val id: Int,
-    @SerializedName("term") val term: String,
-    @SerializedName("definition") val definition: String,
+    @SerializedName("term") val term: String?,
+    @SerializedName("definition") val definition: String?,
     @SerializedName("imageUrl") val imageUrl: String?
 )
 

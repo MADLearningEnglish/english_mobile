@@ -13,6 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentSearchBookBinding
 import com.mit.learning_english.presentation.base.BaseFragment
 import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
@@ -97,7 +98,7 @@ class SearchBookFragment : BaseFragment<FragmentSearchBookBinding, SearchBookVie
                             binding.rvSearchResult.visibility = View.VISIBLE
                             Toast.makeText(
                                 requireContext(),
-                                refreshState.error.localizedMessage ?: "Failed to search books",
+                                refreshState.error.localizedMessage ?: getString(R.string.error_failed_search_books),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

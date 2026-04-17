@@ -22,9 +22,10 @@
             android:id="@+id/infoIcon"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_marginTop="4dp"
             android:background="@drawable/bg_info_i_circle"
             android:gravity="center"
-            android:text="i"
+            android:text="@string/scenario_info_letter"
             android:textColor="@color/primary"
             android:textSize="17sp"
             android:textStyle="bold|italic"
@@ -36,7 +37,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="0dp"
+
             android:text="@string/ai_scenario_label"
             android:textColor="@color/ai_title_navy"
             android:textSize="15sp"
@@ -45,11 +46,12 @@
             app:layout_constraintStart_toEndOf="@id/infoIcon"
             app:layout_constraintTop_toTopOf="@id/infoIcon" />
 
+
         <TextView
             android:id="@+id/scenarioBody"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:lineSpacingExtra="2dp"
             android:textColor="@color/ai_text_on_light"
             android:textSize="14sp"

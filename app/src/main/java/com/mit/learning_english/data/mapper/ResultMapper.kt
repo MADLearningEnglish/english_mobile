@@ -3,6 +3,7 @@ package com.mit.learning_english.data.mapper
 import com.google.gson.Gson
 import com.mit.learning_english.data.remote.dto.BaseResponse
 import com.mit.learning_english.domain.util.Result
+import com.mit.learning_english.shared.UiErrorKey
 import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,13 +37,11 @@ class ResultMapper @Inject constructor(private val gson: Gson) {
                 null
             }
         }
-        return Result.Error(
-            errorMessage ?: "Http error", response.code()
-        )
+        return Result.Error(errorMessage ?: UiErrorKey.HTTP_ERROR, response.code())
     }
 
     fun <T> fromException(e: Throwable): Result<T> {
-        return Result.Error(e.message ?: "Unknown error", exception = e)
+        return Result.Error(e.message ?: UiErrorKey.UNKNOWN, exception = e)
     }
 
     fun <T> fromBaseResponse(response: Response<BaseResponse<T>>): Result<T> {
@@ -60,8 +59,6 @@ class ResultMapper @Inject constructor(private val gson: Gson) {
                 null
             }
         }
-        return Result.Error(
-            errorMessage ?: "Http error", response.code()
-        )
+        return Result.Error(errorMessage ?: UiErrorKey.HTTP_ERROR, response.code())
     }
 }

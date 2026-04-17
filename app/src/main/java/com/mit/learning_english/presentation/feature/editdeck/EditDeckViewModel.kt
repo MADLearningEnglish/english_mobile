@@ -12,6 +12,7 @@ import com.mit.learning_english.domain.usecase.file.UploadFileUseCase
 import com.mit.learning_english.domain.usecase.dictionary.FetchPhoneticUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -53,7 +54,7 @@ class EditDeckViewModel @Inject constructor(
                 }
                 is Result.Error -> {
                     setLoading(false)
-                    emitEvent(EditDeckEvent.ShowSnackbar(result.message ?: "Lỗi tải dữ liệu"))
+                    emitEvent(EditDeckEvent.ShowSnackbar(result.message ?: UiErrorKey.LOAD_DATA_VI))
                 }
                 else -> setLoading(false)
             }
@@ -131,11 +132,18 @@ class EditDeckViewModel @Inject constructor(
             emitEvent(EditDeckEvent.ShowSnackbar("Vui lòng nhập tên bộ thẻ"))
             return
         }
-        val validCards = state.flashcards.filter { it.status == 0 || (it.term.isNotBlank() && it.definition.isNotBlank()) }
-        if (validCards.filter { it.status != 0 }.isEmpty()) {
+        
+        val activeCards = state.flashcards.filter { it.status != 0 }
+        if (activeCards.any { it.term.isBlank() || it.definition.isBlank() }) {
+            emitEvent(EditDeckEvent.ShowSnackbar("Vui lòng điền đầy đủ Thuật ngữ và Định nghĩa cho tất cả các thẻ"))
+            return
+        }
+        if (activeCards.isEmpty()) {
             emitEvent(EditDeckEvent.ShowSnackbar("Vui lòng thêm ít nhất 1 từ hợp lệ"))
             return
         }
+        
+        val validCards = state.flashcards
         
         viewModelScope.launch(exceptionHandler) {
             setState { copy(isSaving = true, isUploadingImages = true) }
@@ -174,7 +182,7 @@ class EditDeckViewModel @Inject constructor(
                 }
                 is Result.Error -> {
                     setState { copy(isSaving = false) }
-                    emitEvent(EditDeckEvent.ShowSnackbar(result.message ?: "Lỗi không xác định"))
+                    emitEvent(EditDeckEvent.ShowSnackbar(result.message ?: UiErrorKey.UNKNOWN))
                 }
                 else -> setState { copy(isSaving = false) }
             }

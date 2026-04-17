@@ -36,7 +36,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Tạo học phần"
+                android:text="@string/deck_create_title"
                 android:textColor="@color/body_primary"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -63,6 +63,7 @@
 
         <!-- Scrollable Content -->
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -80,7 +81,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@null"
-                    android:hint="Chủ đề, chương, đơn vị"
+                    android:hint="@string/deck_topic_hint"
                     android:textColorHint="@color/body_secondary"
                     android:textColor="@color/body_primary"
                     android:textSize="18sp"
@@ -96,7 +97,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TIÊU ĐỀ"
+                    android:text="@string/deck_title_label_upper"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="@color/body_primary"

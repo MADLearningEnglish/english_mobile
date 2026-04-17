@@ -9,6 +9,7 @@ import com.mit.learning_english.domain.usecase.deck.GetStudyFlashCardsUseCase
 import com.mit.learning_english.domain.usecase.deck.LogDeckStudyCompleteUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,7 +52,7 @@ class QuizViewModel @Inject constructor(
                 }
                 is Result.Error -> {
                     setLoading(false)
-                    emitError(result.message ?: "Lỗi tải dữ liệu")
+                    emitError(result.message ?: UiErrorKey.LOAD_DATA_VI)
                 }
                 else -> setLoading(false)
             }
@@ -113,7 +114,7 @@ class QuizViewModel @Inject constructor(
     }
 
     private fun generateQuizQuestion(all: List<Flashcard>, target: Flashcard): QuizQuestion? {
-        if (all.size < 4) return null
+        if (all.isEmpty()) return null
 
         val distractors = all
             .filter { it.id != target.id }

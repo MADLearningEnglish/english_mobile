@@ -73,7 +73,14 @@ class CreateDeckViewModel @Inject constructor(
             emitEvent(CreateDeckEvent.ShowSnackbar("Vui lòng nhập tên bộ thẻ"))
             return
         }
-        val validCards = state.flashcards.filter { it.term.isNotBlank() && it.definition.isNotBlank() }
+        
+        val hasInvalidCards = state.flashcards.any { it.term.isBlank() || it.definition.isBlank() }
+        if (hasInvalidCards) {
+            emitEvent(CreateDeckEvent.ShowSnackbar("Vui lòng điền đầy đủ Thuật ngữ và Định nghĩa cho tất cả các thẻ"))
+            return
+        }
+        
+        val validCards = state.flashcards
         if (validCards.isEmpty()) {
             emitEvent(CreateDeckEvent.ShowSnackbar("Vui lòng thêm ít nhất 1 từ hợp lệ"))
             return

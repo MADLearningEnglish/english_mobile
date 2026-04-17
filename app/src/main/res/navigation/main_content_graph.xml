@@ -8,24 +8,24 @@
     <fragment
         android:id="@+id/home"
         android:name="com.mit.learning_english.presentation.feature.home.HomeFragment"
-        android:label="Home"
+        android:label="@string/nav_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/chat"
         android:name="com.mit.learning_english.presentation.feature.chat.ChooseTopicFragment"
-        android:label="Chat"
+        android:label="@string/nav_chat"
         tools:layout="@layout/fragment_choose_topic" />
 
     <fragment
         android:id="@+id/profile"
         android:name="com.mit.learning_english.presentation.feature.profile.ProfileFragment"
-        android:label="Profile" />
+        android:label="@string/nav_profile" />
 
     <fragment
         android:id="@+id/vocabulary"
         android:name="com.mit.learning_english.presentation.feature.decklist.DeckListFragment"
-        android:label="Vocabulary"
+        android:label="@string/nav_vocabulary"
         tools:layout="@layout/fragment_deck_list" />
 
 </navigation>

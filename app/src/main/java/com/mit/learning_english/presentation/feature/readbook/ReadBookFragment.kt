@@ -32,6 +32,8 @@ import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentReadBookBinding
 import com.mit.learning_english.databinding.DialogReadBookLookupBinding
 import com.mit.learning_english.presentation.base.BaseFragment
+import com.mit.learning_english.presentation.feature.readbook.lookup.AddFlashcardBottomSheet
+import com.mit.learning_english.presentation.feature.readbook.lookup.ChooseDeckBottomSheet
 import com.mit.learning_english.presentation.service.AudioPlaybackService
 import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
@@ -180,6 +182,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
     override fun bindView() {
         val readBookArgs = args.readBookArgs
         viewModel.loadInit(readBookArgs)
+        setupLookupBottomSheetResults()
         binding.btnBack.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -211,7 +214,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
                     errorState?.let {
                         Toast.makeText(
                             requireContext(),
-                            it.error.localizedMessage ?: "Failed to load pages",
+                            it.error.localizedMessage ?: getString(R.string.error_failed_load_pages),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -259,9 +262,8 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
             when (event) {
                 is ReadBookEvent.GoToChapter -> {
                     pendingScrollPosition = event.index
-                    if (pageAdapter.itemCount > event.index) {
-                        binding.viewPager.setCurrentItem(event.index, false)
-                    }
+                    binding.viewPager.setCurrentItem(event.index, false)
+
                 }
                 ReadBookEvent.ShareBook -> {}
                 is ReadBookEvent.PlayAudio -> playAudio(event.url)
@@ -439,6 +441,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
                 examplesText.ifBlank { "-" }
             )
             dialogBinding.btnPlayAudio.isEnabled = !result.audioUrl.isNullOrBlank()
+            dialogBinding.btnAddToFlashcard.isEnabled = state.query.isNotBlank() && result.meaning.isNotBlank()
             dialogBinding.btnPlayAudio.setOnClickListener {
                 result.audioUrl?.let { url -> playLookupAudio(url) }
             }
@@ -453,6 +456,12 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         if (lookupDialog != null && lookupDialogBinding != null) return
         val dialogBinding = DialogReadBookLookupBinding.inflate(layoutInflater)
         lookupDialogBinding = dialogBinding
+        dialogBinding.btnCloseLookup.setOnClickListener {
+            viewModel.dismissLookupDialog()
+        }
+        dialogBinding.btnAddToFlashcard.setOnClickListener {
+            ChooseDeckBottomSheet.show(childFragmentManager)
+        }
         dialogBinding.btnRetryLookup.setOnClickListener {
             viewModel.retryLookup()
         }
@@ -462,6 +471,34 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
                 viewModel.dismissLookupDialog()
             }
             .create()
+    }
+
+    private fun setupLookupBottomSheetResults() {
+        childFragmentManager.setFragmentResultListener(
+            ChooseDeckBottomSheet.REQUEST_KEY_DECK_PICKED,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val deckId = bundle.getInt(ChooseDeckBottomSheet.BUNDLE_KEY_DECK_ID, -1)
+            val deckTitle = bundle.getString(ChooseDeckBottomSheet.BUNDLE_KEY_DECK_TITLE).orEmpty()
+            if (deckId <= 0) return@setFragmentResultListener
+            val state = viewModel.uiState.value
+            AddFlashcardBottomSheet.show(
+                fragmentManager = childFragmentManager,
+                deckId = deckId,
+                deckTitle = deckTitle,
+                defaultTerm = state.lookupQuery,
+                defaultDefinition = state.lookupResult?.meaning.orEmpty()
+            )
+        }
+
+        childFragmentManager.setFragmentResultListener(
+            AddFlashcardBottomSheet.REQUEST_KEY_FLASHCARD_ADDED,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            if (bundle.getBoolean(AddFlashcardBottomSheet.BUNDLE_KEY_FLASHCARD_ADDED)) {
+                Toast.makeText(requireContext(), R.string.add_flashcard_success, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun playLookupAudio(url: String) {

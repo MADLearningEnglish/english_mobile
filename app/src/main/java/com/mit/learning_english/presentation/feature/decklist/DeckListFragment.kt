@@ -120,6 +120,15 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
                                 )
                             )
                         }
+                        is DeckListEvent.NavigateToMatch -> {
+                            parentNavController.navigate(
+                                R.id.action_mainFragment_to_matchFragment,
+                                bundleOf(
+                                    "deckId" to event.deckId,
+                                    "deckTitle" to event.deckTitle
+                                )
+                            )
+                        }
                         is DeckListEvent.ShowStudyModeDialog -> {
                             showStudyModeDialog(event.deckId, event.deckTitle)
                         }
@@ -136,7 +145,11 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
                             showDeleteDialog(event.deckId, event.deckTitle)
                         }
                         is DeckListEvent.ShowSnackbar -> {
-                            Snackbar.make(binding.root, event.message, Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(
+                                binding.root,
+                                resolveUiMessage(event.message),
+                                Snackbar.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
@@ -175,22 +188,29 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
 
     private fun showDeleteDialog(deckId: Int, deckTitle: String) {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Xóa bộ thẻ")
-            .setMessage("Bạn có chắc muốn xóa \"$deckTitle\" không? Hành động này không thể hoàn tác.")
-            .setNegativeButton("Hủy", null)
-            .setPositiveButton("Xóa") { _, _ ->
+            .setTitle(R.string.deck_delete_title)
+            .setMessage(getString(R.string.deck_delete_message, deckTitle))
+            .setNegativeButton(R.string.common_cancel, null)
+            .setPositiveButton(R.string.common_delete) { _, _ ->
                 viewModel.onConfirmDelete(deckId)
             }
             .show()
     }
 
     private fun showStudyModeDialog(deckId: Int, deckTitle: String) {
-        val options = arrayOf("Luyện Thẻ (Flashcard)", "Học (Quiz)")
+        val options = arrayOf(
+            getString(R.string.deck_study_mode_flashcard),
+            getString(R.string.deck_study_mode_quiz),
+            getString(R.string.deck_study_mode_match),
+        )
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Chọn chế độ ôn tập")
+            .setTitle(R.string.deck_study_mode_title)
             .setItems(options) { _, which ->
-                val isQuiz = which == 1
-                viewModel.onStudyModeSelected(deckId, deckTitle, isQuiz)
+                when (which) {
+                    0 -> viewModel.onStudyModeSelected(deckId, deckTitle, false) // Flashcard
+                    1 -> viewModel.onStudyModeSelected(deckId, deckTitle, true) // Quiz
+                    2 -> viewModel.onMatchModeSelected(deckId, deckTitle) // Match
+                }
             }
             .show()
     }

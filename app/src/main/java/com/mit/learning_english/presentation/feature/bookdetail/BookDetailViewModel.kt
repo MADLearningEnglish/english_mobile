@@ -1,10 +1,12 @@
 package com.mit.learning_english.presentation.feature.bookdetail
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.domain.usecase.book.GetBookDetailByIdUseCase
 import com.mit.learning_english.domain.usecase.book.UpdateFavoriteBookUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
 import com.mit.learning_english.presentation.feature.readbook.ReadBookArgs
+import com.mit.learning_english.shared.FavoriteChangeNotifier
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -13,11 +15,11 @@ import javax.inject.Inject
 @HiltViewModel
 class BookDetailViewModel @Inject constructor(
     private val getBookDetailByIdUseCase: GetBookDetailByIdUseCase,
-    private val updateFavoriteBookUseCase: UpdateFavoriteBookUseCase
+    private val updateFavoriteBookUseCase: UpdateFavoriteBookUseCase,
+    private val favoriteChangeNotifier: FavoriteChangeNotifier
 ) : BaseViewModel<BookDetailState, BookDetailEvent>(BookDetailState()) {
     fun getBookDetail(bookId: Int) {
         viewModelScope.launch(exceptionHandler) {
-
             setLoading(true)
             val startTime = System.currentTimeMillis()
             getBookDetailByIdUseCase(bookId).onSuccess { book ->
@@ -35,6 +37,7 @@ class BookDetailViewModel @Inject constructor(
                         isFavorite = book.isFavorite
                     ) 
                 }
+                Log.d("isFavorite", book.isFavorite.toString())
             }.onError { error ->
                 emitError(error.message)
             }
@@ -65,6 +68,7 @@ class BookDetailViewModel @Inject constructor(
             if (state.id != 0) {
                 updateFavoriteBookUseCase(state.id, !state.isFavorite).onSuccess { isFavorite ->
                     setState { copy(isFavorite = isFavorite) }
+                    favoriteChangeNotifier.notifyChanged()
                 }
                     .onError { error ->
                         emitError(error.message)

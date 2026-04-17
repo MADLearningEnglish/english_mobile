@@ -33,15 +33,11 @@ class ReadBookPageAdapter(
         private val binding: ItemReadBookPageBinding,
         private val onLookupTextSelected: (String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-
-        companion object {
-            private const val MENU_LOOKUP_ID = 1001
-        }
-
         fun bind(page: Page?) {
             if (page != null) {
-                val content = "${page.number} ${page.sentences.joinToString(" ") { it.content }}"
+                val content =  page.sentences.joinToString(" ") { it.content }
                 binding.tvPageContent.text = content
+                binding.tvPageNumber.text = page.number.toString()
                 setupSelectionLookup()
             } else {
                 binding.tvPageContent.text = ""
@@ -69,15 +65,6 @@ class ReadBookPageAdapter(
 
     override fun onDestroyActionMode(mode: ActionMode?) = Unit
 }
-        }
-
-        private fun getSelectedText(): String {
-            val start = binding.tvPageContent.selectionStart
-            val end = binding.tvPageContent.selectionEnd
-            if (start < 0 || end < 0 || start == end) return ""
-            val min = minOf(start, end)
-            val max = maxOf(start, end)
-            return binding.tvPageContent.text?.substring(min, max).orEmpty()
         }
     }
 

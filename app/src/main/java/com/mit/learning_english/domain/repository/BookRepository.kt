@@ -17,7 +17,7 @@ interface BookRepository {
 
     suspend fun getBooksRecommend(): Result<List<Book>>
 
-    fun getBooksRecommendPaging(): Flow<PagingData<Book>>
+     fun getBooksRecommendPaging(): Flow<PagingData<Book>>
 
     fun getFavoriteBooksPaging(): Flow<PagingData<Book>>
 

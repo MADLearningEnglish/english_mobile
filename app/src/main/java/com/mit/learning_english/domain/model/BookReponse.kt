@@ -12,5 +12,5 @@ data class BookReponse(
     val processPercent: Double,
     val pageLastRead: Int,
     val lastRead: LocalDateTime,
-    val isFavorite: Boolean
+    val isFavorite: Boolean,
 )

@@ -19,7 +19,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Learning_english"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        >
+        <profileable android:shell="true" />
         
         <activity
             android:name=".presentation.feature.root.MainActivity"

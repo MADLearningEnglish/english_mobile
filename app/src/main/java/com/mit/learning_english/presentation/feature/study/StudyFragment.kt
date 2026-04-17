@@ -223,9 +223,13 @@ class StudyFragment : BaseFragment<FragmentStudyBinding, StudyViewModel>() {
     // =================== Complete State ===================
 
     private fun showCompleteState() {
-        val state = viewModel.uiState.value
+        viewModel.uiState.value
         findNavController().popBackStack()
-        android.widget.Toast.makeText(requireContext(), "Đã ôn tập xong thẻ ghi nhớ!", android.widget.Toast.LENGTH_SHORT).show()
+        android.widget.Toast.makeText(
+            requireContext(),
+            getString(R.string.toast_review_done),
+            android.widget.Toast.LENGTH_SHORT,
+        ).show()
     }
 
     // =================== Audio ===================

@@ -15,6 +15,7 @@ class RecommendBookViewModel @Inject constructor(
     getBookRecommendPagingUseCase: GetBookRecommendPagingUseCase
 ) : BaseViewModel<RecommendBookState, RecommendBookEvent>(RecommendBookState()) {
 
+
     val recommendBooks: Flow<PagingData<Book>> =
         getBookRecommendPagingUseCase().cachedIn(viewModelScope)
 

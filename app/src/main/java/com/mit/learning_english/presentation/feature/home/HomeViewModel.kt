@@ -3,6 +3,7 @@ package com.mit.learning_english.presentation.feature.home
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.mit.learning_english.domain.model.Book
 import com.mit.learning_english.domain.model.BookReponse
 import com.mit.learning_english.domain.model.Author
 import com.mit.learning_english.domain.usecase.book.GetAuthorsUseCase
@@ -11,27 +12,46 @@ import com.mit.learning_english.domain.usecase.book.GetFavoriteBooksPagingUseCas
 import com.mit.learning_english.domain.usecase.book.GetRecentlyReadBookUseCase
 import com.mit.learning_english.domain.usecase.genre.GetGenresUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.presentation.feature.historyreadbook.HistoryReadBookEvent
+import com.mit.learning_english.shared.FavoriteChangeNotifier
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getBookRecommendUseCase: GetBookRecommendUseCase,
-    private val getAuthorsUseCase: GetAuthorsUseCase,
-    getFavoriteBooksPagingUseCase: GetFavoriteBooksPagingUseCase,
+    getAuthorsUseCase: GetAuthorsUseCase,
+    private val getFavoriteBooksPagingUseCase: GetFavoriteBooksPagingUseCase,
     private val getGenresUseCase: GetGenresUseCase,
-    getRecentlyReadBookUseCase: GetRecentlyReadBookUseCase
+    getRecentlyReadBookUseCase: GetRecentlyReadBookUseCase,
+    favoriteChangeNotifier: FavoriteChangeNotifier
 ) : BaseViewModel<HomeState, HomeEvent>(HomeState()) {
     val recentBooks: Flow<PagingData<BookReponse>> =
         getRecentlyReadBookUseCase().cachedIn(viewModelScope)
     val authors = getAuthorsUseCase().cachedIn(viewModelScope)
-    val favoriteBooks = getFavoriteBooksPagingUseCase().cachedIn(viewModelScope)
+
+    private val _refreshFavorites = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val favoriteBooks: Flow<PagingData<Book>> = _refreshFavorites
+        .onStart { emit(Unit) }
+        .flatMapLatest { getFavoriteBooksPagingUseCase() }
+        .cachedIn(viewModelScope)
 
     init {
         fetchRecommendBooks()
         fetchGenres()
+        viewModelScope.launch {
+            favoriteChangeNotifier.favoriteChanged.collect {
+                _refreshFavorites.tryEmit(Unit)
+            }
+        }
     }
 
     fun fetchRecommendBooks() {
@@ -58,7 +78,7 @@ class HomeViewModel @Inject constructor(
             }.onLoading {
                 setState { copy(isGenresLoading = true) }
             }.onError { error ->
-                emitError(error.message ?: "Unknown error")
+                emitError(error.message ?: UiErrorKey.UNKNOWN)
             }
             setState { copy(isGenresLoading = false) }
         }
@@ -96,10 +116,9 @@ class HomeViewModel @Inject constructor(
         emitError(message)
     }
 
-    fun navigateToHistoryReadBooks(){
+    fun navigateToHistoryReadBooks() {
         emitEvent(
             HomeEvent.NavigateToHistoryReadBooks
         )
     }
-
 }

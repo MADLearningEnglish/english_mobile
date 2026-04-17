@@ -5,6 +5,7 @@ import com.mit.learning_english.domain.usecase.deck.DeleteDeckUseCase
 import com.mit.learning_english.domain.usecase.deck.GetAllDecksUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,7 +29,7 @@ class DeckListViewModel @Inject constructor(
             setLoading(false)
             when (result) {
                 is Result.Success -> setState { copy(decks = result.data) }
-                is Result.Error -> emitError(result.message ?: "Lỗi tải dữ liệu")
+                is Result.Error -> emitError(result.message ?: UiErrorKey.LOAD_DATA_VI)
                 else -> Unit
             }
         }
@@ -52,6 +53,10 @@ class DeckListViewModel @Inject constructor(
         } else {
             emitEvent(DeckListEvent.NavigateToStudy(deckId, deckTitle))
         }
+    }
+
+    fun onMatchModeSelected(deckId: Int, deckTitle: String) {
+        emitEvent(DeckListEvent.NavigateToMatch(deckId, deckTitle))
     }
 
     fun onEditDeck(deckId: Int) {

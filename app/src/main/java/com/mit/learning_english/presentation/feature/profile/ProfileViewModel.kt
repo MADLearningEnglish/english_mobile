@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.domain.repository.ProfileRepository
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -48,9 +49,9 @@ class ProfileViewModel @Inject constructor(
             val profileErr = (me as? Result.Error)?.message
             val statsErr = (st as? Result.Error)?.message
             if (me is Result.Error) {
-                emitError(profileErr ?: "Không tải được hồ sơ")
+                emitError(profileErr ?: UiErrorKey.COULD_NOT_LOAD_PROFILE)
             } else if (st is Result.Error) {
-                emitError(statsErr ?: "Không tải được thống kê")
+                emitError(statsErr ?: UiErrorKey.COULD_NOT_LOAD_STATS)
             }
 
             setState {

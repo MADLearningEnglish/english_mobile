@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mit.learning_english.databinding.FragmentRecommendBookBinding
+import com.mit.learning_english.R
 import com.mit.learning_english.presentation.base.BaseFragment
 import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
@@ -74,7 +75,7 @@ class RecommendBookFragment :
                             binding.tvEmptyState.visibility = View.GONE
                             Toast.makeText(
                                 requireContext(),
-                                refreshState.error.localizedMessage ?: "Failed to load books",
+                                refreshState.error.localizedMessage ?: getString(R.string.error_failed_load_books),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -96,12 +97,12 @@ class RecommendBookFragment :
     }
 
     override fun showLoading() {
-        binding.overlayLoading.visibility = View.VISIBLE
-        binding.lottieLoading.playAnimation()
+//        binding.overlayLoading.visibility = View.VISIBLE
+//        binding.lottieLoading.playAnimation()
     }
 
     override fun hideLoading() {
-        binding.lottieLoading.pauseAnimation()
-        binding.overlayLoading.visibility = View.GONE
+//        binding.lottieLoading.pauseAnimation()
+//        binding.overlayLoading.visibility = View.GONE
     }
 }

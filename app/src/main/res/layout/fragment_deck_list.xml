@@ -14,15 +14,14 @@
         android:layout_height="wrap_content"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
-        android:paddingTop="48dp"
-        android:paddingBottom="16dp">
+        >
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Thư viện"
+            android:layout_height="48dp"
+            android:text="@string/deck_library_title"
             android:textSize="28sp"
-            android:textStyle="bold"
+            style="@style/LabelMedium"
             android:textColor="@color/body_primary"
             android:layout_centerVertical="true"/>
 
@@ -66,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@null"
-                android:hint="Tìm kiếm bộ thẻ"
+                android:hint="@string/deck_search_hint"
                 android:textSize="15sp"
                 android:layout_marginStart="12dp"
                 android:textColor="@color/body_primary"
@@ -153,7 +152,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Chưa có bộ thẻ nào"
+                    android:text="@string/deck_empty_title"
                     android:textColor="@color/body_primary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -163,7 +162,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="Tạo bộ thẻ đầu tiên\nbằng nút + ở trên nhé!"
+                    android:text="@string/deck_empty_message"
                     android:textColor="@color/gray_400"
                     android:textSize="14sp" />
             </LinearLayout>

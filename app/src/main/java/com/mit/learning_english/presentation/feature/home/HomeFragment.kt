@@ -16,8 +16,8 @@ import com.google.android.material.appbar.AppBarLayout
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentHomeBinding
 import com.mit.learning_english.presentation.base.BaseFragment
+import com.mit.learning_english.presentation.feature.historyreadbook.HistoryReadBookPagingAdapter
 import com.mit.learning_english.presentation.feature.home.adapter.AuthorAdapter
-import com.mit.learning_english.presentation.feature.home.adapter.BookHistoryAdapter
 import com.mit.learning_english.presentation.feature.home.adapter.BookRecommendAdapter
 import com.mit.learning_english.presentation.feature.home.adapter.FavoriteBookPagingAdapter
 import com.mit.learning_english.presentation.feature.home.adapter.GenreAdapter
@@ -36,7 +36,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private lateinit var authorAdapter: AuthorAdapter
     private lateinit var favoriteBooksAdapter: FavoriteBookPagingAdapter
     private lateinit var genreAdapter: GenreAdapter
-    private lateinit var recentBooksAdapter: BookHistoryAdapter
+    private lateinit var recentBooksAdapter: HistoryReadBookPagingAdapter
 
     private fun navigateFromMainGraph(direction: NavDirections) {
         requireActivity().findNavController(R.id.nav_host_fragment).navigate(direction)
@@ -85,13 +85,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             addItemDecoration(HorizontalSpacingItemDecoration(16))
         }
-        recentBooksAdapter = BookHistoryAdapter()
+        recentBooksAdapter = HistoryReadBookPagingAdapter{book->
+            viewModel.navigateToBookDetail(book.id)
+        }
         binding.rvRecentlyRead.apply {
             adapter = recentBooksAdapter
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             addItemDecoration(VerticalSpacingItemDecoration(12))
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.fetchRecommendBooks()
+        viewModel.fetchGenres()
+        if (::authorAdapter.isInitialized) authorAdapter.refresh()
+        if (::favoriteBooksAdapter.isInitialized) favoriteBooksAdapter.refresh()
+        if (::recentBooksAdapter.isInitialized) recentBooksAdapter.refresh()
     }
 
     private fun setupAppBarCollapseAnimation() {
@@ -219,7 +230,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             binding.shimmerAuthors.visibility = View.INVISIBLE
                             binding.rvAuthors.visibility = View.VISIBLE
                             viewModel.setErrorMessage(
-                                refreshState.error.localizedMessage ?: "Failed to load authors"
+                                refreshState.error.localizedMessage ?: getString(R.string.error_failed_load_authors)
                             )
                         }
 
@@ -256,7 +267,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             binding.shimmerFavoriteBooks.visibility = View.INVISIBLE
                             binding.rvFavoriteBooks.visibility = View.VISIBLE
                             viewModel.setErrorMessage(
-                                refreshState.error.localizedMessage ?: "Failed to load books"
+                                refreshState.error.localizedMessage ?: getString(R.string.error_failed_load_books)
                             )
                         }
 
@@ -292,7 +303,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             binding.shimmerRecentlyRead.visibility = View.INVISIBLE
                             binding.rvRecentlyRead.visibility = View.VISIBLE
                             viewModel.setErrorMessage(
-                                refreshState.error.localizedMessage ?: "Failed to load books"
+                                refreshState.error.localizedMessage ?: getString(R.string.error_failed_load_books)
                             )
                         }
 
