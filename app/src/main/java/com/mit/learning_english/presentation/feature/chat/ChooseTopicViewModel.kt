@@ -24,7 +24,7 @@ data class ChooseTopicUiState(
     /** Sau lần gọi API list scenarios gần nhất (để không hiện empty khi đang load). */
     val scenariosFetchCompleted: Boolean = false,
     val goalType: String = "COMMUNICATION",
-    val focusSkill: String = "GRAMMAR",
+    val focusSkill: String = "FLUENCY",
     val coachingMode: String = "COACH",
 )
 
