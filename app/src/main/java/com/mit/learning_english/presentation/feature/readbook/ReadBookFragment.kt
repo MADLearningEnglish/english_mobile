@@ -11,7 +11,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -475,7 +474,10 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
     }
 
     private fun setupLookupBottomSheetResults() {
-        setFragmentResultListener(ChooseDeckBottomSheet.REQUEST_KEY_DECK_PICKED) { _, bundle ->
+        childFragmentManager.setFragmentResultListener(
+            ChooseDeckBottomSheet.REQUEST_KEY_DECK_PICKED,
+            viewLifecycleOwner
+        ) { _, bundle ->
             val deckId = bundle.getInt(ChooseDeckBottomSheet.BUNDLE_KEY_DECK_ID, -1)
             val deckTitle = bundle.getString(ChooseDeckBottomSheet.BUNDLE_KEY_DECK_TITLE).orEmpty()
             if (deckId <= 0) return@setFragmentResultListener
@@ -489,7 +491,10 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
             )
         }
 
-        setFragmentResultListener(AddFlashcardBottomSheet.REQUEST_KEY_FLASHCARD_ADDED) { _, bundle ->
+        childFragmentManager.setFragmentResultListener(
+            AddFlashcardBottomSheet.REQUEST_KEY_FLASHCARD_ADDED,
+            viewLifecycleOwner
+        ) { _, bundle ->
             if (bundle.getBoolean(AddFlashcardBottomSheet.BUNDLE_KEY_FLASHCARD_ADDED)) {
                 Toast.makeText(requireContext(), R.string.add_flashcard_success, Toast.LENGTH_SHORT).show()
             }
