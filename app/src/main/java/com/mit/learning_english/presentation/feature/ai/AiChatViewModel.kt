@@ -75,9 +75,10 @@ class AiChatViewModel @Inject constructor(
                         .firstOrNull { it.senderType?.equals("USER", true) == true }
                         ?.feedback
                         ?.let { fb ->
-                            fb.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
-                                ?: fb.overallComment?.takeIf { it.isNotBlank() }
+                            fb.feedbackLayers?.layer2Explanation?.takeIf { it.isNotBlank() }
                                 ?: fb.naturalSuggestion?.takeIf { it.isNotBlank() }
+                                ?: fb.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
+                                ?: fb.overallComment?.takeIf { it.isNotBlank() }
                         }
                     setState {
                         copy(
@@ -103,9 +104,10 @@ class AiChatViewModel @Inject constructor(
             repository.sendText(sessionId, trimmed)
                 .onSuccess { res ->
                     val feedback = res.feedback
-                    val hint = feedback?.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
-                        ?: feedback?.overallComment?.takeIf { it.isNotBlank() }
+                    val hint = feedback?.feedbackLayers?.layer2Explanation?.takeIf { it.isNotBlank() }
                         ?: feedback?.naturalSuggestion?.takeIf { it.isNotBlank() }
+                        ?: feedback?.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
+                        ?: feedback?.overallComment?.takeIf { it.isNotBlank() }
                     val appended = appendSendResponseItems(
                         feedback,
                         res.aiMessage?.content.orEmpty(),
@@ -194,9 +196,10 @@ class AiChatViewModel @Inject constructor(
                 .onSuccess { res ->
                     val feedback = res.feedback
                     val userText = res.userMessage?.content.orEmpty()
-                    val hint = feedback?.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
-                        ?: feedback?.overallComment?.takeIf { it.isNotBlank() }
+                    val hint = feedback?.feedbackLayers?.layer2Explanation?.takeIf { it.isNotBlank() }
                         ?: feedback?.naturalSuggestion?.takeIf { it.isNotBlank() }
+                        ?: feedback?.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
+                        ?: feedback?.overallComment?.takeIf { it.isNotBlank() }
                     val appended = appendSendResponseItems(
                         feedback,
                         res.aiMessage?.content.orEmpty(),
