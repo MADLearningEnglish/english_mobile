@@ -10,6 +10,7 @@ import android.graphics.Typeface
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.StyleSpan
+import androidx.core.text.HtmlCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -83,7 +84,7 @@ class AiChatMessageAdapter(
             onSpeak: (String) -> Unit,
             onTextAction: (SelectionAction, String) -> Unit,
         ) {
-            binding.bubbleAssistant.text = renderBoldMarkdown(item.content)
+            binding.bubbleAssistant.text = renderStyledAssistantText(item.content)
             installSelectionMenu(
                 binding.bubbleAssistant,
                 selectionAction = onSpeak,
@@ -102,37 +103,19 @@ class AiChatMessageAdapter(
             textView.customSelectionActionModeCallback = buildSelectionCallback(textView, selectionAction)
         }
 
-        private fun renderBoldMarkdown(raw: String): CharSequence {
-            if (!raw.contains("**")) return raw
-
-            val regex = Regex("\\*\\*(.+?)\\*\\*")
-            val sb = SpannableStringBuilder()
-            var cursor = 0
-            for (match in regex.findAll(raw)) {
-                val start = match.range.first
-                val end = match.range.last + 1
-                if (start > cursor) {
-                    sb.append(raw.substring(cursor, start))
-                }
-                val boldContent = match.groupValues[1]
-                val boldStart = sb.length
-                sb.append(boldContent)
-                sb.setSpan(
-                    StyleSpan(Typeface.BOLD),
-                    boldStart,
-                    sb.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-                cursor = end
+        private fun renderStyledAssistantText(raw: String): CharSequence {
+            val markdownToHtml = raw.replace(Regex("\\*\\*(.+?)\\*\\*"), "<b>$1</b>")
+            return if (markdownToHtml.contains("<b>", ignoreCase = true)) {
+                HtmlCompat.fromHtml(markdownToHtml, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            } else {
+                markdownToHtml
             }
-            if (cursor < raw.length) {
-                sb.append(raw.substring(cursor))
-            }
-            return sb
         }
 
         private fun stripBoldMarkdown(raw: String): String {
-            return raw.replace(Regex("\\*\\*(.+?)\\*\\*"), "$1")
+            return raw
+                .replace(Regex("(?i)</?b>"), "")
+                .replace(Regex("\\*\\*(.+?)\\*\\*"), "$1")
         }
 
         private fun buildSelectionCallback(

@@ -110,8 +110,8 @@
     <string name="ai_listen">Listen</string>
     <string name="ai_scenario_label">Scenario</string>
     <string name="ai_view_details">View Details</string>
-    <string name="ai_correction_title">CORRECTION</string>
-    <string name="ai_why_link">Why? →</string>
+    <string name="ai_correction_title">SUA LOI NHANH</string>
+    <string name="ai_why_link">Vi sao? →</string>
     <string name="ai_back">Back</string>
     <string name="ai_finish_session">✕  KẾT THÚC</string>
     <string name="ai_settings">Settings</string>
@@ -122,7 +122,7 @@
     <string name="ai_level_format">Level: %1$s</string>
     <string name="ai_level_line_format">LEVEL: %1$s</string>
     <string name="ai_pronunciation_score_format">Pronunciation Score %1$d/100 — %2$s</string>
-    <string name="ai_why_title">Why</string>
+    <string name="ai_why_title">Giai thich loi</string>
     <string name="ai_scenario_details_title">Scenario</string>
     <string name="ai_ok">OK</string>
     <string name="ai_confirm_end_title">End session?</string>

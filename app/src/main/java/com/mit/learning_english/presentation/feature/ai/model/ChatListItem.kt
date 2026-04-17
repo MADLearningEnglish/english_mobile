@@ -78,19 +78,23 @@ fun ChatListItem.Correction.buildColoredText(wrongColor: Int, suggestedColor: In
         return sb
     }
     val sb = SpannableStringBuilder()
-    sb.append("Instead of '")
+    val headerStart = sb.length
+    sb.append("LOI SAI CAN NHO: ")
+    sb.setSpan(StyleSpan(Typeface.BOLD), headerStart, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    sb.setSpan(ForegroundColorSpan(wrongColor), headerStart, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    sb.append("\n")
+    sb.append("Ban viet: ")
     val wStart = sb.length
     sb.append(wrongText)
     sb.setSpan(ForegroundColorSpan(wrongColor), wStart, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     sb.setSpan(StyleSpan(Typeface.BOLD), wStart, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-    sb.append("', try '")
+    sb.append("\nGoi y dung: ")
     val sStart = sb.length
     sb.append(suggestedText)
     sb.setSpan(ForegroundColorSpan(suggestedColor), sStart, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     sb.setSpan(StyleSpan(Typeface.BOLD), sStart, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-    sb.append("'.")
     explanationAfter?.takeIf { it.isNotBlank() }?.let {
-        sb.append(" ")
+        sb.append("\nGiai thich: ")
         sb.append(it)
     }
     return sb
