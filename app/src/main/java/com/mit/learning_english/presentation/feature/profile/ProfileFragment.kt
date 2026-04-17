@@ -8,7 +8,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.tabs.TabLayout
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentProfileBinding
@@ -45,6 +47,14 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
         binding.cardProfileHeader.setOnClickListener {
             viewModel.openEditProfile()
         }
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData("profile_avatar_url", "")
+            ?.observe(viewLifecycleOwner) { avatarUrl ->
+                if (!avatarUrl.isNullOrBlank()) {
+                    loadAvatar(avatarUrl)
+                }
+            }
         binding.viewPagerProfile.adapter = ProfilePagerAdapter(this)
         binding.tabLayoutProfile.removeAllTabs()
         binding.tabLayoutProfile.addTab(
@@ -85,15 +95,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
                         binding.tvLevelBadge.text = formatLevelLabel(level)
                         binding.tvFriendsCount.text = "0"
                         val avatar = MediaUrlResolver.resolve(p?.avatarUrl)
-                        if (!avatar.isNullOrBlank()) {
-                            Glide.with(this@ProfileFragment)
-                                .load(avatar)
-                                .circleCrop()
-                                .placeholder(R.drawable.ic_profile_placeholder)
-                                .into(binding.imgAvatar)
-                        } else {
-                            binding.imgAvatar.setImageResource(R.drawable.ic_profile_placeholder)
-                        }
+                        loadAvatar(avatar)
                     }
                 }
                 launch {
@@ -126,5 +128,19 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
             .joinToString(" ") { part ->
                 part.lowercase(Locale.US).replaceFirstChar { it.titlecase(Locale.US) }
             }
+    }
+
+    private fun loadAvatar(avatar: String?) {
+        if (!avatar.isNullOrBlank()) {
+            Glide.with(this@ProfileFragment)
+                .load(avatar)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .circleCrop()
+                .placeholder(R.drawable.ic_profile_placeholder)
+                .into(binding.imgAvatar)
+        } else {
+            binding.imgAvatar.setImageResource(R.drawable.ic_profile_placeholder)
+        }
     }
 }

@@ -5,6 +5,10 @@
     android:id="@+id/main_graph"
     app:startDestination="@+id/mainFragment">
 
+    <action
+        android:id="@+id/action_global_aiChatFragment"
+        app:destination="@id/aiChatFragment" />
+
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.mit.learning_english.presentation.feature.main.MainFragment"

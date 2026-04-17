@@ -163,7 +163,7 @@ class AiChatFragment : BaseFragment<FragmentAiChatBinding, AiChatViewModel>() {
                 }
                 is AiChatEvent.OpenChat -> {
                     findNavController().navigate(
-                        R.id.aiChatFragment,
+                        R.id.action_global_aiChatFragment,
                         androidx.core.os.bundleOf(
                             "sessionId" to ev.sessionId,
                             "title" to ev.title,
