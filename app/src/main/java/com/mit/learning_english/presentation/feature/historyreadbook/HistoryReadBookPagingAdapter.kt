@@ -1,5 +1,6 @@
 package com.mit.learning_english.presentation.feature.historyreadbook
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -50,10 +51,6 @@ class HistoryReadBookPagingAdapter(
             binding.pbProgress.progress = progressValue
             binding.tvProgressPercent.text = context.getString(R.string.profile_percent_format, progressValue)
             binding.tvLastReadTime.text = lastReadText
-            binding.tvLastReadPage.text = context.getString(
-                R.string.history_last_read_page_format,
-                item.pageLastRead
-            )
             binding.root.setOnClickListener { onItemClick(item) }
         }
     }

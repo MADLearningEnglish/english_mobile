@@ -1,10 +1,12 @@
 package com.mit.learning_english.data.mapper
 
+import android.util.Log
 import com.mit.learning_english.data.remote.dto.BookResponse
 import com.mit.learning_english.domain.model.Book
 import com.mit.learning_english.domain.model.BookDetail
 import com.mit.learning_english.domain.model.BookReponse
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
@@ -53,7 +55,7 @@ fun BookResponse.toBookHistory(): BookReponse {
 
 private fun String.parseToLocalDateTime(): LocalDateTime? {
     return try {
-        LocalDateTime.parse(this, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        OffsetDateTime.parse(this).toLocalDateTime()
     } catch (e: DateTimeParseException) {
         null
     }

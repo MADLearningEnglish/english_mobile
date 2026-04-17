@@ -5,9 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="118dp"
+    android:paddingVertical="8dp"
     android:background="@drawable/border_16"
     android:backgroundTint="@color/surface"
-    android:padding="12dp">
+    android:paddingHorizontal="12dp">
 
 
     <androidx.cardview.widget.CardView
@@ -93,15 +94,6 @@
             android:layout_marginTop="8dp"
             android:textColor="@color/body_secondary"
             tools:text="Last read: 08/04/2026 14:30" />
-
-        <TextView
-            android:id="@+id/tvLastReadPage"
-            style="@style/BodyExtraSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textColor="@color/body_secondary"
-            tools:text="Page in progress: 42" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

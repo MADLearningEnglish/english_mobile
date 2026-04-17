@@ -12,6 +12,7 @@ import com.mit.learning_english.domain.usecase.book.GetFavoriteBooksPagingUseCas
 import com.mit.learning_english.domain.usecase.book.GetRecentlyReadBookUseCase
 import com.mit.learning_english.domain.usecase.genre.GetGenresUseCase
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.presentation.feature.historyreadbook.HistoryReadBookEvent
 import com.mit.learning_english.shared.FavoriteChangeNotifier
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -114,10 +115,9 @@ class HomeViewModel @Inject constructor(
         emitError(message)
     }
 
-    fun navigateToHistoryReadBooks(){
+    fun navigateToHistoryReadBooks() {
         emitEvent(
             HomeEvent.NavigateToHistoryReadBooks
         )
     }
-
 }

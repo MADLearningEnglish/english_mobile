@@ -17,12 +17,16 @@ import com.mit.learning_english.databinding.FragmentHistoryReadBookBinding
 import com.mit.learning_english.presentation.base.BaseFragment
 import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HistoryReadBookFragment :
     BaseFragment<FragmentHistoryReadBookBinding, HistoryReadBookViewModel>() {
+    private var loadingStartTime = 0L
+    private val MIN_LOADING_TIME = 500L
+
 
     override val viewModel: HistoryReadBookViewModel by viewModels()
     private lateinit var historyAdapter: HistoryReadBookPagingAdapter
@@ -65,16 +69,16 @@ class HistoryReadBookFragment :
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 historyAdapter.loadStateFlow.collectLatest { loadState ->
                     when (val refreshState = loadState.source.refresh) {
-                        is LoadState.Loading -> showLoading()
+                        is LoadState.Loading -> viewModel.loading(true)
                         is LoadState.NotLoading -> {
-                            hideLoading()
+                            viewModel.loading(false)
                             val isEmpty =
                                 loadState.source.append.endOfPaginationReached && historyAdapter.itemCount == 0
                             binding.tvEmptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE
                         }
 
                         is LoadState.Error -> {
-                            hideLoading()
+                            viewModel.loading(false)
                             binding.tvEmptyState.visibility = View.GONE
                             Toast.makeText(
                                 requireContext(),
@@ -101,12 +105,18 @@ class HistoryReadBookFragment :
     }
 
     override fun showLoading() {
+        loadingStartTime = System.currentTimeMillis()
         binding.overlayLoading.visibility = View.VISIBLE
         binding.lottieLoading.playAnimation()
     }
 
     override fun hideLoading() {
-        binding.lottieLoading.pauseAnimation()
-        binding.overlayLoading.visibility = View.GONE
+         val elapsed = System.currentTimeMillis() - loadingStartTime
+        val remaining = (MIN_LOADING_TIME - elapsed).coerceAtLeast(0)
+        lifecycleScope.launch {
+            delay(remaining)
+            binding.lottieLoading.pauseAnimation()
+            binding.overlayLoading.visibility = View.GONE
+        }
     }
 }

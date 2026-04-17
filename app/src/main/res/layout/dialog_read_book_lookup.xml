@@ -1,89 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="20dp">
-
-    <TextView
-        android:id="@+id/tvLookupTitle"
-        style="@style/TitleSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/lookup_dialog_title" />
-
-    <TextView
-        android:id="@+id/tvSelectedText"
-        style="@style/BodyLarge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textStyle="bold" />
-
-    <ProgressBar
-        android:id="@+id/progressLookup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:visibility="gone" />
+    android:layout_marginHorizontal="4dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp"
+    app:strokeColor="#E6EAF0"
+    app:strokeWidth="1dp">
 
     <LinearLayout
-        android:id="@+id/layoutLookupContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:padding="20dp">
 
-        <TextView
-            android:id="@+id/tvPhonetic"
-            style="@style/BodyMedium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/tvMeaning"
-            style="@style/BodyMedium"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvLookupTitle"
+                style="@style/TitleSmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/lookup_dialog_title"
+                android:textColor="@color/body_primary" />
+
+            <ImageButton
+                android:id="@+id/btnCloseLookup"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/lookup_close"
+                android:padding="4dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_close"
+                app:tint="@color/gray_400" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/tvExamples"
-            style="@style/BodySmall"
+            android:id="@+id/tvSelectedText"
+            style="@style/BodyLarge"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
-
-        <Button
-            android:id="@+id/btnPlayAudio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="@string/lookup_play_audio" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layoutLookupError"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/tvLookupError"
-            style="@style/BodyMedium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/holo_red_dark" />
-
-        <Button
-            android:id="@+id/btnRetryLookup"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/retry" />
+            android:textColor="@color/body_primary"
+            android:textStyle="bold" />
+
+        <ProgressBar
+            android:id="@+id/progressLookup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/layoutLookupContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#F6F8FB"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="10dp">
+
+                <TextView
+                    android:id="@+id/tvPhonetic"
+                    style="@style/BodyMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/body_primary" />
+
+                <ImageButton
+                    android:id="@+id/btnPlayAudio"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/lookup_play_audio"
+                    android:padding="2dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_volume_up"
+                    app:tint="@color/primary" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="@string/lookup_meaning_label"
+                android:textColor="@color/gray_400" />
+
+            <TextView
+                android:id="@+id/tvMeaning"
+                style="@style/BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/body_primary" />
+
+            <TextView
+                style="@style/BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/lookup_examples_label"
+                android:textColor="@color/gray_400" />
+
+            <TextView
+                android:id="@+id/tvExamples"
+                style="@style/BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/body_primary" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAddToFlashcard"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="@string/lookup_add_to_flashcard"
+                app:icon="@drawable/ic_add"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutLookupError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvLookupError"
+                style="@style/BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/holo_red_dark" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRetryLookup"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/retry" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>
