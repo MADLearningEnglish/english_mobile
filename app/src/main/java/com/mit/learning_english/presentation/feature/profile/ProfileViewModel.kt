@@ -68,7 +68,6 @@ class ProfileViewModel @Inject constructor(
 
     fun openEditProfile() = emitEvent(ProfileEvent.OpenEditProfile)
     fun openVocabulary() = emitEvent(ProfileEvent.OpenVocabularyList)
-    fun openCompletedExercises() = emitEvent(ProfileEvent.OpenCompletedExercises)
     fun openMyCorrections() = emitEvent(ProfileEvent.OpenMyCorrections)
     fun openDailyActivity() = emitEvent(ProfileEvent.OpenDailyActivity)
     fun openActivityDay(date: LocalDate) = emitEvent(ProfileEvent.OpenActivityDay(date))

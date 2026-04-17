@@ -73,19 +73,6 @@ class ProfileProgressTabFragment : Fragment() {
         val totalDays = (s?.totalStudyDays ?: 0L).toInt()
         binding.tvActiveDaysSummary.text = buildActiveDaysSummary(totalDays)
 
-        binding.tvRatingCorrection.text = getString(
-            R.string.profile_rating_correction_format,
-            (s?.completedLessonsOrExercises ?: 0L).toInt().coerceAtMost(999)
-        )
-        binding.tvRatingLikes.text = getString(
-            R.string.profile_rating_likes_format,
-            (s?.wordsLearnedCount ?: 0L).toInt().coerceAtMost(999)
-        )
-        binding.tvRatingBest.text = getString(
-            R.string.profile_rating_best_format,
-            (s?.currentStreakDays ?: 0).coerceAtMost(999)
-        )
-
         buildWeekRow(state.heatmap)
     }
 
