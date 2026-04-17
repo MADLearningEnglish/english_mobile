@@ -68,6 +68,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
 
     override fun onResume() {
         super.onResume()
+        viewModel.refresh()
         binding.tabLayoutProfile.selectTab(binding.tabLayoutProfile.getTabAt(0))
         binding.viewPagerProfile.setCurrentItem(0, false)
     }

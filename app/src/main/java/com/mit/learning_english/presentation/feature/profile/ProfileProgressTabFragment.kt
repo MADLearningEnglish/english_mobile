@@ -65,10 +65,6 @@ class ProfileProgressTabFragment : Fragment() {
             R.string.profile_words_learned_format,
             (s?.wordsLearnedCount ?: 0L).toInt()
         )
-        binding.tvCertificates.text = getString(
-            R.string.profile_certificates_format,
-            (s?.completedLessonsOrExercises ?: 0L).toInt()
-        )
 
         val totalDays = (s?.totalStudyDays ?: 0L).toInt()
         binding.tvActiveDaysSummary.text = buildActiveDaysSummary(totalDays)

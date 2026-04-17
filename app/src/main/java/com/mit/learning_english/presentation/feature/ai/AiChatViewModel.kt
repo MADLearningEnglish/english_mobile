@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
 import androidx.lifecycle.viewModelScope
+import com.mit.learning_english.data.remote.dto.CreateChatSessionRequestDto
 import com.mit.learning_english.data.remote.dto.EndSessionResponseDto
 import com.mit.learning_english.data.repository.AiChatRepository
 import com.mit.learning_english.domain.repository.ProfileRepository
@@ -32,6 +33,16 @@ data class AiChatUiState(
 sealed class AiChatEvent {
     data class ShowSummary(val summary: EndSessionResponseDto) : AiChatEvent()
     data class ShowToast(val message: String) : AiChatEvent()
+    data class OpenChat(
+        val sessionId: Int,
+        val title: String,
+        val aiRole: String,
+        val levelName: String,
+        val instruction: String,
+        val goalType: String,
+        val focusSkill: String,
+        val coachingMode: String,
+    ) : AiChatEvent()
 }
 
 @HiltViewModel
@@ -213,6 +224,49 @@ class AiChatViewModel @Inject constructor(
             repository.endSession(sessionId)
                 .onSuccess { dto ->
                     emitEvent(AiChatEvent.ShowSummary(dto))
+                }
+                .onFailure { onError(it) }
+            setLoading(false)
+        }
+    }
+
+    fun startNextTopicSession(
+        topic: String,
+        levelName: String,
+        goalType: String,
+        focusSkill: String,
+        coachingMode: String,
+        aiRole: String,
+    ) {
+        val normalizedTopic = topic.trim()
+        if (normalizedTopic.isEmpty()) return
+        viewModelScope.launch(exceptionHandler) {
+            setLoading(true)
+            val req = CreateChatSessionRequestDto(
+                scenarioId = 0,
+                goalType = goalType,
+                focusSkill = focusSkill,
+                coachingMode = coachingMode,
+                fluencyMode = coachingMode.equals("FLUENCY", ignoreCase = true),
+            )
+            repository.createSession(req)
+                .onSuccess { response ->
+                    val newSessionId = response.sessionId ?: run {
+                        emitEvent(AiChatEvent.ShowToast("Không tạo được session mới"))
+                        return@onSuccess
+                    }
+                    emitEvent(
+                        AiChatEvent.OpenChat(
+                            sessionId = newSessionId,
+                            title = normalizedTopic,
+                            aiRole = response.aiRole ?: aiRole,
+                            levelName = levelName,
+                            instruction = normalizedTopic,
+                            goalType = response.goalType ?: goalType,
+                            focusSkill = response.focusSkill ?: focusSkill,
+                            coachingMode = response.coachingMode ?: coachingMode,
+                        ),
+                    )
                 }
                 .onFailure { onError(it) }
             setLoading(false)
