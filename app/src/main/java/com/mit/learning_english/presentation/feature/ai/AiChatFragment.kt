@@ -52,13 +52,6 @@ class AiChatFragment : BaseFragment<FragmentAiChatBinding, AiChatViewModel>() {
 
     private val messageAdapter by lazy {
         AiChatMessageAdapter(
-            onScenarioDetails = { instruction ->
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.ai_scenario_details_title)
-                    .setMessage(instruction)
-                    .setPositiveButton(R.string.ai_ok, null)
-                    .show()
-            },
             onSpeakAssistant = { text ->
                 tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "ai_chat_tts")
             },
@@ -99,9 +92,6 @@ class AiChatFragment : BaseFragment<FragmentAiChatBinding, AiChatViewModel>() {
         binding.textLevel.text = getString(R.string.ai_level_line_format, levelLabel) + " • " + goal + " • " + mode
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
         binding.btnFinish.setOnClickListener { confirmEndSession() }
-        binding.btnSettings.setOnClickListener {
-            Toast.makeText(requireContext(), R.string.ai_settings, Toast.LENGTH_SHORT).show()
-        }
         binding.btnSend.setOnClickListener {
             val t = binding.inputMessage.text?.toString().orEmpty()
             binding.inputMessage.text?.clear()
