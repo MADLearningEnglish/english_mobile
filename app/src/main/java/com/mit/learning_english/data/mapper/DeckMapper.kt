@@ -23,8 +23,8 @@ fun DeckDto.toDomain(): Deck {
 fun FlashcardDto.toDomain(): Flashcard {
     return Flashcard(
         id = id,
-        term = term,
-        definition = definition,
+        term = term ?: "",
+        definition = definition ?: "",
         imageUrl = imageUrl
     )
 }

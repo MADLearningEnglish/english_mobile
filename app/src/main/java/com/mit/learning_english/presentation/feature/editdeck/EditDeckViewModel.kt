@@ -131,11 +131,18 @@ class EditDeckViewModel @Inject constructor(
             emitEvent(EditDeckEvent.ShowSnackbar("Vui lòng nhập tên bộ thẻ"))
             return
         }
-        val validCards = state.flashcards.filter { it.status == 0 || (it.term.isNotBlank() && it.definition.isNotBlank()) }
-        if (validCards.filter { it.status != 0 }.isEmpty()) {
+        
+        val activeCards = state.flashcards.filter { it.status != 0 }
+        if (activeCards.any { it.term.isBlank() || it.definition.isBlank() }) {
+            emitEvent(EditDeckEvent.ShowSnackbar("Vui lòng điền đầy đủ Thuật ngữ và Định nghĩa cho tất cả các thẻ"))
+            return
+        }
+        if (activeCards.isEmpty()) {
             emitEvent(EditDeckEvent.ShowSnackbar("Vui lòng thêm ít nhất 1 từ hợp lệ"))
             return
         }
+        
+        val validCards = state.flashcards
         
         viewModelScope.launch(exceptionHandler) {
             setState { copy(isSaving = true, isUploadingImages = true) }

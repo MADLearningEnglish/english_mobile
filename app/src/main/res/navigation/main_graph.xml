@@ -29,6 +29,9 @@
             android:id="@+id/action_mainFragment_to_quizFragment"
             app:destination="@id/quizFragment" />
         <action
+            android:id="@+id/action_mainFragment_to_matchFragment"
+            app:destination="@id/matchFragment" />
+        <action
             android:id="@+id/action_mainFragment_to_editDeckFragment"
             app:destination="@id/editDeckFragment" />
         <action
@@ -257,4 +260,19 @@
         android:name="com.mit.learning_english.presentation.feature.historyreadbook.HistoryReadBookFragment"
         android:label="fragment_history_read_book"
         tools:layout="@layout/fragment_history_read_book" />
+
+    <fragment
+        android:id="@+id/matchFragment"
+        android:name="com.mit.learning_english.presentation.feature.study.match.MatchFragment"
+        android:label="Ghép thẻ"
+        tools:layout="@layout/fragment_match">
+        <argument
+            android:name="deckId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="deckTitle"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
 </navigation>

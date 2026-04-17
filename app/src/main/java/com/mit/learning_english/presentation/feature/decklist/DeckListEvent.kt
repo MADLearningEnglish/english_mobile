@@ -3,6 +3,7 @@ package com.mit.learning_english.presentation.feature.decklist
 sealed class DeckListEvent {
     data class NavigateToStudy(val deckId: Int, val deckTitle: String) : DeckListEvent()
     data class NavigateToQuiz(val deckId: Int, val deckTitle: String) : DeckListEvent()
+    data class NavigateToMatch(val deckId: Int, val deckTitle: String) : DeckListEvent()
     data class ShowStudyModeDialog(val deckId: Int, val deckTitle: String) : DeckListEvent()
     data class NavigateToEditDeck(val deckId: Int) : DeckListEvent()
     object NavigateToCreateDeck : DeckListEvent()

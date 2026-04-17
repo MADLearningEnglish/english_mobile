@@ -120,6 +120,15 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
                                 )
                             )
                         }
+                        is DeckListEvent.NavigateToMatch -> {
+                            parentNavController.navigate(
+                                R.id.action_mainFragment_to_matchFragment,
+                                bundleOf(
+                                    "deckId" to event.deckId,
+                                    "deckTitle" to event.deckTitle
+                                )
+                            )
+                        }
                         is DeckListEvent.ShowStudyModeDialog -> {
                             showStudyModeDialog(event.deckId, event.deckTitle)
                         }
@@ -185,12 +194,15 @@ class DeckListFragment : BaseFragment<FragmentDeckListBinding, DeckListViewModel
     }
 
     private fun showStudyModeDialog(deckId: Int, deckTitle: String) {
-        val options = arrayOf("Luyện Thẻ (Flashcard)", "Học (Quiz)")
+        val options = arrayOf("Luyện Thẻ (Flashcard)", "Học (Quiz)", "Ghép thẻ (Match)")
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Chọn chế độ ôn tập")
             .setItems(options) { _, which ->
-                val isQuiz = which == 1
-                viewModel.onStudyModeSelected(deckId, deckTitle, isQuiz)
+                when (which) {
+                    0 -> viewModel.onStudyModeSelected(deckId, deckTitle, false) // Flashcard
+                    1 -> viewModel.onStudyModeSelected(deckId, deckTitle, true) // Quiz
+                    2 -> viewModel.onMatchModeSelected(deckId, deckTitle) // Match
+                }
             }
             .show()
     }

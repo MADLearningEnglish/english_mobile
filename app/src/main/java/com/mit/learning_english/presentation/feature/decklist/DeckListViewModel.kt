@@ -54,6 +54,10 @@ class DeckListViewModel @Inject constructor(
         }
     }
 
+    fun onMatchModeSelected(deckId: Int, deckTitle: String) {
+        emitEvent(DeckListEvent.NavigateToMatch(deckId, deckTitle))
+    }
+
     fun onEditDeck(deckId: Int) {
         emitEvent(DeckListEvent.NavigateToEditDeck(deckId))
     }

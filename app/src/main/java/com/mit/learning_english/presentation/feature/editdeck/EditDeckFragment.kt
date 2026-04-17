@@ -117,7 +117,14 @@ class EditDeckFragment : BaseFragment<FragmentEditDeckBinding, EditDeckViewModel
                     val items = activeCards.map { (originalIndex, card) ->
                         FlashcardEditUiItem(card, originalIndex)
                     }
-                    adapter.submitList(items)
+                    val previousSize = adapter.currentList.size
+                    adapter.submitList(items) {
+                        if (items.size > previousSize && previousSize > 0) {
+                            binding.nestedScrollView.postDelayed({
+                                binding.nestedScrollView.smoothScrollTo(0, binding.nestedScrollView.getChildAt(0).height)
+                            }, 50)
+                        }
+                    }
                 }
             }
         }
