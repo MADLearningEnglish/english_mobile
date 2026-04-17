@@ -38,7 +38,6 @@ class ProfileVocabularyViewModel @Inject constructor(
     }
 
     fun toggleFavorite(w: VocabularyWord) {
-        if (w.id <= 0) return
         viewModelScope.launch {
             when (profileRepository.patchVocabulary(w.id, favorite = !w.favorite, needsAttention = null)) {
                 is Result.Success -> {
