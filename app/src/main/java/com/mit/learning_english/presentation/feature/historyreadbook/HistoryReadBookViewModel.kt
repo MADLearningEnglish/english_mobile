@@ -21,4 +21,7 @@ class HistoryReadBookViewModel @Inject constructor(
     fun onBookClick(bookId: Int) {
         emitEvent(HistoryReadBookEvent.NavigateToBookDetail(bookId))
     }
+    fun loading(isLoading:Boolean){
+        setLoading(isLoading)
+    }
 }

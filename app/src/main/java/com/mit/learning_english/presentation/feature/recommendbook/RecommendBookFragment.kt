@@ -96,12 +96,12 @@ class RecommendBookFragment :
     }
 
     override fun showLoading() {
-        binding.overlayLoading.visibility = View.VISIBLE
-        binding.lottieLoading.playAnimation()
+//        binding.overlayLoading.visibility = View.VISIBLE
+//        binding.lottieLoading.playAnimation()
     }
 
     override fun hideLoading() {
-        binding.lottieLoading.pauseAnimation()
-        binding.overlayLoading.visibility = View.GONE
+//        binding.lottieLoading.pauseAnimation()
+//        binding.overlayLoading.visibility = View.GONE
     }
 }

@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.doOnPreDraw
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.debounce
 
 /**
@@ -35,6 +37,9 @@ import kotlinx.coroutines.flow.debounce
  * @param VM BaseViewModel type
  */
 abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragment() {
+
+    private var loadingStartTime = 0L
+    private val MIN_LOADING_TIME = 500L
 
     private var _binding: VB? = null
     protected val binding get() = _binding!!
@@ -130,6 +135,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
     }
 
     protected open fun showLoading() {
+//        loadingStartTime = System.currentTimeMillis()
 //        val ctx = context ?: return
 //        if (loadingDialog == null) {
 //            loadingDialog = Dialog(ctx).apply {
@@ -147,7 +153,12 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*, *>> : Fragme
     }
 
     protected open fun hideLoading() {
-//        loadingDialog?.dismiss()
+//        val elapsed = System.currentTimeMillis() - loadingStartTime
+//        val remaining = (MIN_LOADING_TIME - elapsed).coerceAtLeast(0)
+//        lifecycleScope.launch {
+//            delay(remaining)
+//            loadingDialog?.dismiss()
+//        }
     }
 
     protected open fun showError(message: String) {
