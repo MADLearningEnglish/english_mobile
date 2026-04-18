@@ -64,10 +64,12 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
 
     private fun shareBook() {
         val state = viewModel.uiState.value
+        if (state.id == 0) return
         val shareUrl = "${Constant.DEEP_LINK_HTTPS_BOOK_URL}${state.id}"
         val shareText = getString(R.string.share_book_message, state.title, shareUrl)
         val sendIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, state.title)
             putExtra(Intent.EXTRA_TEXT, shareText)
         }
         startActivity(Intent.createChooser(sendIntent, getString(R.string.share_book_title)))
@@ -91,9 +93,12 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
         collectStateProperty(viewModel.uiState, { it.chapters }) { chapters ->
             if (chapters.isNotEmpty()) {
                 chapterAdapter.submitList(chapters)
-                binding.tvReadTimeAndPage.text = getString(R.string.minutes_format, chapters.sumOf { chapter -> chapter.totalDuration }/3600)
-                binding.tvTotalPages.text = getString(R.string.total_page_format, chapters.sumOf { chapter -> chapter.totalPages })
             }
+            binding.tvReadTimeAndPage.text = getString(
+                R.string.minutes_format,
+                ((chapters.sumOf { it.totalDuration } ) / 3600)
+            )
+            binding.tvTotalPages.text = getString(R.string.total_page_format, chapters.sumOf { chapter -> chapter.totalPages })
         }
         collectStateProperty(viewModel.uiState, { it.isFavorite }) { isFavorite ->
             if (!isFavorite) {

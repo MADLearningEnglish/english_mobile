@@ -7,12 +7,19 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.mit.learning_english.R
 import com.mit.learning_english.shared.Constant
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var pendingDeepLinkManager: PendingDeepLinkManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,18 +29,25 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             insets
         }
-//        handleDeepLinkIntent(intent)
+        // Khôi phục pending sau process death (nếu có) trước, rồi mới xử lý intent hiện tại
+        lifecycleScope.launch {
+            pendingDeepLinkManager.hydrateFromPersistent()
+            handleDeepLinkIntent(intent)
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        handleDeepLinkIntent(intent)
+        setIntent(intent)
+        lifecycleScope.launch { handleDeepLinkIntent(intent) }
     }
 
-    private fun handleDeepLinkIntent(intent: Intent?) {
-        val uri = intent?.data ?: return
+    private suspend fun handleDeepLinkIntent(intent: Intent?) {
+        if (intent == null) return
+        if (intent.action != Intent.ACTION_VIEW) return
+        val uri = intent.data ?: return
         val bookId = extractBookId(uri) ?: return
-        pendingDeepLinkBookId = bookId
+        pendingDeepLinkManager.setPending(bookId)
     }
 
     private fun extractBookId(uri: Uri): Int? {
@@ -41,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         if (uri.scheme == Constant.DEEP_LINK_SCHEME && uri.host == Constant.DEEP_LINK_HOST_BOOK) {
             return uri.pathSegments?.firstOrNull()?.toIntOrNull()
         }
-        // https://flulingo.com/book/{bookId}
+        // https://english.kimchimar3.store/book/{bookId}
         if (uri.scheme == "https" && uri.host == Constant.DEEP_LINK_HTTPS_HOST) {
             val segments = uri.pathSegments ?: return null
             if (segments.size >= 2 && segments[0] == Constant.DEEP_LINK_HOST_BOOK) {
@@ -49,16 +63,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return null
-    }
-
-    companion object {
-        var pendingDeepLinkBookId: Int? = null
-            private set
-
-        fun consumePendingDeepLink(): Int? {
-            val id = pendingDeepLinkBookId
-            pendingDeepLinkBookId = null
-            return id
-        }
     }
 }
