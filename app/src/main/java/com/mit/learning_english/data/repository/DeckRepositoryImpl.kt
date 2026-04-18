@@ -7,6 +7,7 @@ import com.mit.learning_english.data.remote.api.DeckApiService
 import com.mit.learning_english.domain.model.*
 import com.mit.learning_english.domain.repository.DeckRepository
 import com.mit.learning_english.domain.util.Result
+import com.mit.learning_english.shared.UiErrorKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -21,10 +22,10 @@ class DeckRepositoryImpl @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.Success(response.body()!!.data!!.toDomain())
             } else {
-                Result.Error(response.message() ?: "Lỗi tạo bộ thẻ")
+                Result.Error(response.message() ?: UiErrorKey.CREATE_DECK_VI)
             }
         } catch (e: Exception) {
-            Result.Error(e.message ?: "Unknown error")
+            Result.Error(e.message ?: UiErrorKey.UNKNOWN)
         }
     }
 
@@ -39,7 +40,7 @@ class DeckRepositoryImpl @Inject constructor(
                 Result.Error(response.message() ?: "Lỗi tải danh sách bộ thẻ")
             }
         } catch (e: Exception) {
-            Result.Error(e.message ?: "Unknown error")
+            Result.Error(e.message ?: UiErrorKey.UNKNOWN)
         }
     }
 
@@ -77,10 +78,10 @@ class DeckRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 Result.Success(Unit)
             } else {
-                Result.Error("Review failed")
+                Result.Error(UiErrorKey.REVIEW_FAILED)
             }
         } catch (e: Exception) {
-            Result.Error(e.message ?: "Unknown error")
+            Result.Error(e.message ?: UiErrorKey.UNKNOWN)
         }
     }
 
@@ -90,10 +91,10 @@ class DeckRepositoryImpl @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.Success(response.body()!!.data!!.toDomain())
             } else {
-                Result.Error("Cannot get results")
+                Result.Error(UiErrorKey.CANNOT_GET_RESULTS)
             }
         } catch (e: Exception) {
-            Result.Error(e.message ?: "Unknown error")
+            Result.Error(e.message ?: UiErrorKey.UNKNOWN)
         }
     }
 
@@ -129,10 +130,10 @@ class DeckRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 Result.Success(Unit)
             } else {
-                Result.Error("Delete failed")
+                Result.Error(UiErrorKey.DELETE_FAILED)
             }
         } catch (e: Exception) {
-            Result.Error(e.message ?: "Unknown error")
+            Result.Error(e.message ?: UiErrorKey.UNKNOWN)
         }
     }
 
@@ -154,10 +155,10 @@ class DeckRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 Result.Success(Unit)
             } else {
-                Result.Error(response.message() ?: "study-complete failed")
+                Result.Error(response.message() ?: UiErrorKey.STUDY_COMPLETE_FAILED)
             }
         } catch (e: Exception) {
-            Result.Error(e.message ?: "Unknown error")
+            Result.Error(e.message ?: UiErrorKey.UNKNOWN)
         }
     }
 }

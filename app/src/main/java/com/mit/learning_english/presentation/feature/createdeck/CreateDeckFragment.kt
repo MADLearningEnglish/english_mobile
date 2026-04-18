@@ -135,7 +135,11 @@ class CreateDeckFragment : BaseFragment<FragmentCreateDeckBinding, CreateDeckVie
                         is CreateDeckEvent.NavigateBack -> findNavController().navigateUp()
                         is CreateDeckEvent.ShowSuccessDialog -> showSuccessDialog(event.deckId)
                         is CreateDeckEvent.ShowSnackbar ->
-                            Snackbar.make(binding.root, event.message, Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(
+                                binding.root,
+                                resolveUiMessage(event.message),
+                                Snackbar.LENGTH_SHORT
+                            ).show()
                     }
                 }
             }
@@ -155,7 +159,7 @@ class CreateDeckFragment : BaseFragment<FragmentCreateDeckBinding, CreateDeckVie
             dialog.dismiss()
             val bundle = Bundle().apply {
                 putInt("deckId", deckId)
-                putString("deckTitle", "Luyện tập")
+                putString("deckTitle", getString(R.string.nav_study))
             }
             val navOptions = androidx.navigation.NavOptions.Builder()
                 .setPopUpTo(R.id.mainFragment, false)

@@ -51,7 +51,7 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
         }
         collectStateProperty(viewModel.uiState, { it.serverError }) { serverError ->
             if (serverError != null) {
-                binding.tvServerError.text = serverError
+                binding.tvServerError.text = resolveUiMessage(serverError)
                 binding.tvServerError.isVisible = true
             } else {
                 binding.tvServerError.isVisible = false

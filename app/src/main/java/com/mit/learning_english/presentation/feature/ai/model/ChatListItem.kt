@@ -78,23 +78,22 @@ fun ChatListItem.Correction.buildColoredText(wrongColor: Int, suggestedColor: In
         return sb
     }
     val sb = SpannableStringBuilder()
-    val headerStart = sb.length
-    sb.append("LOI SAI CAN NHO: ")
-    sb.setSpan(StyleSpan(Typeface.BOLD), headerStart, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-    sb.setSpan(ForegroundColorSpan(wrongColor), headerStart, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-    sb.append("\n")
-    sb.append("Ban viet: ")
+    val titleStart = sb.length
+    sb.append("Lỗi sai cần nhớ:\n")
+    sb.setSpan(StyleSpan(Typeface.BOLD), titleStart, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    sb.setSpan(ForegroundColorSpan(wrongColor), titleStart, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    sb.append("Bạn viết: ")
     val wStart = sb.length
     sb.append(wrongText)
     sb.setSpan(ForegroundColorSpan(wrongColor), wStart, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     sb.setSpan(StyleSpan(Typeface.BOLD), wStart, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-    sb.append("\nGoi y dung: ")
+    sb.append("\nGợi ý đúng: ")
     val sStart = sb.length
     sb.append(suggestedText)
     sb.setSpan(ForegroundColorSpan(suggestedColor), sStart, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     sb.setSpan(StyleSpan(Typeface.BOLD), sStart, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     explanationAfter?.takeIf { it.isNotBlank() }?.let {
-        sb.append("\nGiai thich: ")
+        sb.append("\nGiải thích: ")
         sb.append(it)
     }
     return sb
@@ -104,9 +103,6 @@ fun mapTranscriptToChatItems(
     instruction: String,
     transcript: List<ChatMessageDetailItemDto>,
 ): List<ChatListItem> = buildList {
-    if (instruction.isNotBlank()) {
-        add(ChatListItem.ScenarioCard(instruction))
-    }
     val hasOpeningAi = transcript.any {
         it.senderType?.equals("AI", ignoreCase = true) == true && !it.content.isNullOrBlank()
     }

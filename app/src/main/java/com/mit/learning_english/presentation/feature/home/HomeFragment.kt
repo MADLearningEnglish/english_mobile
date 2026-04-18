@@ -230,7 +230,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             binding.shimmerAuthors.visibility = View.INVISIBLE
                             binding.rvAuthors.visibility = View.VISIBLE
                             viewModel.setErrorMessage(
-                                refreshState.error.localizedMessage ?: "Failed to load authors"
+                                refreshState.error.localizedMessage ?: getString(R.string.error_failed_load_authors)
                             )
                         }
 
@@ -267,7 +267,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             binding.shimmerFavoriteBooks.visibility = View.INVISIBLE
                             binding.rvFavoriteBooks.visibility = View.VISIBLE
                             viewModel.setErrorMessage(
-                                refreshState.error.localizedMessage ?: "Failed to load books"
+                                refreshState.error.localizedMessage ?: getString(R.string.error_failed_load_books)
                             )
                         }
 
@@ -303,7 +303,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             binding.shimmerRecentlyRead.visibility = View.INVISIBLE
                             binding.rvRecentlyRead.visibility = View.VISIBLE
                             viewModel.setErrorMessage(
-                                refreshState.error.localizedMessage ?: "Failed to load books"
+                                refreshState.error.localizedMessage ?: getString(R.string.error_failed_load_books)
                             )
                         }
 

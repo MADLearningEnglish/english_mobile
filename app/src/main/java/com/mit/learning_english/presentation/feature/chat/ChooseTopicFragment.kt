@@ -64,15 +64,15 @@ class ChooseTopicFragment : BaseFragment<FragmentChooseTopicBinding, ChooseTopic
         collectState(viewModel.uiState) { state ->
             applyFilterChips(state.selectedFilter)
             val goalLabel = when (state.goalType.uppercase()) {
-                "COMMUNICATION" -> "Goal: Talk"
-                "GRAMMAR" -> "Goal: Grammar"
-                "FLUENCY" -> "Goal: Fluency"
-                else -> "Goal: ${state.goalType.replace('_', ' ')}"
+                "COMMUNICATION" -> getString(R.string.chat_goal_talk)
+                "GRAMMAR" -> getString(R.string.chat_goal_grammar)
+                "FLUENCY" -> getString(R.string.chat_goal_fluency)
+                else -> getString(R.string.chat_goal_fallback_format, state.goalType.replace('_', ' '))
             }
             val modeLabel = when (state.coachingMode.uppercase()) {
-                "COACH" -> "Mode: Coach"
-                "FLUENCY" -> "Mode: Fluency"
-                else -> "Mode: ${state.coachingMode.replace('_', ' ')}"
+                "COACH" -> getString(R.string.chat_mode_coach)
+                "FLUENCY" -> getString(R.string.chat_mode_fluency)
+                else -> getString(R.string.chat_mode_fallback_format, state.coachingMode.replace('_', ' '))
             }
             binding.btnGoal.text = goalLabel
             binding.btnMode.text = modeLabel
@@ -134,12 +134,17 @@ class ChooseTopicFragment : BaseFragment<FragmentChooseTopicBinding, ChooseTopic
     }
 
     private fun showGoalPicker() {
-        val options = arrayOf("COMMUNICATION", "GRAMMAR", "FLUENCY")
-        val selected = options.indexOf(viewModel.uiState.value.goalType).coerceAtLeast(0)
+        val optionValues = arrayOf("COMMUNICATION", "GRAMMAR", "FLUENCY")
+        val optionLabels = arrayOf(
+            getString(R.string.chat_goal_communication_option),
+            getString(R.string.chat_goal_grammar_option),
+            getString(R.string.chat_goal_fluency_option),
+        )
+        val selected = optionValues.indexOf(viewModel.uiState.value.goalType).coerceAtLeast(0)
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Choose goal")
-            .setSingleChoiceItems(options, selected) { dialog, which ->
-                val goal = options[which]
+            .setTitle(R.string.chat_choose_goal)
+            .setSingleChoiceItems(optionLabels, selected) { dialog, which ->
+                val goal = optionValues[which]
                 viewModel.onGoalSelected(goal)
                 viewModel.onFocusSelected(if (goal == "COMMUNICATION") "FLUENCY" else goal)
                 dialog.dismiss()
@@ -148,12 +153,16 @@ class ChooseTopicFragment : BaseFragment<FragmentChooseTopicBinding, ChooseTopic
     }
 
     private fun showModePicker() {
-        val options = arrayOf("COACH", "FLUENCY")
-        val selected = options.indexOf(viewModel.uiState.value.coachingMode).coerceAtLeast(0)
+        val optionValues = arrayOf("COACH", "FLUENCY")
+        val optionLabels = arrayOf(
+            getString(R.string.chat_mode_coach_option),
+            getString(R.string.chat_mode_fluency_option),
+        )
+        val selected = optionValues.indexOf(viewModel.uiState.value.coachingMode).coerceAtLeast(0)
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Choose mode")
-            .setSingleChoiceItems(options, selected) { dialog, which ->
-                viewModel.onModeSelected(options[which])
+            .setTitle(R.string.chat_choose_mode)
+            .setSingleChoiceItems(optionLabels, selected) { dialog, which ->
+                viewModel.onModeSelected(optionValues[which])
                 dialog.dismiss()
             }
             .show()

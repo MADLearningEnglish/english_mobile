@@ -6,6 +6,7 @@ import androidx.paging.PagingState
 import com.mit.learning_english.data.mapper.toPage
 import com.mit.learning_english.data.remote.api.PageApiService
 import com.mit.learning_english.domain.model.Page
+import com.mit.learning_english.shared.UiErrorKey
 
 class PagePagingSource(
     private val pageApi: PageApiService,
@@ -51,7 +52,7 @@ class PagePagingSource(
                     itemsAfter = maxOf(totalPages - end, 0)
                 )
             } else {
-                LoadResult.Error(Exception(body?.message ?: "Failed to load pages"))
+                LoadResult.Error(Exception(body?.message ?: UiErrorKey.FAILED_LOAD_PAGES))
             }
         } catch (e: Exception) {
             LoadResult.Error(e)

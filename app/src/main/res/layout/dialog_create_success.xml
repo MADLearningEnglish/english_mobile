@@ -20,7 +20,7 @@
             android:layout_gravity="top|start"
             android:layout_marginStart="28dp"
             android:layout_marginTop="28dp"
-            android:text="⭐"
+            android:text="@string/deck_success_star_1"
             android:textSize="20sp"
             tools:ignore="HardcodedText" />
 
@@ -31,7 +31,7 @@
             android:layout_gravity="top|end"
             android:layout_marginEnd="50dp"
             android:layout_marginTop="36dp"
-            android:text="✨"
+            android:text="@string/deck_success_star_2"
             android:textSize="16sp"
             tools:ignore="HardcodedText" />
 
@@ -42,7 +42,7 @@
             android:layout_gravity="bottom|start"
             android:layout_marginStart="60dp"
             android:layout_marginBottom="30dp"
-            android:text="🌟"
+            android:text="@string/deck_success_star_3"
             android:textSize="14sp"
             tools:ignore="HardcodedText" />
 
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
-            android:text="🦉"
+            android:text="@string/deck_success_mascot"
             android:textSize="72sp"
             tools:ignore="HardcodedText" />
     </FrameLayout>
@@ -70,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="🎉 Tạo bộ thành công!"
+            android:text="@string/deck_success_title"
             android:textColor="@color/body_primary"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -84,7 +84,7 @@
             android:layout_marginBottom="28dp"
             android:gravity="center"
             android:lineSpacingMultiplier="1.4"
-            android:text="Bộ flashcard của bạn đã sẵn sàng để luyện tập.\nBạn có thể bắt đầu học ngay bây giờ 🚀"
+            android:text="@string/deck_success_message"
             android:textColor="@color/gray_400"
             android:textSize="14sp"
             tools:ignore="HardcodedText" />
@@ -94,7 +94,7 @@
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:backgroundTint="@color/primary"
-            android:text="Bắt đầu luyện ngay"
+            android:text="@string/deck_success_start_now"
             android:textColor="@color/white"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -105,7 +105,7 @@
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_marginTop="10dp"
-            android:text="Về danh sách"
+            android:text="@string/deck_success_back_to_list"
             android:textColor="@color/body_primary"
             android:textSize="15sp"
             android:textStyle="bold" />

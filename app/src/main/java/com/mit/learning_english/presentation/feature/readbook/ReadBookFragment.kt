@@ -214,7 +214,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
                     errorState?.let {
                         Toast.makeText(
                             requireContext(),
-                            it.error.localizedMessage ?: "Failed to load pages",
+                            it.error.localizedMessage ?: getString(R.string.error_failed_load_pages),
                             Toast.LENGTH_SHORT
                         ).show()
                     }

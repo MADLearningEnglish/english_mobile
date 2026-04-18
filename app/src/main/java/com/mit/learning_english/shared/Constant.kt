@@ -1,8 +1,8 @@
 package com.mit.learning_english.shared
 
 object Constant {
-    //        const val BASE_URL: String = "http://192.168.0.102:7000/api/"
-    const val BASE_URL: String = "https://english.kimchimar3.store/api/"
+            const val BASE_URL: String = "http://192.168.0.102:7000/api/"
+//    const val BASE_URL: String = "https://english.kimchimar3.store/api/"
 
     //        const val BASE_URL: String = "http://10.0.2.2:7000/api/"
     const val PAGE_SIZE_PAGE: Int = 5

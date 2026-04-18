@@ -2,6 +2,7 @@ package com.mit.learning_english.presentation.base
 
 import androidx.lifecycle.ViewModel
 import com.mit.learning_english.domain.util.Result.Loading.onError
+import com.mit.learning_english.shared.UiErrorKey
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,6 +62,6 @@ abstract class BaseViewModel<STATE : Any?, EVENT>(
      */
     protected open fun onError(throwable: Throwable) {
         _isLoading.value = false
-        emitError(throwable.message ?: "Unknown error")
+        emitError(throwable.message ?: UiErrorKey.UNKNOWN)
     }
 }

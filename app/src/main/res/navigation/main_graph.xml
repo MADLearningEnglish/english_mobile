@@ -5,10 +5,14 @@
     android:id="@+id/main_graph"
     app:startDestination="@+id/mainFragment">
 
+    <action
+        android:id="@+id/action_global_aiChatFragment"
+        app:destination="@id/aiChatFragment" />
+
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.mit.learning_english.presentation.feature.main.MainFragment"
-        android:label="fragment_main"
+        android:label="@string/nav_fragment_main"
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_mainFragment_to_bookDetailFragment"
@@ -69,7 +73,7 @@
     <fragment
         android:id="@+id/detailAuthorFragment"
         android:name="com.mit.learning_english.presentation.feature.detailauthor.DetailAuthorFragment"
-        android:label="fragment_detail_author"
+        android:label="@string/nav_fragment_detail_author"
         tools:layout="@layout/fragment_detail_author">
         <argument
             android:name="authorId"
@@ -99,7 +103,7 @@
     <fragment
         android:id="@+id/bookDetailFragment"
         android:name="com.mit.learning_english.presentation.feature.bookdetail.BookDetailFragment"
-        android:label="fragment_book_detail"
+        android:label="@string/nav_fragment_book_detail"
         tools:layout="@layout/fragment_book_detail">
         <argument
             android:name="bookId"
@@ -115,7 +119,7 @@
     <fragment
         android:id="@+id/readBookFragment"
         android:name="com.mit.learning_english.presentation.feature.readbook.ReadBookFragment"
-        android:label="fragment_read_book"
+        android:label="@string/nav_fragment_read_book"
         app:enterAnim="@anim/slide_in_right"
         app:exitAnim="@anim/slide_out_left"
         tools:layout="@layout/fragment_read_book">
@@ -127,7 +131,7 @@
     <fragment
         android:id="@+id/searchBookFragment"
         android:name="com.mit.learning_english.presentation.feature.searchbook.SearchBookFragment"
-        android:label="fragment_search_book"
+        android:label="@string/nav_fragment_search_book"
         tools:layout="@layout/fragment_search_book">
         <action
             android:id="@+id/action_searchBookFragment_to_bookDetailFragment"
@@ -140,7 +144,7 @@
     <fragment
         android:id="@+id/editDeckFragment"
         android:name="com.mit.learning_english.presentation.feature.editdeck.EditDeckFragment"
-        android:label="Chỉnh sửa bộ thẻ"
+        android:label="@string/nav_edit_deck"
         tools:layout="@layout/fragment_edit_deck">
         <argument
             android:name="deckId"
@@ -150,13 +154,13 @@
     <fragment
         android:id="@+id/createDeckFragment"
         android:name="com.mit.learning_english.presentation.feature.createdeck.CreateDeckFragment"
-        android:label="Tạo bộ thẻ mới"
+        android:label="@string/nav_create_deck"
         tools:layout="@layout/fragment_create_deck" />
 
     <fragment
         android:id="@+id/studyFragment"
         android:name="com.mit.learning_english.presentation.feature.study.StudyFragment"
-        android:label="Luyện tập"
+        android:label="@string/nav_study"
         tools:layout="@layout/fragment_study">
         <argument
             android:name="deckId"
@@ -171,7 +175,7 @@
     <fragment
         android:id="@+id/quizFragment"
         android:name="com.mit.learning_english.presentation.feature.study.quiz.QuizFragment"
-        android:label="Học"
+        android:label="@string/nav_quiz"
         tools:layout="@layout/fragment_quiz">
         <argument
             android:name="deckId"
@@ -186,7 +190,7 @@
     <fragment
         android:id="@+id/bookByGenreFragment"
         android:name="com.mit.learning_english.presentation.feature.booksbygenre.BookByGenreFragment"
-        android:label="fragment_book_by_genre"
+        android:label="@string/nav_fragment_book_by_genre"
         tools:layout="@layout/fragment_book_by_genre">
         <argument
             android:name="genreId"
@@ -204,7 +208,7 @@
     <fragment
         android:id="@+id/recommendBookFragment"
         android:name="com.mit.learning_english.presentation.feature.recommendbook.RecommendBookFragment"
-        android:label="fragment_recommend_book"
+        android:label="@string/nav_fragment_recommend_book"
         tools:layout="@layout/fragment_recommend_book">
         <action
             android:id="@+id/action_recommendBookFragment_to_bookDetailFragment"
@@ -214,7 +218,7 @@
     <fragment
         android:id="@+id/aiChatFragment"
         android:name="com.mit.learning_english.presentation.feature.ai.AiChatFragment"
-        android:label="AI Chat"
+        android:label="@string/nav_ai_chat"
         tools:layout="@layout/fragment_ai_chat">
         <argument
             android:name="sessionId"
@@ -296,7 +300,7 @@
     <fragment
         android:id="@+id/profileActivityDayFragment"
         android:name="com.mit.learning_english.presentation.feature.profile.day.ProfileActivityDayFragment"
-        android:label="Activities"
+        android:label="@string/nav_activities"
         tools:layout="@layout/fragment_profile_activity_day">
         <argument
             android:name="isoDate"
@@ -309,7 +313,7 @@
     <fragment
         android:id="@+id/profileActivityCategoryFragment"
         android:name="com.mit.learning_english.presentation.feature.profile.day.ProfileActivityCategoryFragment"
-        android:label="Activities"
+        android:label="@string/nav_activities"
         tools:layout="@layout/fragment_profile_activity_category">
         <argument
             android:name="isoDate"
@@ -321,13 +325,13 @@
     <fragment
         android:id="@+id/historyReadBookFragment"
         android:name="com.mit.learning_english.presentation.feature.historyreadbook.HistoryReadBookFragment"
-        android:label="fragment_history_read_book"
+        android:label="@string/nav_fragment_history_read_book"
         tools:layout="@layout/fragment_history_read_book" />
 
     <fragment
         android:id="@+id/matchFragment"
         android:name="com.mit.learning_english.presentation.feature.study.match.MatchFragment"
-        android:label="Ghép thẻ"
+        android:label="@string/nav_match"
         tools:layout="@layout/fragment_match">
         <argument
             android:name="deckId"

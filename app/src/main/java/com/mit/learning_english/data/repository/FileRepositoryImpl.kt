@@ -5,6 +5,7 @@ import com.mit.learning_english.data.remote.api.FileApiService
 import com.mit.learning_english.data.remote.dto.FileDto
 import com.mit.learning_english.domain.repository.FileRepository
 import com.mit.learning_english.domain.util.Result
+import com.mit.learning_english.shared.UiErrorKey
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
@@ -21,11 +22,11 @@ class FileRepositoryImpl @Inject constructor(
                     if (fileDto != null) {
                         Result.Success(fileDto)
                     } else {
-                        Result.Error(result.data.message ?: "Upload failed")
+                        Result.Error(result.data.message ?: UiErrorKey.UPLOAD_FAILED)
                     }
                 }
                 is Result.Error -> result
-                else -> Result.Error("Unknown error")
+                else -> Result.Error(UiErrorKey.UNKNOWN)
             }
         } catch (e: Exception) {
             resultMapper.fromException(e)

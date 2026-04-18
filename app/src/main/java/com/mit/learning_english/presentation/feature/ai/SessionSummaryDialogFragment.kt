@@ -72,6 +72,13 @@ class SessionSummaryDialogFragment : androidx.fragment.app.DialogFragment() {
                 row.iconSuggestion.setImageResource(
                     if (index % 2 == 0) R.drawable.ic_restaurant_topic else R.drawable.ic_briefcase_topic,
                 )
+                row.root.setOnClickListener {
+                    parentFragmentManager.setFragmentResult(
+                        REQUEST_NEXT_TOPIC,
+                        bundleOf(KEY_NEXT_TOPIC to text),
+                    )
+                    dismiss()
+                }
                 b.containerSuggestions.addView(row.root)
             }
         }
@@ -92,6 +99,8 @@ class SessionSummaryDialogFragment : androidx.fragment.app.DialogFragment() {
 
     companion object {
         const val REQUEST_SUMMARY_CLOSED = "ai_session_summary_closed"
+        const val REQUEST_NEXT_TOPIC = "ai_session_next_topic"
+        const val KEY_NEXT_TOPIC = "next_topic"
         private const val ARG_ARGS = "args"
 
         fun newInstance(args: SessionSummaryArgs): SessionSummaryDialogFragment {

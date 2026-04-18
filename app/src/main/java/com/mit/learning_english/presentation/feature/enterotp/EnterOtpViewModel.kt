@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.domain.usecase.auth.VerifyForgotPasswordOtpUseCase
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,7 +26,7 @@ class EnterOtpViewModel @Inject constructor(
             val otp = uiState.value.otp
             val email = uiState.value.email ?: ""
             if (otp.isNullOrEmpty() || email.isEmpty()) {
-                setState { copy(serverError = "OTP or email missing") }
+                setState { copy(serverError = UiErrorKey.OTP_OR_EMAIL_MISSING) }
                 return@launch
             }
 
@@ -36,7 +37,7 @@ class EnterOtpViewModel @Inject constructor(
             when (result) {
                 is Result.Success -> emitEvent(EnterOtpEvent.NavigateToResetPassword)
                 is Result.Error -> setState { copy(serverError = result.message) }
-                else -> setState { copy(serverError = "Unknown error") }
+                else -> setState { copy(serverError = UiErrorKey.UNKNOWN) }
             }
         }
     }

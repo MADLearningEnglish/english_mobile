@@ -49,7 +49,7 @@ class EnterOtpFragment : BaseFragment<FragmentEnterOtpBinding, EnterOtpViewModel
         }
 
         collectStateProperty(viewModel.uiState, { it.serverError }) { serverError ->
-            binding.tvOtpError.text = serverError ?: ""
+            binding.tvOtpError.text = serverError?.let(::resolveUiMessage).orEmpty()
         }
     }
 }

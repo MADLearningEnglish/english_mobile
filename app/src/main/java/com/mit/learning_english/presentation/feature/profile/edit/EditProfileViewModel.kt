@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.mit.learning_english.domain.repository.ProfileRepository
 import com.mit.learning_english.domain.util.Result
 import com.mit.learning_english.presentation.base.BaseViewModel
+import com.mit.learning_english.shared.UiErrorKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -68,7 +69,7 @@ class EditProfileViewModel @Inject constructor(
             val cr = appContext.contentResolver
             val mime = cr.getType(uri) ?: "image/jpeg"
             val bytes = cr.openInputStream(uri)?.use { it.readBytes() } ?: run {
-                emitError("Cannot read image")
+                emitError(UiErrorKey.CANNOT_READ_IMAGE)
                 setLoading(false)
                 return@launch
             }
