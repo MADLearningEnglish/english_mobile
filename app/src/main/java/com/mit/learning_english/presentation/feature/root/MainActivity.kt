@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,16 +23,21 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             insets
         }
-//        handleDeepLinkIntent(intent)
+        // Cold start: app được mở bằng deep link khi chưa chạy
+        handleDeepLinkIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        // Warm start: app đang chạy, user bấm 1 link chia sẻ khác
+        setIntent(intent)
         handleDeepLinkIntent(intent)
     }
 
     private fun handleDeepLinkIntent(intent: Intent?) {
-        val uri = intent?.data ?: return
+        if (intent == null) return
+        if (intent.action != Intent.ACTION_VIEW) return
+        val uri = intent.data ?: return
         val bookId = extractBookId(uri) ?: return
         pendingDeepLinkBookId = bookId
     }
@@ -41,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         if (uri.scheme == Constant.DEEP_LINK_SCHEME && uri.host == Constant.DEEP_LINK_HOST_BOOK) {
             return uri.pathSegments?.firstOrNull()?.toIntOrNull()
         }
-        // https://flulingo.com/book/{bookId}
+        // https://english.kimchimar3.store/book/{bookId}
         if (uri.scheme == "https" && uri.host == Constant.DEEP_LINK_HTTPS_HOST) {
             val segments = uri.pathSegments ?: return null
             if (segments.size >= 2 && segments[0] == Constant.DEEP_LINK_HOST_BOOK) {
@@ -52,6 +58,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+        // Dùng static đơn giản vì MainActivity là singleTop → tối đa 1 instance tại 1 thời điểm.
+        // Giá trị được MainFragment tiêu thụ sau khi qua được splash/auth.
+        @Volatile
         var pendingDeepLinkBookId: Int? = null
             private set
 
