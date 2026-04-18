@@ -95,7 +95,7 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
                 chapterAdapter.submitList(chapters)
                 binding.tvReadTimeAndPage.text = getString(
                     R.string.minutes_format,
-                    (chapters.sumOf { it.totalDuration } ?: 0) / 3600
+                    ((chapters.sumOf { it.totalDuration } ) / 3600)
                 )
                 binding.tvTotalPages.text = getString(R.string.total_page_format, chapters.sumOf { chapter -> chapter.totalPages })
             }
