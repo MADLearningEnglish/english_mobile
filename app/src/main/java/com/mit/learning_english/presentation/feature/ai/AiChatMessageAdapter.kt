@@ -27,7 +27,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 
 class AiChatMessageAdapter(
-    private val onScenarioDetails: (String) -> Unit,
     private val onSpeakAssistant: (String) -> Unit,
     private val onWhyCorrection: (String?) -> Unit,
     private val onTextAction: (SelectionAction, String) -> Unit,
@@ -58,7 +57,7 @@ class AiChatMessageAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val ctx = holder.itemView.context
         when (val item = getItem(position)) {
-            is ChatListItem.ScenarioCard -> (holder as ScenarioVH).bind(item, onScenarioDetails)
+            is ChatListItem.ScenarioCard -> (holder as ScenarioVH).bind(item)
             is ChatListItem.Assistant -> (holder as AssistantVH).bind(item, onSpeakAssistant, onTextAction)
             is ChatListItem.User -> (holder as UserVH).bind(item, onTextAction)
             is ChatListItem.Correction -> (holder as CorrectionVH).bind(
@@ -72,9 +71,8 @@ class AiChatMessageAdapter(
     }
 
     class ScenarioVH(private val binding: ItemChatScenarioInlineBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: ChatListItem.ScenarioCard, onDetails: (String) -> Unit) {
+        fun bind(item: ChatListItem.ScenarioCard) {
             binding.scenarioBody.text = item.instruction
-            binding.btnViewDetails.setOnClickListener { onDetails(item.instruction) }
         }
     }
 

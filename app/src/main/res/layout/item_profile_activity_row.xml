@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
-    android:clickable="true"
-    android:focusable="true"
-    android:foreground="?attr/selectableItemBackground"
+    android:clickable="false"
+    android:focusable="false"
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
@@ -56,11 +55,5 @@
                 tools:text="15 mins • 20 words" />
         </LinearLayout>
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_chevron_right"
-            app:tint="@color/gray_400" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -15,7 +15,7 @@
         android:paddingHorizontal="20dp"
         android:paddingBottom="24dp">
 
-        <!-- English — British -->
+        <!-- Language -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,27 +24,11 @@
             android:paddingVertical="8dp">
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/profile_language_english_flag"
                 android:textAppearance="@style/TextAppearance.App.Title.ExtraSmall"
                 android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="8dp"
-                android:text="@string/profile_language_separator"
-                android:textAppearance="@style/TextAppearance.App.Body.Small.Secondary" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="@string/profile_british"
-                android:textAppearance="@style/TextAppearance.App.Body.Small.Secondary" />
         </LinearLayout>
 
         <View
@@ -83,18 +67,16 @@
             android:textAppearance="@style/TextAppearance.App.Body.Small.Secondary" />
 
         <!-- Stat cards -->
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+            >
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardWordsLearned"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -133,108 +115,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardCertificates"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                app:cardBackgroundColor="@color/profile_stat_tile_bg"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/divider"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/bg_profile_icon_square"
-                        android:contentDescription="@null"
-                        android:padding="8dp"
-                        android:src="@drawable/ic_profile_stat_cert"
-                        app:tint="@color/profile_icon_red" />
-
-                    <TextView
-                        android:id="@+id/tvCertificates"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:gravity="center"
-                        android:textColor="@color/profile_tile_text"
-                        android:textAppearance="@style/TextAppearance.App.Body.Small"
-                        tools:text="1 Certificates" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="20dp"
-            android:background="@color/divider" />
-
-        <!-- Study days -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/profile_study_days"
-            android:textAppearance="@style/TextAppearance.App.Profile.SectionTitle" />
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:scrollbars="none">
-
-            <LinearLayout
-                android:id="@+id/rowWeekDays"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-        </HorizontalScrollView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_profile_calendar"
-                app:tint="@color/profile_icon_red" />
-
-            <TextView
-                android:id="@+id/tvActiveDaysSummary"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:textAppearance="@style/TextAppearance.App.Body.Small"
-                tools:text="1 Active day" />
-
-            <TextView
-                android:id="@+id/btnDailyActivity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="?attr/selectableItemBackground"
-                android:padding="8dp"
-                android:text="@string/profile_daily_activity_link"
-                android:textAppearance="@style/TextAppearance.App.Body.Small"
-                android:textColor="@color/primary" />
-        </LinearLayout>
+        </FrameLayout>
 
         <View
             android:layout_width="match_parent"

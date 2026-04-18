@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
 import androidx.lifecycle.viewModelScope
+import com.mit.learning_english.data.remote.dto.CreateChatSessionRequestDto
 import com.mit.learning_english.data.remote.dto.EndSessionResponseDto
 import com.mit.learning_english.data.repository.AiChatRepository
 import com.mit.learning_english.domain.repository.ProfileRepository
@@ -32,6 +33,16 @@ data class AiChatUiState(
 sealed class AiChatEvent {
     data class ShowSummary(val summary: EndSessionResponseDto) : AiChatEvent()
     data class ShowToast(val message: String) : AiChatEvent()
+    data class OpenChat(
+        val sessionId: Int,
+        val title: String,
+        val aiRole: String,
+        val levelName: String,
+        val instruction: String,
+        val goalType: String,
+        val focusSkill: String,
+        val coachingMode: String,
+    ) : AiChatEvent()
 }
 
 @HiltViewModel
@@ -64,9 +75,10 @@ class AiChatViewModel @Inject constructor(
                         .firstOrNull { it.senderType?.equals("USER", true) == true }
                         ?.feedback
                         ?.let { fb ->
-                            fb.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
-                                ?: fb.overallComment?.takeIf { it.isNotBlank() }
+                            fb.feedbackLayers?.layer2Explanation?.takeIf { it.isNotBlank() }
                                 ?: fb.naturalSuggestion?.takeIf { it.isNotBlank() }
+                                ?: fb.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
+                                ?: fb.overallComment?.takeIf { it.isNotBlank() }
                         }
                     setState {
                         copy(
@@ -92,9 +104,10 @@ class AiChatViewModel @Inject constructor(
             repository.sendText(sessionId, trimmed)
                 .onSuccess { res ->
                     val feedback = res.feedback
-                    val hint = feedback?.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
-                        ?: feedback?.overallComment?.takeIf { it.isNotBlank() }
+                    val hint = feedback?.feedbackLayers?.layer2Explanation?.takeIf { it.isNotBlank() }
                         ?: feedback?.naturalSuggestion?.takeIf { it.isNotBlank() }
+                        ?: feedback?.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
+                        ?: feedback?.overallComment?.takeIf { it.isNotBlank() }
                     val appended = appendSendResponseItems(
                         feedback,
                         res.aiMessage?.content.orEmpty(),
@@ -183,9 +196,10 @@ class AiChatViewModel @Inject constructor(
                 .onSuccess { res ->
                     val feedback = res.feedback
                     val userText = res.userMessage?.content.orEmpty()
-                    val hint = feedback?.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
-                        ?: feedback?.overallComment?.takeIf { it.isNotBlank() }
+                    val hint = feedback?.feedbackLayers?.layer2Explanation?.takeIf { it.isNotBlank() }
                         ?: feedback?.naturalSuggestion?.takeIf { it.isNotBlank() }
+                        ?: feedback?.feedbackLayers?.layer1Tip?.takeIf { it.isNotBlank() }
+                        ?: feedback?.overallComment?.takeIf { it.isNotBlank() }
                     val appended = appendSendResponseItems(
                         feedback,
                         res.aiMessage?.content.orEmpty(),
@@ -213,6 +227,49 @@ class AiChatViewModel @Inject constructor(
             repository.endSession(sessionId)
                 .onSuccess { dto ->
                     emitEvent(AiChatEvent.ShowSummary(dto))
+                }
+                .onFailure { onError(it) }
+            setLoading(false)
+        }
+    }
+
+    fun startNextTopicSession(
+        topic: String,
+        levelName: String,
+        goalType: String,
+        focusSkill: String,
+        coachingMode: String,
+        aiRole: String,
+    ) {
+        val normalizedTopic = topic.trim()
+        if (normalizedTopic.isEmpty()) return
+        viewModelScope.launch(exceptionHandler) {
+            setLoading(true)
+            val req = CreateChatSessionRequestDto(
+                scenarioId = 0,
+                goalType = goalType,
+                focusSkill = focusSkill,
+                coachingMode = coachingMode,
+                fluencyMode = coachingMode.equals("FLUENCY", ignoreCase = true),
+            )
+            repository.createSession(req)
+                .onSuccess { response ->
+                    val newSessionId = response.sessionId ?: run {
+                        emitEvent(AiChatEvent.ShowToast("Không tạo được session mới"))
+                        return@onSuccess
+                    }
+                    emitEvent(
+                        AiChatEvent.OpenChat(
+                            sessionId = newSessionId,
+                            title = normalizedTopic,
+                            aiRole = response.aiRole ?: aiRole,
+                            levelName = levelName,
+                            instruction = normalizedTopic,
+                            goalType = response.goalType ?: goalType,
+                            focusSkill = response.focusSkill ?: focusSkill,
+                            coachingMode = response.coachingMode ?: coachingMode,
+                        ),
+                    )
                 }
                 .onFailure { onError(it) }
             setLoading(false)

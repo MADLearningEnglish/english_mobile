@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 class EditProfileFragment : BaseFragment<FragmentProfileEditBinding, EditProfileViewModel>() {
 
     override val viewModel: EditProfileViewModel by viewModels()
+    private var lastAvatarUrl: String? = null
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let { viewModel.uploadAvatar(it) }
@@ -53,6 +54,12 @@ class EditProfileFragment : BaseFragment<FragmentProfileEditBinding, EditProfile
                         }
                         binding.etEmail.setText(s.email)
                         val url = MediaUrlResolver.resolve(s.avatarUrl)
+                        if (!url.isNullOrBlank() && url != lastAvatarUrl) {
+                            findNavController().previousBackStackEntry
+                                ?.savedStateHandle
+                                ?.set("profile_avatar_url", url)
+                            lastAvatarUrl = url
+                        }
                         if (!url.isNullOrBlank()) {
                             Glide.with(this@EditProfileFragment).load(url).circleCrop()
                                 .into(binding.imgAvatar)

@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.navOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mit.learning_english.R
 import com.mit.learning_english.databinding.FragmentAiChatBinding
@@ -52,13 +53,6 @@ class AiChatFragment : BaseFragment<FragmentAiChatBinding, AiChatViewModel>() {
 
     private val messageAdapter by lazy {
         AiChatMessageAdapter(
-            onScenarioDetails = { instruction ->
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(R.string.ai_scenario_details_title)
-                    .setMessage(instruction)
-                    .setPositiveButton(R.string.ai_ok, null)
-                    .show()
-            },
             onSpeakAssistant = { text ->
                 tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "ai_chat_tts")
             },
@@ -86,6 +80,22 @@ class AiChatFragment : BaseFragment<FragmentAiChatBinding, AiChatViewModel>() {
         ) { _, _ ->
             findNavController().popBackStack()
         }
+        childFragmentManager.setFragmentResultListener(
+            SessionSummaryDialogFragment.REQUEST_NEXT_TOPIC,
+            viewLifecycleOwner,
+        ) { _, bundle ->
+            val topic = bundle.getString(SessionSummaryDialogFragment.KEY_NEXT_TOPIC).orEmpty()
+            if (topic.isNotBlank()) {
+                viewModel.startNextTopicSession(
+                    topic = topic,
+                    levelName = args.levelName,
+                    goalType = args.goalType,
+                    focusSkill = args.focusSkill,
+                    coachingMode = args.coachingMode,
+                    aiRole = args.aiRole,
+                )
+            }
+        }
         binding.recyclerChat.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerChat.adapter = messageAdapter
         applyChatInsets()
@@ -99,9 +109,6 @@ class AiChatFragment : BaseFragment<FragmentAiChatBinding, AiChatViewModel>() {
         binding.textLevel.text = getString(R.string.ai_level_line_format, levelLabel) + " • " + goal + " • " + mode
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
         binding.btnFinish.setOnClickListener { confirmEndSession() }
-        binding.btnSettings.setOnClickListener {
-            Toast.makeText(requireContext(), R.string.ai_settings, Toast.LENGTH_SHORT).show()
-        }
         binding.btnSend.setOnClickListener {
             val t = binding.inputMessage.text?.toString().orEmpty()
             binding.inputMessage.text?.clear()
@@ -153,6 +160,25 @@ class AiChatFragment : BaseFragment<FragmentAiChatBinding, AiChatViewModel>() {
                 }
                 is AiChatEvent.ShowToast -> {
                     Toast.makeText(requireContext(), ev.message, Toast.LENGTH_SHORT).show()
+                }
+                is AiChatEvent.OpenChat -> {
+                    findNavController().navigate(
+                        R.id.action_global_aiChatFragment,
+                        androidx.core.os.bundleOf(
+                            "sessionId" to ev.sessionId,
+                            "title" to ev.title,
+                            "aiRole" to ev.aiRole,
+                            "levelName" to ev.levelName,
+                            "instruction" to ev.instruction,
+                            "goalType" to ev.goalType,
+                            "focusSkill" to ev.focusSkill,
+                            "coachingMode" to ev.coachingMode,
+                        ),
+                        navOptions {
+                            popUpTo(R.id.aiChatFragment) { inclusive = true }
+                            launchSingleTop = true
+                        },
+                    )
                 }
             }
         }
