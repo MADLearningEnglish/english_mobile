@@ -5,7 +5,9 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -72,6 +74,15 @@ class SearchBookFragment : BaseFragment<FragmentSearchBookBinding, SearchBookVie
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.edtKeyWordSearchBook.post {
+            binding.edtKeyWordSearchBook.requestFocus()
+            ContextCompat.getSystemService(requireContext(), InputMethodManager::class.java)
+                ?.showSoftInput(binding.edtKeyWordSearchBook, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+
     override fun observeViewModel() {
         super.observeViewModel()
         viewLifecycleOwner.lifecycleScope.launch {
@@ -116,7 +127,11 @@ class SearchBookFragment : BaseFragment<FragmentSearchBookBinding, SearchBookVie
         collectEvent(viewModel.event) { event ->
             when (event) {
                 is SearchBookEvent.NavigateToBookDetail -> {
-                    // TODO: navigate to book detail
+                    val action =
+                        SearchBookFragmentDirections.actionSearchBookFragmentToBookDetailFragment(
+                            event.bookId
+                        )
+                    findNavController().navigate(action)
                 }
             }
         }
