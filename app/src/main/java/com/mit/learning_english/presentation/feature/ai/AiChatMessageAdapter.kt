@@ -1,5 +1,6 @@
 package com.mit.learning_english.presentation.feature.ai
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.ActionMode
@@ -9,6 +10,7 @@ import android.widget.TextView
 import android.graphics.Typeface
 import android.text.SpannableStringBuilder
 import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import androidx.core.text.HtmlCompat
 import androidx.core.content.ContextCompat
@@ -82,7 +84,10 @@ class AiChatMessageAdapter(
             onSpeak: (String) -> Unit,
             onTextAction: (SelectionAction, String) -> Unit,
         ) {
-            binding.bubbleAssistant.text = renderStyledAssistantText(item.content)
+            binding.bubbleAssistant.text = renderStyledAssistantText(
+                binding.root.context,
+                item.content,
+            )
             installSelectionMenu(
                 binding.bubbleAssistant,
                 selectionAction = onSpeak,
@@ -101,13 +106,17 @@ class AiChatMessageAdapter(
             textView.customSelectionActionModeCallback = buildSelectionCallback(textView, selectionAction)
         }
 
-        private fun renderStyledAssistantText(raw: String): CharSequence {
+        private fun renderStyledAssistantText(
+            context: Context,
+            raw: String,
+        ): CharSequence {
             val markdownToHtml = raw.replace(Regex("\\*\\*(.+?)\\*\\*"), "<b>$1</b>")
-            return if (markdownToHtml.contains("<b>", ignoreCase = true)) {
-                HtmlCompat.fromHtml(markdownToHtml, HtmlCompat.FROM_HTML_MODE_LEGACY)
-            } else {
-                markdownToHtml
+            if (!markdownToHtml.contains("<b>", ignoreCase = true)) {
+                return markdownToHtml
             }
+            val spanned = HtmlCompat.fromHtml(markdownToHtml, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            val embeddedColor = ContextCompat.getColor(context, R.color.ai_chat_embedded_term)
+            return tintEmbeddedBoldSpans(spanned, embeddedColor)
         }
 
         private fun stripBoldMarkdown(raw: String): String {
@@ -260,4 +269,23 @@ class AiChatMessageAdapter(
             }
         }
     }
+}
+
+/** Tô màu đậm cho đoạn AI đánh dấu in đậm (`**` / `<b>` sau Html). */
+private fun tintEmbeddedBoldSpans(text: CharSequence, color: Int): CharSequence {
+    val sb = SpannableStringBuilder(text)
+    val spans = sb.getSpans(0, sb.length, StyleSpan::class.java)
+    for (span in spans) {
+        if (span.style != Typeface.BOLD && span.style != Typeface.BOLD_ITALIC) continue
+        val start = sb.getSpanStart(span)
+        val end = sb.getSpanEnd(span)
+        if (end <= start) continue
+        sb.setSpan(
+            ForegroundColorSpan(color),
+            start,
+            end,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+        )
+    }
+    return sb
 }
