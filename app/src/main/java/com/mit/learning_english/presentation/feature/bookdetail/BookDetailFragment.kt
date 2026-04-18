@@ -93,12 +93,12 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
         collectStateProperty(viewModel.uiState, { it.chapters }) { chapters ->
             if (chapters.isNotEmpty()) {
                 chapterAdapter.submitList(chapters)
-                binding.tvReadTimeAndPage.text = getString(
-                    R.string.minutes_format,
-                    ((chapters.sumOf { it.totalDuration } ) / 3600)
-                )
-                binding.tvTotalPages.text = getString(R.string.total_page_format, chapters.sumOf { chapter -> chapter.totalPages })
             }
+            binding.tvReadTimeAndPage.text = getString(
+                R.string.minutes_format,
+                ((chapters.sumOf { it.totalDuration } ) / 3600)
+            )
+            binding.tvTotalPages.text = getString(R.string.total_page_format, chapters.sumOf { chapter -> chapter.totalPages })
         }
         collectStateProperty(viewModel.uiState, { it.isFavorite }) { isFavorite ->
             if (!isFavorite) {

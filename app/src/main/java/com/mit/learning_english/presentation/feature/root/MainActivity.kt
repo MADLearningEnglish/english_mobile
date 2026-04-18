@@ -7,12 +7,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.mit.learning_english.R
 import com.mit.learning_english.shared.Constant
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var pendingDeepLinkManager: PendingDeepLinkManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,23 +29,25 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             insets
         }
-        // Cold start: app được mở bằng deep link khi chưa chạy
-        handleDeepLinkIntent(intent)
+        // Khôi phục pending sau process death (nếu có) trước, rồi mới xử lý intent hiện tại
+        lifecycleScope.launch {
+            pendingDeepLinkManager.hydrateFromPersistent()
+            handleDeepLinkIntent(intent)
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        // Warm start: app đang chạy, user bấm 1 link chia sẻ khác
         setIntent(intent)
-        handleDeepLinkIntent(intent)
+        lifecycleScope.launch { handleDeepLinkIntent(intent) }
     }
 
-    private fun handleDeepLinkIntent(intent: Intent?) {
+    private suspend fun handleDeepLinkIntent(intent: Intent?) {
         if (intent == null) return
         if (intent.action != Intent.ACTION_VIEW) return
         val uri = intent.data ?: return
         val bookId = extractBookId(uri) ?: return
-        pendingDeepLinkBookId = bookId
+        pendingDeepLinkManager.setPending(bookId)
     }
 
     private fun extractBookId(uri: Uri): Int? {
@@ -55,19 +63,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return null
-    }
-
-    companion object {
-        // Dùng static đơn giản vì MainActivity là singleTop → tối đa 1 instance tại 1 thời điểm.
-        // Giá trị được MainFragment tiêu thụ sau khi qua được splash/auth.
-        @Volatile
-        var pendingDeepLinkBookId: Int? = null
-            private set
-
-        fun consumePendingDeepLink(): Int? {
-            val id = pendingDeepLinkBookId
-            pendingDeepLinkBookId = null
-            return id
-        }
     }
 }
