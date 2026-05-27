@@ -409,6 +409,12 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         return "%02d:%02d".format(minutes, seconds)
     }
 
+    /**
+     * Hiển thị hoặc ẩn Dialog tra từ dựa vào trạng thái [LookupDialogState].
+     *
+     * Nếu trạng thái là Loading, hiện progress. Nếu Success, điền
+     * phiên âm, nghĩa và ví dụ. Nếu có lỗi, hiển thị thông báo lỗi.
+     */
     private fun renderLookupDialogState(state: LookupDialogState) {
         if (state.status == LookupStatus.Idle) {
             lookupDialog?.dismiss()
@@ -473,6 +479,14 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
             .create()
     }
 
+    /**
+     * Thiết lập Listener nhận kết quả từ các BottomSheet:
+     *
+     * 1. Khi [ChooseDeckBottomSheet] trả về `deckId`, mở [AddFlashcardBottomSheet]
+     *    để điền thông tin thẻ với term và definition có sẵn.
+     * 2. Khi [AddFlashcardBottomSheet] trả về kết quả thành công,
+     *    hiển thị Toast thông báo.
+     */
     private fun setupLookupBottomSheetResults() {
         childFragmentManager.setFragmentResultListener(
             ChooseDeckBottomSheet.REQUEST_KEY_DECK_PICKED,

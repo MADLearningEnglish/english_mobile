@@ -15,9 +15,11 @@ import javax.inject.Inject
 import com.mit.learning_english.data.remote.dto.LoginRequest as LoginRequestDto
 
 /**
- * Implementation của AuthRepository
- * 
- * Chịu trách nhiệm gọi API và xử lý authentication logic
+ * AuthRepositoryImpl – Triển khai [AuthRepository] tầng Data.
+ *
+ * Chịu trách nhiệm gọi [AuthApiService] (Retrofit), xử lý response,
+ * và quản lý token thông qua [AuthManager] (lưu vào DataStore).
+ * Tất cả các hàm đều chạy trên Dispatchers.IO qua [withContext].
  */
 class AuthRepositoryImpl @Inject constructor(
     private val authApiService: AuthApiService,
@@ -31,6 +33,17 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Đăng nhập bằng email và mật khẩu.
+     *
+     * Gọi [AuthApiService.login] → `POST /api/auth/v1/login`. Nếu thành công,
+     * lưu [accessToken], [refreshToken] và [expiresAt] vào [AuthManager] (DataStore)
+     * để các request tiếp theo tự động đính kèm token qua AuthInterceptor.
+     *
+     * @param loginRequest Domain model chứa username (email) và password
+     * @return [Result.Success] true nếu đăng nhập thành công;
+     *         [Result.Error] với message lỗi nếu thất bại
+     */
     override suspend fun login(loginRequest: LoginRequest): Result<Boolean> {
         return withContext(Dispatchers.IO) {
             try {
@@ -131,6 +144,19 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Đăng ký tài khoản mới.
+     *
+     * Gọi [AuthApiService.createUser] → `POST /api/user/v1` với
+     * [CreateUserRequest] chứa email, password và fullName.
+     * Backend mã hoá password bằng BCrypt trước khi lưu.
+     *
+     * @param email    Email đăng ký (phải unique trong hệ thống)
+     * @param password Mật khẩu plain text (Backend tự hash)
+     * @param fullName Họ và tên đầy đủ
+     * @return [Result.Success] true nếu tạo tài khoản thành công;
+     *         [Result.Error] nếu email đã tồn tại hoặc lỗi server
+     */
     override suspend fun signUp(email: String, password: String, fullName: String): Result<Boolean> {
         return withContext(Dispatchers.IO) {
             try {
@@ -157,6 +183,16 @@ class AuthRepositoryImpl @Inject constructor(
             }
         }
     }
+    /**
+     * Yêu cầu gửi OTP đặt lại mật khẩu qua email.
+     *
+     * Gọi [AuthApiService.requestForgotPasswordOtp] → `POST /api/auth/v1/forgot-password/request-otp`.
+     * Backend sẽ tạo OTP 6 chữ số và gửi qua JavaMailSender (Gmail SMTP).
+     *
+     * @param email Email tài khoản cần đặt lại mật khẩu
+     * @return [Result.Success] true nếu yêu cầu được gửi thành công;
+     *         [Result.Error] nếu email không tồn tại hoặc lỗi gửi mail
+     */
     override suspend fun requestForgotPasswordOtp(email: String): Result<Boolean> {
         return withContext(Dispatchers.IO) {
             try {
@@ -173,6 +209,17 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Xác minh OTP đặt lại mật khẩu.
+     *
+     * Gọi [AuthApiService.verifyForgotPasswordOtp] → `POST /api/auth/v1/forgot-password/verify-otp`.
+     * Backend kiểm tra OTP còn hiệu lực, chưa được dùng và chưa hết hạn (mặc định 5 phút).
+     *
+     * @param email Email tài khoản
+     * @param otp   Mã OTP 6 chữ số người dùng nhận qua email
+     * @return [Result.Success] true nếu OTP hợp lệ;
+     *         [Result.Error] nếu OTP sai, đã dùng, hoặc hết hạn
+     */
     override suspend fun verifyForgotPasswordOtp(email: String, otp: String): Result<Boolean> {
         return withContext(Dispatchers.IO) {
             try {
@@ -189,6 +236,18 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Đặt lại mật khẩu mới sau khi xác minh OTP thành công.
+     *
+     * Gọi [AuthApiService.resetPassword] → `POST /api/auth/v1/forgot-password/reset`.
+     * Backend mã hoá newPassword bằng BCrypt, lưu vào DB và đánh dấu OTP đã dùng.
+     *
+     * @param email       Email tài khoản cần đặt lại mật khẩu
+     * @param otp         OTP đã xác minh ở bước trước
+     * @param newPassword Mật khẩu mới (plain text, Backend tự hash)
+     * @return [Result.Success] true nếu đặt lại thành công;
+     *         [Result.Error] nếu OTP không hợp lệ hoặc email không tồn tại
+     */
     override suspend fun resetForgotPassword(email: String, otp: String, newPassword: String): Result<Boolean> {
         return withContext(Dispatchers.IO) {
             try {
