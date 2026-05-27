@@ -21,6 +21,14 @@ import com.mit.learning_english.databinding.BottomsheetChooseDeckBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+/**
+ * ChooseDeckBottomSheet – BottomSheet cho người dùng chọn bộ thẻ (Deck).
+ *
+ * Màn hình này được hiển thị khi người dùng nhấn "Thêm vào Flashcard"
+ * từ dialog tra từ. Nó load danh sách deck thông qua [DeckPickerViewModel].
+ * Khi người dùng chọn 1 deck, nó sẽ trả về deckId và deckTitle cho
+ * [ReadBookFragment] thông qua FragmentResult.
+ */
 @AndroidEntryPoint
 class ChooseDeckBottomSheet : BottomSheetDialogFragment() {
 

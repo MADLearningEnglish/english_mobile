@@ -21,6 +21,14 @@ import com.mit.learning_english.databinding.BottomsheetAddFlashcardBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+/**
+ * AddFlashcardBottomSheet – BottomSheet điền thông tin flashcard.
+ *
+ * Bước cuối cùng trong luồng thêm flashcard:
+ * Hiển thị form với `term` (từ) và `definition` (nghĩa) được điền sẵn.
+ * Khi người dùng xác nhận, sẽ gọi [AddFlashcardViewModel.submit] để
+ * gửi request lên backend.
+ */
 @AndroidEntryPoint
 class AddFlashcardBottomSheet : BottomSheetDialogFragment() {
 
