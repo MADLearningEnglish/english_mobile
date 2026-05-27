@@ -22,6 +22,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
+/**
+ * Màn hình hiển thị danh sách sách đã đọc gần đây của người dùng.
+ */
 class HistoryReadBookFragment :
     BaseFragment<FragmentHistoryReadBookBinding, HistoryReadBookViewModel>() {
     private var loadingStartTime = 0L
@@ -31,6 +34,9 @@ class HistoryReadBookFragment :
     override val viewModel: HistoryReadBookViewModel by viewModels()
     private lateinit var historyAdapter: HistoryReadBookPagingAdapter
 
+    /**
+     * Khởi tạo binding cho layout fragment.
+     */
     override fun verifyBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -38,6 +44,9 @@ class HistoryReadBookFragment :
         return FragmentHistoryReadBookBinding.inflate(inflater, container, false)
     }
 
+    /**
+     * Thiết lập RecyclerView lịch sử đọc và adapter phân trang.
+     */
     override fun setupView() {
         historyAdapter = HistoryReadBookPagingAdapter { book ->
             viewModel.onBookClick(book.id)
@@ -49,12 +58,18 @@ class HistoryReadBookFragment :
         }
     }
 
+    /**
+     * Gán hành vi cho nút quay lại.
+     */
     override fun bindView() {
         binding.btnBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }
 
+    /**
+     * Theo dõi dữ liệu/state để cập nhật danh sách, loading và điều hướng.
+     */
     override fun observeViewModel() {
         super.observeViewModel()
         viewLifecycleOwner.lifecycleScope.launch {
@@ -104,12 +119,18 @@ class HistoryReadBookFragment :
         }
     }
 
+    /**
+     * Hiển thị overlay loading với animation.
+     */
     override fun showLoading() {
         loadingStartTime = System.currentTimeMillis()
         binding.overlayLoading.visibility = View.VISIBLE
         binding.lottieLoading.playAnimation()
     }
 
+    /**
+     * Ẩn loading và đảm bảo thời gian hiển thị tối thiểu để tránh giật UI.
+     */
     override fun hideLoading() {
          val elapsed = System.currentTimeMillis() - loadingStartTime
         val remaining = (MIN_LOADING_TIME - elapsed).coerceAtLeast(0)

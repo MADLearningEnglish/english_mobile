@@ -15,6 +15,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+/**
+ * Fragment cho phép người dùng lựa chọn các thể loại sách yêu thích trong quá trình onboarding sau khi đăng nhập.
+ */
 @AndroidEntryPoint
 class OnboardingChooseGenresFragment : Fragment() {
 
@@ -29,6 +32,9 @@ class OnboardingChooseGenresFragment : Fragment() {
         sharedViewModel.toggleGenre(genreId)
     }
 
+    /**
+     * Tạo và khởi tạo giao diện Fragment bằng cách inflate layout FragmentOnboardingChooseGenresBinding.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,6 +43,10 @@ class OnboardingChooseGenresFragment : Fragment() {
         return binding.root
     }
 
+    /**
+     * Thiết lập danh sách RecyclerView với Grid Layout 2 cột, gán adapter
+     * và lắng nghe sự thay đổi trạng thái danh sách thể loại từ ViewModel để cập nhật UI.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvGenre.layoutManager = GridLayoutManager(requireContext(), 2)
@@ -51,6 +61,9 @@ class OnboardingChooseGenresFragment : Fragment() {
         }
     }
 
+    /**
+     * Giải phóng liên kết view binding khi Fragment bị hủy view để tránh rò rỉ bộ nhớ.
+     */
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

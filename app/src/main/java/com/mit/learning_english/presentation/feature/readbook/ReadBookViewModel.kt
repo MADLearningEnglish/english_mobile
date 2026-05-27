@@ -29,6 +29,9 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
+/**
+ * ViewModel điều phối luồng đọc/nghe sách, paging trang và tra từ.
+ */
 class ReadBookViewModel @Inject constructor(
     private val getBookDetailByIdUseCase: GetBookDetailByIdUseCase,
     private val getPagesByBookUseCase: GetPagesByBookUseCase,
@@ -36,6 +39,9 @@ class ReadBookViewModel @Inject constructor(
     private val updateBookReadingProgressUseCase: UpdateBookReadingProgressUseCase
 ) : BaseViewModel<ReadBookState, ReadBookEvent>(ReadBookState()) {
 
+    /**
+     * Cấu hình truy vấn paging trang sách.
+     */
     private data class PagingParams(val bookId: Int, val totalPages: Int, val initialKey: Int)
 
     private val pagingParams = MutableStateFlow<PagingParams?>(null)
@@ -43,6 +49,9 @@ class ReadBookViewModel @Inject constructor(
     /** Thời điểm bắt đầu phiên đọc (foreground), để gửi durationSeconds lên server. */
     private var readingSessionStartElapsed: Long? = null
 
+    /**
+     * Luồng phân trang các trang sách theo tham số hiện tại.
+     */
     val pagesFlow: Flow<PagingData<Page>> = pagingParams
         .filterNotNull()
         .flatMapLatest { params ->
@@ -50,6 +59,9 @@ class ReadBookViewModel @Inject constructor(
         }
         .cachedIn(viewModelScope)
 
+    /**
+     * Tải dữ liệu ban đầu cho màn đọc sách từ đối số điều hướng.
+     */
     fun loadInit(readBookArgs: ReadBookArgs) {
         viewModelScope.launch(exceptionHandler) {
             setLoading(true)
@@ -88,6 +100,9 @@ class ReadBookViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Đồng bộ chương active theo số trang hiện tại.
+     */
     private fun updateActiveChapter(pageNumber: Int) {
         val chapters = uiState.value.chapters
         if (chapters.isEmpty()) return
@@ -106,11 +121,17 @@ class ReadBookViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Cập nhật trang hiện tại khi ViewPager thay đổi.
+     */
     fun onPageChanged(position: Int) {
         setState { copy(currentPageNumber = position) }
         updateActiveChapter(position)
     }
 
+    /**
+     * Cập nhật audio của trang hiện tại và tự phát nếu đang ở chế độ nghe.
+     */
     fun onPageAudioAvailable(audio: Audio?) {
         val url = audio?.fileUrl
         setState { copy(currentAudioUrl = url, currentTime = 0L, audioDuration = 0L) }
@@ -119,14 +140,23 @@ class ReadBookViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Cập nhật trạng thái phát audio để hiển thị lên UI.
+     */
     fun updatePlaybackState(isPlaying: Boolean, currentTime: Long, duration: Long) {
         setState { copy(isPlaying = isPlaying, currentTime = currentTime, audioDuration = duration) }
     }
 
+    /**
+     * Lưu tốc độ phát audio hiện tại.
+     */
     fun updatePlaybackSpeed(speed: Float) {
         setState { copy(playbackSpeed = speed) }
     }
 
+    /**
+     * Chuyển tới chương được chọn và cập nhật paging key tương ứng.
+     */
     fun goToChapter(chapterId: Int) {
         val state = uiState.value
         val chapters = state.chapters
@@ -142,6 +172,9 @@ class ReadBookViewModel @Inject constructor(
         pagingParams.value = PagingParams(bookId, totalPages, initialKey)
     }
 
+    /**
+     * Tính trang bắt đầu của chương dựa trên danh sách chương đã sắp xếp.
+     */
     private fun calculateFirstPage(chapterId: Int, sortedChapters: List<Chapter>): Int {
         var firstPage = 0
         for (chapter in sortedChapters) {
@@ -151,10 +184,16 @@ class ReadBookViewModel @Inject constructor(
         return firstPage
     }
 
+    /**
+     * Đặt chế độ đọc theo giá trị điều hướng.
+     */
     fun setReadMode(readMode: Int) {
         setState { copy(readMode = ReadMode.fromValue(readMode)) }
     }
 
+    /**
+     * Đổi qua lại giữa chế độ đọc và nghe.
+     */
     fun readModeClicked() {
         val currentReadValue = uiState.value.readMode.value
         val newMode = ReadMode.fromValue(1 - currentReadValue)
@@ -169,12 +208,18 @@ class ReadBookViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Nhận đoạn text người dùng chọn để thực hiện tra nghĩa.
+     */
     fun onTextSelected(selectedText: String) {
         val normalizedText = normalizeSelectedText(selectedText)
         if (normalizedText.isBlank()) return
         lookupText(normalizedText)
     }
 
+    /**
+     * Thử tra nghĩa lại với truy vấn gần nhất.
+     */
     fun retryLookup() {
         val query = uiState.value.lookupQuery
         if (query.isNotBlank()) {
@@ -182,6 +227,9 @@ class ReadBookViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Đóng hộp thoại tra từ và reset trạng thái lookup.
+     */
     fun dismissLookupDialog() {
         setState {
             copy(
@@ -192,6 +240,9 @@ class ReadBookViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Gọi use case tra từ và cập nhật trạng thái thành công/lỗi.
+     */
     private fun lookupText(text: String) {
         viewModelScope.launch(exceptionHandler) {
             setState {
@@ -224,18 +275,27 @@ class ReadBookViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Chuẩn hóa đoạn text bôi đen trước khi gửi lên API tra từ.
+     */
     private fun normalizeSelectedText(rawText: String): String {
         return rawText.trim()
             .replace("\\s+".toRegex(), " ")
             .trim('\"', '\'', ',', '.', ';', ':', '!', '?', '(', ')', '[', ']', '{', '}')
     }
 
+    /**
+     * Đánh dấu bắt đầu phiên đọc để tính thời lượng đọc.
+     */
     fun markReadingSessionStarted() {
         val s = uiState.value
         if (s.book == null || s.totalPages <= 0) return
         readingSessionStartElapsed = SystemClock.elapsedRealtime()
     }
 
+    /**
+     * Gửi tiến độ và thời lượng đọc khi rời màn hình.
+     */
     fun reportReadingProgressOnLeave() {
         val start = readingSessionStartElapsed ?: return
         val s = uiState.value
