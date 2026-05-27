@@ -15,6 +15,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+/**
+ * Fragment cho phép người dùng lựa chọn trình độ tiếng Anh của mình (như A1, A2, B1, B2...) trong quá trình onboarding.
+ */
 @AndroidEntryPoint
 class OnboardingChooseLevelFragment : Fragment() {
 
@@ -29,6 +32,9 @@ class OnboardingChooseLevelFragment : Fragment() {
         sharedViewModel.selectLevel(levelId)
     }
 
+    /**
+     * Tạo và khởi tạo giao diện Fragment từ FragmentOnboardingChooseLevelBinding.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,6 +43,10 @@ class OnboardingChooseLevelFragment : Fragment() {
         return binding.root
     }
 
+    /**
+     * Thiết lập danh sách các trình độ học tập bằng LinearLayoutManager và adapter,
+     * đồng thời lắng nghe trạng thái của các trình độ từ ViewModel để cập nhật UI tương ứng.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvLevels.layoutManager = LinearLayoutManager(requireContext())
@@ -52,6 +62,9 @@ class OnboardingChooseLevelFragment : Fragment() {
         }
     }
 
+    /**
+     * Hủy bỏ binding khi giao diện Fragment bị hủy nhằm tránh rò rỉ bộ nhớ.
+     */
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

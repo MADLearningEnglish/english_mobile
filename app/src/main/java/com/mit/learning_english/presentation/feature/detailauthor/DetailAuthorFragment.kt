@@ -21,11 +21,17 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
+/**
+ * Màn hình hiển thị thông tin tác giả và các sách liên quan.
+ */
 class DetailAuthorFragment : BaseFragment<FragmentDetailAuthorBinding, DetailAuthorViewModel>() {
     override val viewModel: DetailAuthorViewModel by viewModels()
 
     private lateinit var authorBooksAdapter: RecommendBookPagingAdapter
 
+    /**
+     * Khởi tạo binding cho layout của fragment.
+     */
     override fun verifyBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -33,6 +39,9 @@ class DetailAuthorFragment : BaseFragment<FragmentDetailAuthorBinding, DetailAut
         return FragmentDetailAuthorBinding.inflate(inflater, container, false)
     }
 
+    /**
+     * Thiết lập RecyclerView hiển thị danh sách sách của tác giả.
+     */
     override fun setupView() {
         authorBooksAdapter = RecommendBookPagingAdapter { book ->
             viewModel.onBookClick(book.id)
@@ -44,10 +53,16 @@ class DetailAuthorFragment : BaseFragment<FragmentDetailAuthorBinding, DetailAut
         }
     }
 
+    /**
+     * Gán hành vi cho nút quay lại.
+     */
     override fun bindView() {
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
     }
 
+    /**
+     * Theo dõi state/event để cập nhật UI và điều hướng.
+     */
     override fun observeViewModel() {
         super.observeViewModel()
         collectStateProperty(viewModel.uiState, { it.authorName }) { name ->
@@ -107,11 +122,17 @@ class DetailAuthorFragment : BaseFragment<FragmentDetailAuthorBinding, DetailAut
         }
     }
 
+    /**
+     * Hiển thị overlay loading.
+     */
     override fun showLoading() {
         binding.overlayLoading.visibility = View.VISIBLE
         binding.lottieLoading.playAnimation()
     }
 
+    /**
+     * Ẩn overlay loading.
+     */
     override fun hideLoading() {
         binding.lottieLoading.pauseAnimation()
         binding.overlayLoading.visibility = View.GONE

@@ -4,6 +4,9 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+/**
+ * Tham số điều hướng dùng để mở màn hình đọc sách.
+ */
 data class ReadBookArgs(
     val bookId: Int, val chapterId: Int? = null, val readModeValue: Int = 0,
 ) : Parcelable

@@ -13,11 +13,17 @@ import com.mit.learning_english.R
 import com.mit.learning_english.databinding.ItemReadBookPageBinding
 import com.mit.learning_english.domain.model.Page
 
+/**
+ * Adapter phân trang hiển thị nội dung từng trang sách.
+ */
 class ReadBookPageAdapter(
     private val onLookupTextSelected: (String) -> Unit
 ) :
     PagingDataAdapter<Page, ReadBookPageAdapter.PageViewHolder>(PageDiffCallback()) {
 
+    /**
+     * Tạo ViewHolder cho item trang sách.
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageViewHolder {
         val binding = ItemReadBookPageBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
@@ -25,14 +31,23 @@ class ReadBookPageAdapter(
         return PageViewHolder(binding, onLookupTextSelected)
     }
 
+    /**
+     * Bind dữ liệu trang vào ViewHolder theo vị trí hiện tại.
+     */
     override fun onBindViewHolder(holder: PageViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
+    /**
+     * ViewHolder hiển thị nội dung một trang và xử lý tra từ khi bôi đen.
+     */
     class PageViewHolder(
         private val binding: ItemReadBookPageBinding,
         private val onLookupTextSelected: (String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
+        /**
+         * Gán nội dung văn bản và số trang cho UI.
+         */
         fun bind(page: Page?) {
             if (page != null) {
                 val content =  page.sentences.joinToString(" ") { it.content }
@@ -44,6 +59,9 @@ class ReadBookPageAdapter(
             }
         }
 
+        /**
+         * Chặn menu mặc định và gửi đoạn text đã chọn về callback tra từ.
+         */
         private fun setupSelectionLookup() {
             binding.tvPageContent.customSelectionActionModeCallback = object : ActionMode.Callback {
     override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
@@ -68,6 +86,9 @@ class ReadBookPageAdapter(
         }
     }
 
+    /**
+     * DiffUtil hỗ trợ tối ưu cập nhật dữ liệu trang.
+     */
     class PageDiffCallback : DiffUtil.ItemCallback<Page>() {
         override fun areItemsTheSame(oldItem: Page, newItem: Page): Boolean {
             return oldItem.id == newItem.id

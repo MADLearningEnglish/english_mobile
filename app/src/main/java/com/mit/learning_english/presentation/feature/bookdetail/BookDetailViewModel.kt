@@ -12,12 +12,20 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel xử lý nghiệp vụ và quản lý trạng thái cho màn hình Chi tiết sách (BookDetailFragment).
+ * Hỗ trợ tải dữ liệu chi tiết sách, yêu thích/bỏ yêu thích sách và điều hướng sang màn hình đọc sách.
+ */
 @HiltViewModel
 class BookDetailViewModel @Inject constructor(
     private val getBookDetailByIdUseCase: GetBookDetailByIdUseCase,
     private val updateFavoriteBookUseCase: UpdateFavoriteBookUseCase,
     private val favoriteChangeNotifier: FavoriteChangeNotifier
 ) : BaseViewModel<BookDetailState, BookDetailEvent>(BookDetailState()) {
+    
+    /**
+     * Tải thông tin chi tiết của sách từ hệ thống theo ID và cập nhật vào UI State.
+     */
     fun getBookDetail(bookId: Int) {
         viewModelScope.launch(exceptionHandler) {
             setLoading(true)
@@ -49,6 +57,9 @@ class BookDetailViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Phát sự kiện điều hướng sang màn hình Đọc sách (ReadBookFragment) kèm theo các thông tin cấu hình đọc.
+     */
     fun navigateToReadBook(readMode: Int, chapterId: Int? = null) {
         val state = uiState.value
         if (state.id != 0) {
@@ -62,6 +73,9 @@ class BookDetailViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Thêm hoặc xóa sách khỏi danh sách yêu thích của người dùng và thông báo cho các màn hình khác cập nhật lại dữ liệu.
+     */
     fun clickedFavorite(){
         viewModelScope.launch(exceptionHandler) {
             val state = uiState.value

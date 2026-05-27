@@ -20,12 +20,19 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
+/**
+ * Fragment hiển thị màn hình Danh sách sách đề xuất phân trang.
+ */
+@AndroidEntryPoint
 class RecommendBookFragment :
     BaseFragment<FragmentRecommendBookBinding, RecommendBookViewModel>() {
 
     override val viewModel: RecommendBookViewModel by viewModels()
     private lateinit var recommendBookAdapter: RecommendBookPagingAdapter
 
+    /**
+     * Khởi tạo đối tượng binding cho giao diện fragment từ FragmentRecommendBookBinding.
+     */
     override fun verifyBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -33,6 +40,9 @@ class RecommendBookFragment :
         return FragmentRecommendBookBinding.inflate(inflater, container, false)
     }
 
+    /**
+     * Thiết lập danh sách các cuốn sách đề xuất dạng RecyclerView dọc và áp dụng adapter cũng như khoảng cách giữa các item.
+     */
     override fun setupView() {
         recommendBookAdapter = RecommendBookPagingAdapter { book ->
             viewModel.onBookClick(book.id)
@@ -44,12 +54,19 @@ class RecommendBookFragment :
         }
     }
 
+    /**
+     * Gán sự kiện click cho các thành phần giao diện, ở đây có nút Quay lại (btnBack).
+     */
     override fun bindView() {
         binding.btnBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }
 
+    /**
+     * Quan sát trạng thái phân trang (loading, lỗi, trống) của danh sách sách đề xuất từ ViewModel
+     * và cập nhật adapter, đồng thời lắng nghe sự kiện điều hướng sang Chi tiết sách.
+     */
     override fun observeViewModel() {
         super.observeViewModel()
         viewLifecycleOwner.lifecycleScope.launch {
@@ -96,11 +113,17 @@ class RecommendBookFragment :
         }
     }
 
+    /**
+     * Hiển thị trạng thái loading cho màn hình.
+     */
     override fun showLoading() {
 //        binding.overlayLoading.visibility = View.VISIBLE
 //        binding.lottieLoading.playAnimation()
     }
 
+    /**
+     * Ẩn trạng thái loading cho màn hình.
+     */
     override fun hideLoading() {
 //        binding.lottieLoading.pauseAnimation()
 //        binding.overlayLoading.visibility = View.GONE

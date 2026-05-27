@@ -52,6 +52,10 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*, *>> : AppCom
         observeViewModel()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+    }
+
     /**
      * Observe ViewModel. Mặc định observe loading từ uiState và error từ errorEvent.
      */

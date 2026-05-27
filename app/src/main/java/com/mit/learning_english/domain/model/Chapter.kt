@@ -5,7 +5,7 @@ data class Chapter(
     val bookId: Int,
     val title: String,
     val description: String,
-    val number: Int,
-    val totalPages: Int,
-    val totalDuration: Int
+    val number: Int=0,
+    val totalPages: Int=0,
+    val totalDuration: Int=0
 )
