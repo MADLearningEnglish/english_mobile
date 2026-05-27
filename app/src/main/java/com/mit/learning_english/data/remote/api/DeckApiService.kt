@@ -103,9 +103,10 @@ interface DeckApiService {
     suspend fun deleteDeck(@Path("id") deckId: Int): Response<BaseResponse<String>>
 
     /**
-     * Báo cáo kết thúc toàn bộ một phiên học (chứa điểm số bài trắc nghiệm và tổng thời gian học).
+     * Báo cáo kết thúc toàn bộ một phiên học, bao gồm tổng thời gian học, số thẻ đã ôn và kết quả bài trắc nghiệm.
      * @param deckId ID của bộ thẻ.
-     * @param body Payload ghi nhận thời lượng (durationSeconds) và điểm số (score).
+     * @param body Payload ghi nhận thời lượng học (`durationSeconds`), số thẻ đã ôn (`cardsReviewed`),
+     * số câu trả lời đúng (`quizCorrect`) và tổng số câu hỏi trắc nghiệm (`quizTotal`).
      * @return Thông báo thành công.
      */
     @POST("/api/deck/v1/{id}/study-complete")
