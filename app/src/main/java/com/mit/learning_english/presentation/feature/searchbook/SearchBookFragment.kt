@@ -24,17 +24,28 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
+/**
+ * Fragment hiển thị màn hình Tìm kiếm sách. 
+ * Hỗ trợ tìm kiếm thời gian thực với debounce, hiển thị kết quả phân trang, shimmer loading và điều hướng sang chi tiết sách.
+ */
+@AndroidEntryPoint
 class SearchBookFragment : BaseFragment<FragmentSearchBookBinding, SearchBookViewModel>() {
 
     override val viewModel: SearchBookViewModel by viewModels()
     private lateinit var searchBookAdapter: SearchBookAdapter
 
+    /**
+     * Khởi tạo đối tượng binding cho giao diện fragment từ FragmentSearchBookBinding.
+     */
     override fun verifyBinding(
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentSearchBookBinding {
         return FragmentSearchBookBinding.inflate(inflater, container, false)
     }
 
+    /**
+     * Khởi tạo adapter, gán cho RecyclerView kết quả tìm kiếm và thiết lập khoảng cách giữa các item.
+     */
     override fun setupView() {
         searchBookAdapter = SearchBookAdapter { book ->
             viewModel.onBookClicked(book.id)
@@ -46,6 +57,9 @@ class SearchBookFragment : BaseFragment<FragmentSearchBookBinding, SearchBookVie
         }
     }
 
+    /**
+     * Gán trình lắng nghe sự kiện và thay đổi văn bản tìm kiếm (TextWatcher), nút Xóa tìm kiếm, nút Quay lại và nút Tìm kiếm thủ công.
+     */
     override fun bindView() {
         binding.edtKeyWordSearchBook.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -74,6 +88,9 @@ class SearchBookFragment : BaseFragment<FragmentSearchBookBinding, SearchBookVie
         }
     }
 
+    /**
+     * Tự động hiển thị bàn phím ảo (Soft Keyboard) và tập trung (focus) vào ô nhập dữ liệu tìm kiếm khi màn hình hiển thị.
+     */
     override fun onResume() {
         super.onResume()
         binding.edtKeyWordSearchBook.post {
@@ -83,6 +100,10 @@ class SearchBookFragment : BaseFragment<FragmentSearchBookBinding, SearchBookVie
         }
     }
 
+    /**
+     * Quan sát luồng kết quả tìm kiếm phân trang từ ViewModel và các trạng thái tải danh sách (loading, lỗi, thành công)
+     * để điều khiển Shimmer Effect và gán dữ liệu vào adapter. Đồng thời, nhận các sự kiện điều hướng sang chi tiết sách.
+     */
     override fun observeViewModel() {
         super.observeViewModel()
         viewLifecycleOwner.lifecycleScope.launch {

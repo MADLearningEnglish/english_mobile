@@ -13,12 +13,19 @@ import com.mit.learning_english.databinding.ItemOnboardingLevelBinding
 import com.mit.learning_english.domain.model.LearningLevel
 import kotlin.math.roundToInt
 
+/**
+ * Adapter cho RecyclerView hiển thị danh sách các cấp độ học tập trong màn hình onboarding.
+ */
 class OnboardingLevelAdapter(
     private val onLevelSelected: (Int) -> Unit
 ) : ListAdapter<LearningLevel, OnboardingLevelAdapter.VH>(Diff) {
 
     private var selectedId: Int? = null
 
+    /**
+     * Cập nhật danh sách cấp độ mới và ID cấp độ đang được chọn.
+     * Sử dụng payload để tối ưu việc cập nhật lại các item.
+     */
     fun submitLevels(levels: List<LearningLevel>, selected: Int?) {
         val selectionChanged = selectedId != selected
         selectedId = selected
@@ -29,6 +36,9 @@ class OnboardingLevelAdapter(
         }
     }
 
+    /**
+     * Tạo ViewHolder mới bằng cách inflate layout ItemOnboardingLevelBinding.
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding = ItemOnboardingLevelBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
@@ -36,10 +46,16 @@ class OnboardingLevelAdapter(
         return VH(binding, onLevelSelected) { selectedId }
     }
 
+    /**
+     * Gán dữ liệu cấp độ học tập tại vị trí tương ứng vào ViewHolder.
+     */
     override fun onBindViewHolder(holder: VH, position: Int) {
         holder.bind(getItem(position), position)
     }
 
+    /**
+     * Gán dữ liệu với Payload hỗ trợ tối ưu hóa, chỉ cập nhật trạng thái chọn nếu có yêu cầu.
+     */
     override fun onBindViewHolder(holder: VH, position: Int, payloads: MutableList<Any>) {
         if (payloads.contains(PAYLOAD_SELECTION)) {
             holder.bindSelection(getItem(position), position)
@@ -48,12 +64,18 @@ class OnboardingLevelAdapter(
         }
     }
 
+    /**
+     * ViewHolder đại diện cho giao diện một mục cấp độ học tập.
+     */
     class VH(
         private val binding: ItemOnboardingLevelBinding,
         private val onSelect: (Int) -> Unit,
         private val selectedId: () -> Int?
     ) : RecyclerView.ViewHolder(binding.root) {
 
+        /**
+         * Liên kết thông tin tên cấp độ, mô tả của cấp độ và thiết lập sự kiện click chọn.
+         */
         fun bind(level: LearningLevel, position: Int) {
             binding.tvLevelName.text = level.name
             val desc = level.description.trim()
@@ -63,6 +85,9 @@ class OnboardingLevelAdapter(
             binding.root.setOnClickListener { onSelect(level.id) }
         }
 
+        /**
+         * Cập nhật trạng thái chọn (RadioButton, màu viền stroke, độ dày viền) của item hiện tại.
+         */
         fun bindSelection(level: LearningLevel, position: Int) {
             val selected = level.id == selectedId()
             binding.rbLevel.isChecked = selected
@@ -83,6 +108,9 @@ class OnboardingLevelAdapter(
         }
     }
 
+    /**
+     * Callback DiffUtil dùng để so sánh các phần tử trong danh sách cấp độ.
+     */
     private object Diff : DiffUtil.ItemCallback<LearningLevel>() {
         override fun areItemsTheSame(oldItem: LearningLevel, newItem: LearningLevel): Boolean =
             oldItem.id == newItem.id

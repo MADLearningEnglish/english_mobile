@@ -10,10 +10,16 @@ import com.mit.learning_english.databinding.ItemChapterBinding
 import com.mit.learning_english.domain.model.Chapter
 import java.util.Locale
 
+/**
+ * Adapter hiển thị danh sách các chương (Chapters) của cuốn sách trong màn hình Chi tiết sách.
+ */
 class ChapterAdapter(
     private val onClick: (Chapter) -> Unit
 ) : ListAdapter<Chapter, ChapterAdapter.ChapterViewHolder>(ChapterDiffCallback()) {
 
+    /**
+     * Tạo ViewHolder mới bằng cách inflate layout ItemChapterBinding.
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChapterViewHolder {
         val binding = ItemChapterBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
@@ -21,10 +27,16 @@ class ChapterAdapter(
         return ChapterViewHolder(binding)
     }
 
+    /**
+     * Gán dữ liệu chương sách tại vị trí tương ứng vào ViewHolder.
+     */
     override fun onBindViewHolder(holder: ChapterViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
+    /**
+     * ViewHolder chứa giao diện hiển thị thông tin một chương của sách.
+     */
     inner class ChapterViewHolder(private val binding: ItemChapterBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -37,6 +49,10 @@ class ChapterAdapter(
             }
         }
 
+        /**
+         * Liên kết dữ liệu hiển thị gồm: Số chương (định dạng 2 chữ số), tiêu đề, tổng số trang
+         * và thời lượng nghe audio (định dạng Giờ - Phút) của chương.
+         */
         fun bind(chapter: Chapter) {
             binding.apply {
                 tvNumber.text = String.format(Locale.getDefault(),"%02d", chapter.number)
@@ -47,6 +63,9 @@ class ChapterAdapter(
         }
     }
 
+    /**
+     * Callback DiffUtil so sánh các chương sách giúp tối ưu hóa việc cập nhật danh sách RecyclerView.
+     */
     class ChapterDiffCallback : DiffUtil.ItemCallback<Chapter>() {
         override fun areItemsTheSame(oldItem: Chapter, newItem: Chapter): Boolean {
             return oldItem.id == newItem.id

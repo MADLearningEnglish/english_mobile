@@ -13,16 +13,26 @@ import com.mit.learning_english.databinding.FragmentOnboardingSecondBinding
 import com.mit.learning_english.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Fragment chứa chính quản lý luồng Onboarding sau khi người dùng đăng nhập thành công.
+ * Sử dụng ViewPager2 để hiển thị hai bước: Chọn cấp độ học tập và chọn thể loại yêu thích.
+ */
 @AndroidEntryPoint
 class OnboardingSecondFragment : BaseFragment<FragmentOnboardingSecondBinding, OnboardingSecondViewModel>() {
     override val viewModel: OnboardingSecondViewModel by viewModels()
 
+    /**
+     * Khởi tạo đối tượng binding cho giao diện fragment từ FragmentOnboardingSecondBinding.
+     */
     override fun verifyBinding(
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentOnboardingSecondBinding {
         return FragmentOnboardingSecondBinding.inflate(layoutInflater, container, false)
     }
 
+    /**
+     * Thiết lập ViewPager2, adapter, sự kiện chuyển trang, và xử lý sự kiện click nút Tiếp tục (Next) hoặc Bỏ qua (Skip).
+     */
     override fun setupView() {
         val adapter = OnboardingSecondAdapter(this)
         binding.viewPager.adapter = adapter
@@ -49,6 +59,9 @@ class OnboardingSecondFragment : BaseFragment<FragmentOnboardingSecondBinding, O
         }
     }
 
+    /**
+     * Cập nhật văn bản hiển thị cho nút btnNext tùy thuộc vào trang hiện tại (Trang cuối hiển thị "Bắt đầu", trang khác hiển thị "Tiếp tục").
+     */
     private fun updateNextButtonLabel(position: Int, pageCount: Int) {
         if (position == pageCount - 1) {
             binding.btnNext.text = ContextCompat.getString(requireContext(), R.string.get_started)
@@ -60,6 +73,9 @@ class OnboardingSecondFragment : BaseFragment<FragmentOnboardingSecondBinding, O
     override fun bindView() {
     }
 
+    /**
+     * Quan sát các sự kiện từ ViewModel gửi về để thực hiện chuyển trang tiếp theo hoặc kết thúc onboarding chuyển sang MainGraph.
+     */
     override fun observeViewModel() {
         super.observeViewModel()
         collectEvent(viewModel.event) { event ->
@@ -78,9 +94,15 @@ class OnboardingSecondFragment : BaseFragment<FragmentOnboardingSecondBinding, O
         }
     }
 
+    /**
+     * Adapter quản lý danh sách Fragment con bên trong ViewPager2 của Onboarding.
+     */
     private inner class OnboardingSecondAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
         override fun getItemCount(): Int = 2
 
+        /**
+         * Trả về Fragment tương ứng với vị trí trang hiển thị (0: Chọn cấp độ, 1: Chọn thể loại).
+         */
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> OnboardingChooseLevelFragment()

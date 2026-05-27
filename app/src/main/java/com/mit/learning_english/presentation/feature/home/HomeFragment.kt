@@ -29,6 +29,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
+/**
+ * Fragment hiển thị giao diện trang chủ của ứng dụng (Home).
+ * Chứa danh sách sách đề xuất, thể loại sách, tác giả nổi bật, sách yêu thích và lịch sử đọc sách gần đây.
+ */
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override val viewModel: HomeViewModel by viewModels()
@@ -38,16 +42,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private lateinit var genreAdapter: GenreAdapter
     private lateinit var recentBooksAdapter: HistoryReadBookPagingAdapter
 
+    /**
+     * Điều hướng từ Main Graph chính của Activity dựa trên hướng điều hướng được truyền vào.
+     */
     private fun navigateFromMainGraph(direction: NavDirections) {
         requireActivity().findNavController(R.id.nav_host_fragment).navigate(direction)
     }
 
+    /**
+     * Khởi tạo đối tượng binding cho giao diện fragment từ FragmentHomeBinding.
+     */
     override fun verifyBinding(
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentHomeBinding {
         return FragmentHomeBinding.inflate(inflater, container, false)
     }
 
+    /**
+     * Khởi tạo các adapter cho các danh sách RecyclerView (Sách đề xuất, Thể loại, Tác giả, Sách yêu thích, Sách gần đây)
+     * và thiết lập LayoutManager cũng như khoảng cách (ItemDecoration) cho mỗi RecyclerView.
+     */
     override fun setupView() {
 //        setupAppBarCollapseAnimation()
 
@@ -96,6 +110,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    /**
+     * Làm mới lại danh sách và dữ liệu khi người dùng quay lại màn hình Home.
+     */
     override fun onResume() {
         super.onResume()
         viewModel.fetchRecommendBooks()
@@ -105,6 +122,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         if (::recentBooksAdapter.isInitialized) recentBooksAdapter.refresh()
     }
 
+    /**
+     * Thiết lập hiệu ứng thu nhỏ và mờ nhạt dần thông tin tên ứng dụng và avatar khi người dùng cuộn AppBar.
+     */
     private fun setupAppBarCollapseAnimation() {
         binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             val totalScrollRange = appBarLayout.totalScrollRange
@@ -123,6 +143,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         })
     }
 
+    /**
+     * Đăng ký sự kiện click chuột cho các thành phần giao diện (Thanh tìm kiếm, Nút Xem tất cả).
+     */
     override fun bindView() {
         binding.apply {
             layoutSearch.setOnClickListener {
@@ -138,6 +161,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    /**
+     * Quan sát trạng thái UI (loading, danh sách dữ liệu) từ ViewModel và các sự kiện điều hướng màn hình
+     * để hiển thị Shimmer Loading thích hợp và cập nhật dữ liệu vào các RecyclerView tương ứng.
+     */
     override fun observeViewModel() {
         super.observeViewModel()
         collectStateProperty(
