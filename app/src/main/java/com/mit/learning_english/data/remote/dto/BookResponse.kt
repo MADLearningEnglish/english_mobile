@@ -10,7 +10,7 @@ data class BookResponse(
     val coverUrl: String,
     val genresName: String,
     @SerializedName("authors") val authorsName: String,
-    val chapters: List<Chapter>? = null,
+    val chapters: List<Chapter> = emptyList(),
     @SerializedName("lastReadNumberPage") val lastReadNumberPage: Int = 0,
     @SerializedName("progressPercent") val progressPercent: Double = 0.0,
     @SerializedName("lastReadTime") val lastReadTime: String? = null,

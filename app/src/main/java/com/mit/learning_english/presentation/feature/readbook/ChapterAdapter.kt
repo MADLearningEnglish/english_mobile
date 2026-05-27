@@ -14,16 +14,25 @@ import com.mit.learning_english.databinding.ItemChapterReadBookBinding
 import com.mit.learning_english.domain.model.Chapter
 import java.util.Locale
 
+/**
+ * Adapter hiển thị danh sách chương trong ngăn điều hướng của màn hình đọc sách.
+ */
 class ChapterAdapter(
     private val onChapterClick: (Chapter) -> Unit
 ) : ListAdapter<Chapter, ChapterAdapter.ChapterViewHolder>(ChapterDiffCallback()) {
 
  private var activeChapterId: Int = -1
 
+    /**
+     * Lấy ID chương đang được đánh dấu hoạt động.
+     */
     fun getActiveChapterId():Int{
         return activeChapterId
     }
 
+    /**
+     * Cập nhật chương đang active và refresh đúng các item cần thiết.
+     */
     fun setActiveChapterId(chapterId: Int) {
         if (activeChapterId != chapterId) {
             val oldId = activeChapterId
@@ -39,6 +48,9 @@ class ChapterAdapter(
     }
 
 
+    /**
+     * Tạo ViewHolder cho item chương.
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChapterViewHolder {
         val binding = ItemChapterReadBookBinding.inflate(
             LayoutInflater.from(parent.context),
@@ -48,11 +60,17 @@ class ChapterAdapter(
         return ChapterViewHolder(binding)
     }
 
+    /**
+     * Bind dữ liệu chương và trạng thái active vào ViewHolder.
+     */
     override fun onBindViewHolder(holder: ChapterViewHolder, position: Int) {
         val chapter = getItem(position)
         holder.bind(chapter, chapter.id == activeChapterId)
     }
 
+    /**
+     * ViewHolder hiển thị thông tin một chương và style theo trạng thái active.
+     */
     inner class ChapterViewHolder(private val binding: ItemChapterReadBookBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -65,6 +83,9 @@ class ChapterAdapter(
             }
         }
 
+        /**
+         * Gán dữ liệu chương và đổi màu item nếu đây là chương đang đọc.
+         */
         fun bind(chapter: Chapter, isActive: Boolean) {
             binding.apply{
             tvNumber.text = String.format(Locale.getDefault(), "%02d", chapter.number)
@@ -100,6 +121,9 @@ class ChapterAdapter(
         }
     }
 
+    /**
+     * DiffUtil tối ưu cập nhật danh sách chương.
+     */
     class ChapterDiffCallback : DiffUtil.ItemCallback<Chapter>() {
         override fun areItemsTheSame(oldItem: Chapter, newItem: Chapter): Boolean {
             return oldItem.id == newItem.id

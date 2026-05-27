@@ -44,6 +44,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
+/**
+ * Màn hình đọc/nghe sách, hỗ trợ điều hướng chương, phát audio và tra từ.
+ */
 class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel>() {
     override val viewModel: ReadBookViewModel by viewModels()
     val args: ReadBookFragmentArgs by navArgs()
@@ -63,12 +66,18 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
     private val speeds = floatArrayOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f)
     private var currentSpeedIndex = 2
 
+    /**
+     * Khởi tạo binding cho layout của fragment.
+     */
     override fun verifyBinding(
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentReadBookBinding {
         return FragmentReadBookBinding.inflate(inflater, container, false)
     }
 
+    /**
+     * Thiết lập pager nội dung, danh sách chương và audio controls.
+     */
     override fun setupView() {
         pageAdapter = ReadBookPageAdapter { selectedText ->
             viewModel.onTextSelected(selectedText)
@@ -105,6 +114,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         setupAudioControls()
     }
 
+    /**
+     * Cấu hình trạng thái cho bottom sheet điều khiển audio.
+     */
     private fun setupBottomSheet() {
         val bottomSheetView = binding.bottomSheet.root
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetView)
@@ -113,6 +125,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         bottomSheetBehavior.peekHeight = resources.getDimensionPixelSize(R.dimen.bottom_sheet_peek_height)
     }
 
+    /**
+     * Gán các thao tác play/pause, tua và đổi tốc độ phát audio.
+     */
     private fun setupAudioControls() {
         binding.bottomSheet.btnPlay.setOnClickListener {
             mediaController?.let { controller ->
@@ -143,7 +158,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
 
         binding.bottomSheet.btnRewindNext5s.setOnClickListener {
             mediaController?.let { controller ->
-                val newPos = (controller.currentPosition + 5000).coerceAtMost(controller.duration)
+                val newPos = (controller.currentPosition + 5000)
                 controller.seekTo(newPos)
             }
         }
@@ -179,6 +194,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         })
     }
 
+    /**
+     * Nhận args ban đầu và gán sự kiện click cho các nút chính.
+     */
     override fun bindView() {
         val readBookArgs = args.readBookArgs
         viewModel.loadInit(readBookArgs)
@@ -194,6 +212,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         }
     }
 
+    /**
+     * Theo dõi state/event từ ViewModel để cập nhật UI đọc/nghe.
+     */
     override fun observeViewModel() {
         super.observeViewModel()
 
@@ -272,16 +293,25 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         }
     }
 
+    /**
+     * Khởi tạo media controller khi fragment bắt đầu hiển thị.
+     */
     override fun onStart() {
         super.onStart()
         initializeMediaController()
     }
 
+    /**
+     * Đánh dấu bắt đầu phiên đọc khi quay lại màn hình.
+     */
     override fun onResume() {
         super.onResume()
         viewModel.markReadingSessionStarted()
     }
 
+    /**
+     * Báo cáo tiến độ đọc và giải phóng tài nguyên media khi rời màn hình.
+     */
     override fun onStop() {
         viewModel.reportReadingProgressOnLeave()
         progressJob?.cancel()
@@ -291,6 +321,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         super.onStop()
     }
 
+    /**
+     * Tạo kết nối với service phát audio nền qua MediaController.
+     */
     private fun initializeMediaController() {
         val sessionToken = SessionToken(
             requireContext(),
@@ -305,6 +338,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         }
     }
 
+    /**
+     * Đăng ký listener để đồng bộ trạng thái player với UI.
+     */
     private fun setupPlayerListener() {
         mediaController?.addListener(object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -328,6 +364,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         })
     }
 
+    /**
+     * Khôi phục trạng thái phát audio khi fragment được tạo lại.
+     */
     private fun restoreStateIfNeeded() {
         val state = viewModel.uiState.value
         if (state.readMode == ReadMode.ListenMode && state.currentAudioUrl != null) {
@@ -341,6 +380,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         }
     }
 
+    /**
+     * Phát audio theo URL được cung cấp.
+     */
     private fun playAudio(url: String) {
         val controller = mediaController ?: return
         val mediaItem = MediaItem.Builder()
@@ -356,6 +398,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         controller.play()
     }
 
+    /**
+     * Dừng audio và xóa media item hiện tại.
+     */
     private fun stopAudio() {
         mediaController?.let { controller ->
             controller.stop()
@@ -364,6 +409,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         stopProgressUpdates()
     }
 
+    /**
+     * Cập nhật định kỳ tiến trình phát audio lên giao diện.
+     */
     private fun startProgressUpdates() {
         progressJob?.cancel()
         progressJob = viewLifecycleOwner.lifecycleScope.launch {
@@ -381,27 +429,42 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         }
     }
 
+    /**
+     * Hủy job cập nhật tiến trình audio.
+     */
     private fun stopProgressUpdates() {
         progressJob?.cancel()
         progressJob = null
     }
 
+    /**
+     * Đổi icon play/pause theo trạng thái phát.
+     */
     private fun updatePlayPauseIcon(isPlaying: Boolean) {
         binding.bottomSheet.icPlay.setImageResource(
             if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
         )
     }
 
+    /**
+     * Hiển thị bottom sheet điều khiển audio.
+     */
     private fun showBottomSheet() {
         bottomSheetBehavior.isHideable = false
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
+    /**
+     * Ẩn bottom sheet điều khiển audio.
+     */
     private fun hideBottomSheet() {
         bottomSheetBehavior.isHideable = true
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
+    /**
+     * Định dạng thời lượng milliseconds về mm:ss.
+     */
     private fun formatTime(ms: Long): String {
         val totalSeconds = ms / 1000
         val minutes = totalSeconds / 60
@@ -410,10 +473,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
     }
 
     /**
-     * Hiển thị hoặc ẩn Dialog tra từ dựa vào trạng thái [LookupDialogState].
-     *
-     * Nếu trạng thái là Loading, hiện progress. Nếu Success, điền
-     * phiên âm, nghĩa và ví dụ. Nếu có lỗi, hiển thị thông báo lỗi.
+     * Render trạng thái hộp thoại tra từ (loading/success/error).
      */
     private fun renderLookupDialogState(state: LookupDialogState) {
         if (state.status == LookupStatus.Idle) {
@@ -458,6 +518,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         }
     }
 
+    /**
+     * Khởi tạo dialog tra từ nếu chưa tồn tại.
+     */
     private fun ensureLookupDialog() {
         if (lookupDialog != null && lookupDialogBinding != null) return
         val dialogBinding = DialogReadBookLookupBinding.inflate(layoutInflater)
@@ -480,12 +543,7 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
     }
 
     /**
-     * Thiết lập Listener nhận kết quả từ các BottomSheet:
-     *
-     * 1. Khi [ChooseDeckBottomSheet] trả về `deckId`, mở [AddFlashcardBottomSheet]
-     *    để điền thông tin thẻ với term và definition có sẵn.
-     * 2. Khi [AddFlashcardBottomSheet] trả về kết quả thành công,
-     *    hiển thị Toast thông báo.
+     * Lắng nghe kết quả từ bottom sheet chọn deck/thêm flashcard.
      */
     private fun setupLookupBottomSheetResults() {
         childFragmentManager.setFragmentResultListener(
@@ -515,6 +573,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         }
     }
 
+    /**
+     * Phát audio phát âm của từ đã tra.
+     */
     private fun playLookupAudio(url: String) {
         stopLookupAudio()
         lookupMediaPlayer = MediaPlayer().apply {
@@ -533,6 +594,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         }
     }
 
+    /**
+     * Dừng và giải phóng MediaPlayer cho audio phát âm.
+     */
     private fun stopLookupAudio() {
         lookupMediaPlayer?.let { player ->
             try {
@@ -544,6 +608,9 @@ class ReadBookFragment : BaseFragment<FragmentReadBookBinding, ReadBookViewModel
         lookupMediaPlayer = null
     }
 
+    /**
+     * Dọn dẹp dialog và tài nguyên media khi hủy view.
+     */
     override fun onDestroyView() {
         lookupDialog?.dismiss()
         lookupDialog = null

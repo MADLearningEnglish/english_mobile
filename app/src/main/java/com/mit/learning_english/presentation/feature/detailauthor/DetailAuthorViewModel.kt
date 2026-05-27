@@ -9,6 +9,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
+/**
+ * ViewModel quản lý dữ liệu tác giả và danh sách sách của tác giả.
+ */
 class DetailAuthorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getBooksByAuthorPagingUseCase: GetBooksByAuthorPagingUseCase
@@ -16,6 +19,9 @@ class DetailAuthorViewModel @Inject constructor(
 
     private val authorId: Int = savedStateHandle["authorId"] ?: 0
 
+    /**
+     * Luồng sách của tác giả theo cơ chế phân trang.
+     */
     val authorBooks = getBooksByAuthorPagingUseCase(authorId).cachedIn(viewModelScope)
 
     init {
@@ -29,10 +35,16 @@ class DetailAuthorViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Phát sự kiện mở màn hình chi tiết sách.
+     */
     fun onBookClick(bookId: Int) {
         emitEvent(DetailAuthorEvent.NavigateToBookDetail(bookId))
     }
 
+    /**
+     * Đẩy thông báo lỗi lên lớp giao diện.
+     */
     fun setErrorMessage(message: String) {
         emitError(message)
     }

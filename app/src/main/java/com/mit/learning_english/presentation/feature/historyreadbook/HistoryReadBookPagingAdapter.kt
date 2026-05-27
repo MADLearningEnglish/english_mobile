@@ -14,10 +14,16 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+/**
+ * Adapter phân trang hiển thị danh sách sách trong lịch sử đọc.
+ */
 class HistoryReadBookPagingAdapter(
     private val onItemClick: (BookReponse) -> Unit
 ) : PagingDataAdapter<BookReponse, HistoryReadBookPagingAdapter.HistoryBookViewHolder>(DiffCallback) {
 
+    /**
+     * Tạo ViewHolder cho từng item sách lịch sử.
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryBookViewHolder {
         val binding = ItemHistoryBookBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
@@ -25,14 +31,23 @@ class HistoryReadBookPagingAdapter(
         return HistoryBookViewHolder(binding)
     }
 
+    /**
+     * Bind dữ liệu trang hiện tại vào ViewHolder.
+     */
     override fun onBindViewHolder(holder: HistoryBookViewHolder, position: Int) {
         getItem(position)?.let(holder::bind)
     }
 
+    /**
+     * ViewHolder hiển thị thông tin một cuốn sách đã đọc.
+     */
     inner class HistoryBookViewHolder(
         private val binding: ItemHistoryBookBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
+        /**
+         * Gán dữ liệu hiển thị tiêu đề, tiến độ và thời gian đọc gần nhất.
+         */
         fun bind(item: BookReponse) {
             val context = binding.root.context
             val progressValue = item.processPercent.toInt().coerceIn(0, 100)
@@ -55,6 +70,9 @@ class HistoryReadBookPagingAdapter(
         }
     }
 
+    /**
+     * DiffUtil tối ưu cập nhật item trong danh sách phân trang.
+     */
     private object DiffCallback : DiffUtil.ItemCallback<BookReponse>() {
         override fun areItemsTheSame(oldItem: BookReponse, newItem: BookReponse): Boolean =
             oldItem.id == newItem.id

@@ -27,6 +27,7 @@
     <!-- Giống values: màn Choose Topic cố định sáng như mockup -->
     <color name="ai_screen_bg">#FFFFFF</color>
     <color name="ai_text_on_light">#131313</color>
+    <color name="ai_chat_embedded_term">#0D47A1</color>
     <color name="ai_title_navy">#1A2332</color>
     <color name="ai_hint_on_light">#9E9E9E</color>
     <color name="ai_toolbar_divider">#E8E8ED</color>

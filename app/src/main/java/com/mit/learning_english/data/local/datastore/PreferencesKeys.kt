@@ -20,6 +20,8 @@ object PreferencesKeys {
     // Int keys
     val USER_ID = intPreferencesKey("user_id")
     val THEME_MODE = intPreferencesKey("theme_mode") // 0 = Light, 1 = Dark, 2 = System
+    // Deep link pending - 0 hoặc vắng = không có pending
+    val PENDING_DEEP_LINK_BOOK_ID = intPreferencesKey("pending_deep_link_book_id")
 
     val HAS_SEEN_BEFORE_LOGIN_ONBOARDING = booleanPreferencesKey("has_seen_onboarding_before_login")
 

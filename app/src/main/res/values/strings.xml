@@ -2,7 +2,7 @@
     <string name="app_name">FluLingO</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Xin chào fragment trống</string>
-    <string name="your_personal_language_n_learning_tutor">Gia sư ngôn ngữ\n học tập cá nhân</string>
+    <string name="your_personal_language_n_learning_tutor">Ứng dụng học tiếng anh\nqua các cuốn sách .</string>
     <string name="log_in_and_continue_your_learning">Đăng nhập để tiếp tục học</string>
     <string name="email">Email</string>
     <string name="user_gmail_com">user@gmail.com</string>

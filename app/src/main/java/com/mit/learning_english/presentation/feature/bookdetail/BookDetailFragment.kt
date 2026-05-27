@@ -15,6 +15,10 @@ import com.mit.learning_english.presentation.utils.VerticalSpacingItemDecoration
 import com.mit.learning_english.shared.Constant
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Fragment hiển thị màn hình Chi tiết sách.
+ * Cho phép xem thông tin mô tả, danh sách chương, tiến độ đọc, chia sẻ, yêu thích sách và chọn chế độ đọc/nghe sách.
+ */
 @AndroidEntryPoint
 class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailViewModel>() {
     override val viewModel: BookDetailViewModel by viewModels()
@@ -23,12 +27,19 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
 
     private val args: BookDetailFragmentArgs by navArgs()
 
+    /**
+     * Khởi tạo đối tượng binding cho giao diện fragment từ FragmentBookDetailBinding.
+     */
     override fun verifyBinding(
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentBookDetailBinding {
         return FragmentBookDetailBinding.inflate(inflater, container, false)
     }
 
+    /**
+     * Gọi ViewModel tải thông tin sách theo ID, khởi tạo adapter hiển thị danh sách chương sách
+     * dưới dạng RecyclerView dọc cùng khoảng cách các item.
+     */
     override fun setupView() {
         viewModel.getBookDetail(args.bookId)
         chapterAdapter = ChapterAdapter { chapter ->
@@ -42,6 +53,9 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
 
     }
 
+    /**
+     * Gán sự kiện click cho các thành phần giao diện (đọc sách, nghe sách, quay lại, thích sách, chia sẻ).
+     */
     override fun bindView() {
         binding.apply {
             btnReadBook.setOnClickListener {
@@ -62,17 +76,26 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
         }
     }
 
+    /**
+     * Thực hiện tạo Intent chia sẻ thông tin cuốn sách kèm deep-link liên kết.
+     */
     private fun shareBook() {
         val state = viewModel.uiState.value
+        if (state.id == 0) return
         val shareUrl = "${Constant.DEEP_LINK_HTTPS_BOOK_URL}${state.id}"
         val shareText = getString(R.string.share_book_message, state.title, shareUrl)
         val sendIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, state.title)
             putExtra(Intent.EXTRA_TEXT, shareText)
         }
         startActivity(Intent.createChooser(sendIntent, getString(R.string.share_book_title)))
     }
 
+    /**
+     * Quan sát trạng thái UI (tiêu đề, tác giả, tiến trình đọc, ảnh bìa, chương sách, yêu thích)
+     * từ ViewModel và các sự kiện điều hướng sang màn hình đọc sách để cập nhật giao diện tương ứng.
+     */
     override fun observeViewModel() {
         super.observeViewModel()
         collectStateProperty(viewModel.uiState, { it.title }) { title ->
@@ -91,9 +114,12 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding, BookDetailVie
         collectStateProperty(viewModel.uiState, { it.chapters }) { chapters ->
             if (chapters.isNotEmpty()) {
                 chapterAdapter.submitList(chapters)
-                binding.tvReadTimeAndPage.text = getString(R.string.minutes_format, chapters.sumOf { chapter -> chapter.totalDuration }/3600)
-                binding.tvTotalPages.text = getString(R.string.total_page_format, chapters.sumOf { chapter -> chapter.totalPages })
             }
+            binding.tvReadTimeAndPage.text = getString(
+                R.string.minutes_format,
+                ((chapters.sumOf { it.totalDuration } ) / 3600)
+            )
+            binding.tvTotalPages.text = getString(R.string.total_page_format, chapters.sumOf { chapter -> chapter.totalPages })
         }
         collectStateProperty(viewModel.uiState, { it.isFavorite }) { isFavorite ->
             if (!isFavorite) {
