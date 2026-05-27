@@ -76,7 +76,7 @@ interface DeckApiService {
      * Gửi kết quả ôn tập của TỪNG thẻ đơn lẻ (ví dụ: đánh giá EASY, HARD) lên máy chủ.
      * @param deckId ID bộ thẻ chứa thẻ đó.
      * @param flashcardId ID của thẻ vừa ôn tập.
-     * @param level Mức độ nhớ từ (Hard, Good, Easy...).
+     * @param level Mức độ nhớ từ. Giá trị hợp lệ: HARD, MEDIUM, EASY, KNOWN.
      * @return Xác nhận thành công.
      */
     @POST("/api/deck/v1/{id}/flashcards/{flashcardId}/review")
